@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.test;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,7 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @TeleOp(name = "LiftLimits")
 @Config()
-
 public class LiftLimits extends LinearOpMode {
 
     public static double leftPowerInitial = 0.1; // counterclockwise
@@ -26,18 +26,21 @@ public class LiftLimits extends LinearOpMode {
 
         waitForStart();
 
-        while(opModeIsActive()) {
+        while (opModeIsActive()) {
 
-            if (left.getCurrentPosition() > leftPos - 5 && left.getCurrentPosition() < leftPos+5) {
+            if (left.getCurrentPosition() > leftPos - 5
+                    && left.getCurrentPosition() < leftPos + 5) {
                 double leftPower = left.getPower();
                 double rightPower = right.getPower();
                 while (leftPower >= 0.02) { // quick fix - write better, smoother function later
-                    left.setPower(leftPower - leftPower/5);
-                    right.setPower(rightPower + rightPower/5); // power same for both, just opposite direction
+                    left.setPower(leftPower - leftPower / 5);
+                    right.setPower(
+                            rightPower
+                                    + rightPower
+                                            / 5); // power same for both, just opposite direction
                 }
                 left.setPower(0); // full break
                 right.setPower(0); // full break
-
 
             } else {
                 left.setTargetPosition((int) leftPos);
