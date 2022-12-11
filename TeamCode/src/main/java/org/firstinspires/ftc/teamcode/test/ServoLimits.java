@@ -17,7 +17,6 @@ public class ServoLimits extends LinearOpMode{
     public void runOpMode() throws InterruptedException {
         Servo one = hardwareMap.get(Servo.class, "claw");
 
-
         waitForStart();
         while (opModeIsActive()) {
 
