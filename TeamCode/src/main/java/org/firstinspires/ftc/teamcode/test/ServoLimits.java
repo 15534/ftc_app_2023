@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.tests;
+package org.firstinspires.ftc.teamcode.test;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -16,7 +16,6 @@ public class ServoLimits extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException {
         Servo one = hardwareMap.get(Servo.class, "claw");
-
 
         waitForStart();
         while (opModeIsActive()) {
