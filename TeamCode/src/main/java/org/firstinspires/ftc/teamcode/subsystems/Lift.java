@@ -22,12 +22,10 @@ public class Lift {
 
     public static int target = 0;
 
-    public Lift(){
+    public Lift() {}
 
-    }
-
-    public void goTo(Constants.LiftTargets input){
-        switch (input){
+    public void goTo(Constants.LiftTargets input) {
+        switch (input) {
             case PICKUP:
                 moveLift(0);
                 break;
@@ -48,10 +46,9 @@ public class Lift {
                 moveLift(50);
                 break;
         }
-
     }
 
-    public void init(HardwareMap hardwareMap){
+    public void init(HardwareMap hardwareMap) {
         left = hardwareMap.get(DcMotorEx.class, "leftLift");
         left.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
@@ -59,7 +56,7 @@ public class Lift {
         right.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
     }
 
-    public void moveLift(int height){
+    public void moveLift(int height) {
         target = height;
 
         left.setTargetPosition((int) height);
@@ -72,23 +69,22 @@ public class Lift {
         right.setPower(rightPowerBase);
     }
 
-    public void update(){
+    public void update() {
         if (left.getCurrentPosition() > target - 5 && left.getCurrentPosition() < -target + 5) {
             motorAtTarget = false;
 
             double leftPower = left.getPower();
             double rightPower = right.getPower();
-            if (leftPower >= 0.02){
+            if (leftPower >= 0.02) {
                 left.setPower(leftPower - leftPower / 5);
-                right.setPower(rightPower + rightPower / 5); // power same for both, just opposite direction
+                right.setPower(
+                        rightPower
+                                + rightPower / 5); // power same for both, just opposite direction
             }
             left.setPower(0); // full brake
             right.setPower(0); // full brake
-        }
-
-        else {
+        } else {
             motorAtTarget = true;
         }
     }
-
 }
