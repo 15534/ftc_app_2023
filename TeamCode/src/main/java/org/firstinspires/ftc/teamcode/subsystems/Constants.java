@@ -17,6 +17,18 @@ public class Constants {
         HIGH,
         PUTDOWN
     }
+
+    public enum IntakeTargets {
+        PICKUP,
+        HOLD,
+        DROPOFF
+    }// pick up 49, 25 drop off, 310 maxheight
+
+    public enum ClawTargets {
+        OPENCLAW,
+        CLOSECLAW
+    }// 0, 1
+
     /*
     Lift Init Variables
     */
