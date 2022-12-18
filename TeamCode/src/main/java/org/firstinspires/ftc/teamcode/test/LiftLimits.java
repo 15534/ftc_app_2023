@@ -34,10 +34,7 @@ public class LiftLimits extends LinearOpMode {
                 double rightPower = right.getPower();
                 while (leftPower >= 0.02) { // quick fix - write better, smoother function later
                     left.setPower(leftPower - leftPower / 5);
-                    right.setPower(
-                            rightPower
-                                    + rightPower
-                                            / 5); // power same for both, just opposite direction
+                    right.setPower(rightPower + rightPower/ 5); // power same for both, just opposite direction
                 }
                 left.setPower(0); // full break
                 right.setPower(0); // full break
