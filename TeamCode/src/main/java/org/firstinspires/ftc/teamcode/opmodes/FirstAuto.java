@@ -12,6 +12,7 @@ public class FirstAuto extends LinearOpMode {
     public static double DISTANCE = 50;
 
     public void runOpMode() throws InterruptedException {
+        waitForStart();
         MecanumDrive drive = new MecanumDrive(hardwareMap);
 
         Trajectory trajectoryForward =
