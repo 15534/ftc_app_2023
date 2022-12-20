@@ -20,9 +20,9 @@ public class Claw {
         intakeLift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         clawServo =  hardwareMap.get(Servo.class, "claw");
-
-        moveBelt(Constants.IntakeTargets.HOLD);
-        moveClaw(Constants.ClawTargets.CLOSECLAW);
+//        this doesn't seem to work (byran 12.19.22)
+//        moveBelt(Constants.IntakeTargets.HOLD);
+//        moveClaw(Constants.ClawTargets.CLOSECLAW);
 
     }
 
@@ -72,5 +72,13 @@ public class Claw {
                 clawServo.setPosition(1);
                 break;
         }
+    }
+
+    public int getBeltPosition() {
+        return intakeLift.getCurrentPosition();
+    }
+
+    public double getServoPosition() {
+        return clawServo.getPosition();
     }
 }

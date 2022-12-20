@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Constants;
 @Config
 
 public class PickUpTest extends LinearOpMode {
-    public Lift myLift = new Lift();
+    public Lift myLift = new Lift(20);
     public Claw myClaw = new Claw();
 
     // place claw at very top
