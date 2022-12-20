@@ -9,10 +9,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Lift {
-
-    public static double leftPowerInit = 0; // counterclockwise, positive
-    public static double rightPowerInit = -0; // clockwise, negative
-
     public static double leftPowerBase = 50;
     public static double rightPowerBase = -leftPowerBase;
 
