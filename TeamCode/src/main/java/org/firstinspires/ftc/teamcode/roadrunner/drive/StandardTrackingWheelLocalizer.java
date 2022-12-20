@@ -24,18 +24,22 @@ import java.util.List;
  *    |              |
  *    \--------------/
  *
+ *
  */
 @Config
 public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
     public static double TICKS_PER_REV = 1440;
-    public static double WHEEL_RADIUS = 1.14; // in
-    public static double GEAR_RATIO = 1.6577; // output (wheel) speed / input (encoder) speed
+    public static double WHEEL_RADIUS = 1.14173; // in
+    public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
+    // Data above was retrieved from 2021 code
 
     public static double LATERAL_DISTANCE = 9.6; // in; distance between the left and right wheels
-    public static double FORWARD_OFFSET = 6.73; // in; offset of the lateral wheel
+    // FORWARD_OFFSET is negative because it is behind the lateral encoders
+    public static double FORWARD_OFFSET = -6.73; // in; offset of the lateral wheel
 
     private Encoder leftEncoder, rightEncoder, backEncoder;
 
+    // TODO: Tune X and Y multiplier
     public static double X_MULTIPLIER = 1; // Multiplier in the X direction
     public static double Y_MULTIPLIER = 1; // Multiplier in the Y direction
 
@@ -50,7 +54,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontRight"));
         backEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "backLeft"));
 
-        // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
+        // Reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
         backEncoder.setDirection(Encoder.Direction.REVERSE);
         leftEncoder.setDirection(Encoder.Direction.REVERSE);
     }
@@ -59,13 +63,19 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }
 
+    // backEncoder has a different gear ratio (40:24)
+    // Byran 12.20.22
+    public static double encoderTicksToInchesBack(double ticks) {
+        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV / (40.0/24);
+    }
+
     @NonNull
     @Override
     public List<Double> getWheelPositions() {
         return Arrays.asList(
                 encoderTicksToInches(leftEncoder.getCurrentPosition() * X_MULTIPLIER),
                 encoderTicksToInches(rightEncoder.getCurrentPosition() * X_MULTIPLIER),
-                encoderTicksToInches(backEncoder.getCurrentPosition() * Y_MULTIPLIER)
+                encoderTicksToInchesBack(backEncoder.getCurrentPosition() * Y_MULTIPLIER)
         );
     }
 

@@ -17,13 +17,13 @@ public class Claw {
 
     public void init(HardwareMap hardwareMap) {
         intakeLift = hardwareMap.get(DcMotorEx.class, "intakeLift");
+        intakeLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         intakeLift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         clawServo =  hardwareMap.get(Servo.class, "claw");
-
-        moveBelt(Constants.IntakeTargets.HOLD);
-        moveClaw(Constants.ClawTargets.CLOSECLAW);
-
+//        this doesn't seem to work (byran 12.19.22)
+//        moveBelt(Constants.IntakeTargets.HOLD);
+//        moveClaw(Constants.ClawTargets.CLOSECLAW);
     }
 
     public void pickUpCone() throws InterruptedException {
@@ -44,7 +44,6 @@ public class Claw {
 
     public void moveBelt(int position) {
         intakeLift.setTargetPosition((int) position);
-        intakeLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         intakeLift.setPower(beltPower);
     }
 
@@ -72,5 +71,13 @@ public class Claw {
                 clawServo.setPosition(1);
                 break;
         }
+    }
+
+    public int getBeltPosition() {
+        return intakeLift.getCurrentPosition();
+    }
+
+    public double getServoPosition() {
+        return clawServo.getPosition();
     }
 }

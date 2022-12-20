@@ -9,11 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Lift {
-
-    public static double leftPowerInit = 0; // counterclockwise, positive
-    public static double rightPowerInit = -0; // clockwise, negative
-
-    public static double leftPowerBase = 20;
+    public static double leftPowerBase = 50;
     public static double rightPowerBase = -leftPowerBase;
 
     private DcMotorEx left, right;
@@ -22,7 +18,9 @@ public class Lift {
 
     public static int target = 0;
 
-    public Lift() {}
+    public Lift(double power) {
+        power = leftPowerBase;
+    }
 
     public void goTo(Constants.LiftTargets input) {
         switch (input) {
