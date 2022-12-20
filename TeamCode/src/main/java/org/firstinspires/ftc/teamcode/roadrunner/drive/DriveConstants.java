@@ -60,7 +60,7 @@ public class DriveConstants {
      */
     // TODO: Tune FeedForward PID
     public static double kV = 0.01846;
-    public static double kA = 0;
+    public static double kA = 0; // kA has not been tuned yet
     public static double kStatic = 0.07235;
 
     /*
