@@ -3,18 +3,17 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 public class Belt {
-    private DcMotorEx belt;
+    public DcMotorEx belt;
 
-    public static double BELT_POWER = 0.05;
+    public static double BELT_POWER = 0.001;
 
-    public Belt(HardwareMap hardwareMap) {
-        belt = hardwareMap.get(DcMotorEx.class, "belt");
+    public Belt() {
     }
 
     public void init(HardwareMap hardwareMap) {
+        belt = hardwareMap.get(DcMotorEx.class, "intakeLift");
         belt.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
     }
 
@@ -26,6 +25,11 @@ public class Belt {
 
     public void moveBelt(int position) {
         belt.setTargetPosition((int) position);
+        belt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         belt.setPower(BELT_POWER);
+    }
+
+    public int getPosition() {
+        return belt.getCurrentPosition();
     }
 }

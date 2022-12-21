@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.Belt;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.Constants;
@@ -16,24 +18,21 @@ public class BeltTest extends LinearOpMode {
     public static int BELT_POSITION_END = -10;
     public static Constants.ClawTargets OPEN_OR_CLOSE = Constants.ClawTargets.CLOSECLAW;
 
-    public Belt myClaw = new Belt(hardwareMap);
+    public Belt myBelt = new Belt();
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        myClaw.init(hardwareMap);
+        myBelt.init(hardwareMap);
 
         waitForStart();
 
-        myClaw.goUp();
-
         while (opModeIsActive()) {
-//            myClaw.moveClaw(OPEN_OR_CLOSE);
-//            //myClaw.moveBelt(BELT_POSITION_START);
-//            myClaw.moveBelt(BELT_POSITION_END);
-//            telemetry.addData("belt", myClaw.getBeltPosition());
-//            telemetry.addData("servo", myClaw.getServoPosition());
-//            telemetry.update();
+            myBelt.belt.setTargetPosition(-140);  //-280
+            myBelt.belt.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            myBelt.belt.setPower(0.5);
+            telemetry.addData("position: ", myBelt.getPosition());
+            telemetry.update();
         }
 
     }
