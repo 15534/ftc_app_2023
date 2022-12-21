@@ -50,7 +50,7 @@ public class DriveConstants {
     public static double WHEEL_RADIUS = 1.8898; // in
     // robot has direct drive, so gear ratio is 1:1
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 13.48; // in
+    public static double TRACK_WIDTH = 14.45; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -59,9 +59,9 @@ public class DriveConstants {
      * empirically tuned.
      */
     // TODO: Tune FeedForward PID
-    public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
-    public static double kA = 0;
-    public static double kStatic = 0;
+    public static double kV = 0.0165;
+    public static double kA = 0.0032;
+    public static double kStatic = 0.0657;
 
     /*
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
@@ -93,8 +93,8 @@ public class DriveConstants {
      */
     public static double MAX_VEL = 52.48291908330528;
     public static double MAX_ACCEL = 52.48291908330528;
-    public static double MAX_ANG_VEL = Math.toRadians(167.05832);
-    public static double MAX_ANG_ACCEL = Math.toRadians(167.05832);
+    public static double MAX_ANG_VEL = 4.45;
+    public static double MAX_ANG_ACCEL = 2.9157177268502936;
 
 
     public static double encoderTicksToInches(double ticks) {

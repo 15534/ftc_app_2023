@@ -28,9 +28,11 @@ import java.util.List;
  */
 @Config
 public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
-    public static double TICKS_PER_REV = 1440;
-    public static double WHEEL_RADIUS = 1.14173; // in
+    public static double TICKS_PER_REV = 1440; // S4T Miniature Optical Shaft Encoder
+    // hypothesis: CPR * 4 = PPR = TICKS_PER_REV, thus CPR = 360
+    public static double WHEEL_RADIUS = 1.147; // in, from 2021 code
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
+    public static double GEAR_RATIO_BACK = 40.0/24; // output (wheel) speed / input (encoder) speed
     // Data above was retrieved from 2021 code
 
     public static double LATERAL_DISTANCE = 9.6; // in; distance between the left and right wheels
@@ -40,8 +42,8 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     private Encoder leftEncoder, rightEncoder, backEncoder;
 
     // TODO: Tune X and Y multiplier
-    public static double X_MULTIPLIER = 1; // Multiplier in the X direction
-    public static double Y_MULTIPLIER = 1; // Multiplier in the Y direction
+    public static double X_MULTIPLIER = 100/100.5625366389; // Multiplier in the X direction
+    public static double Y_MULTIPLIER = 100/98.9672081053; // Multiplier in the Y direction
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
         super(Arrays.asList(
@@ -66,7 +68,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     // backEncoder has a different gear ratio (40:24)
     // Byran 12.20.22
     public static double encoderTicksToInchesBack(double ticks) {
-        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV / (40.0/24);
+        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV / (GEAR_RATIO_BACK);
     }
 
     @NonNull
