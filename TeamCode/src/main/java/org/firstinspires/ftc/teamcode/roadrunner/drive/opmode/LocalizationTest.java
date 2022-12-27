@@ -4,8 +4,10 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
 
 /**
  * This is a simple teleop routine for testing localization. Drive the robot around like a normal
@@ -34,6 +36,10 @@ public class LocalizationTest extends LinearOpMode {
             );
 
             drive.update();
+
+            telemetry.addData("frontLeft:", hardwareMap.get(DcMotorEx.class, "frontLeft").getCurrentPosition());
+            telemetry.addData("frontRight:", hardwareMap.get(DcMotorEx.class, "frontRight").getCurrentPosition());
+            telemetry.addData("backLeft:", hardwareMap.get(DcMotorEx.class, "backLeft").getCurrentPosition());
 
             Pose2d poseEstimate = drive.getPoseEstimate();
             telemetry.addData("x", poseEstimate.getX());

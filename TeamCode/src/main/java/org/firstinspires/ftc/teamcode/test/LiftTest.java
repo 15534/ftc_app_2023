@@ -10,7 +10,11 @@ import org.firstinspires.ftc.teamcode.subsystems.Constants;
 @Config
 
 public class LiftTest extends LinearOpMode {
-    public Lift myLift = new Lift();
+    public static double POWER = 20;
+
+    public static Constants.LiftTargets LIFT_HEIGHT_FIRST = Constants.LiftTargets.HIGH;
+    public static Constants.LiftTargets LIFT_HEIGHT_LAST = Constants.LiftTargets.PICKUP;
+    public Lift myLift = new Lift(POWER);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -19,7 +23,9 @@ public class LiftTest extends LinearOpMode {
 
         waitForStart();
 
-        myLift.goTo(Constants.LiftTargets.MEDIUM);
+        myLift.goTo(LIFT_HEIGHT_FIRST);
+        sleep(2000);
+        myLift.goTo(LIFT_HEIGHT_LAST);
 
         while (opModeIsActive()) {
             myLift.update();
