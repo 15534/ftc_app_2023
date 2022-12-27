@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Constants;
 
 public class PickUpTest extends LinearOpMode {
     public Lift myLift = new Lift(20);
-    public Claw myClaw = new Claw();
+    public Claw myClaw = new Claw(hardwareMap);
 
     // place claw at very top
     // place turntable at 0 degrees
@@ -23,7 +23,7 @@ public class PickUpTest extends LinearOpMode {
 
         // initing stuff
         myLift.init(hardwareMap); // init does initial movement
-        myClaw.init(hardwareMap); // init does not do initial movement, goTo does for myLift
+
 
         waitForStart();
         myLift.goTo(Constants.LiftTargets.PICKUP);
