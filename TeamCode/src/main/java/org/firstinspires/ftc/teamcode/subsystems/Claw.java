@@ -15,50 +15,8 @@ public class Claw {
     private DcMotorEx intakeLift;
     private Servo clawServo;
 
-    public void init(HardwareMap hardwareMap) {
-        intakeLift = hardwareMap.get(DcMotorEx.class, "intakeLift");
-        intakeLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        intakeLift.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-
+    public Claw(HardwareMap hardwareMap) {
         clawServo =  hardwareMap.get(Servo.class, "claw");
-//        this doesn't seem to work (byran 12.19.22)
-//        moveBelt(Constants.IntakeTargets.HOLD);
-//        moveClaw(Constants.ClawTargets.CLOSECLAW);
-    }
-
-    public void pickUpCone() throws InterruptedException {
-        moveBelt(Constants.IntakeTargets.PICKUP);
-        moveClaw(Constants.ClawTargets.OPENCLAW);
-
-        sleep(2000);
-        moveClaw(Constants.ClawTargets.CLOSECLAW);
-        sleep(2000);
-        moveBelt(Constants.IntakeTargets.HOLD);
-
-    }
-
-    public void dropOffCone() throws InterruptedException {
-        moveBelt(Constants.IntakeTargets.DROPOFF);
-        moveClaw(Constants.ClawTargets.OPENCLAW);
-    }
-
-    public void moveBelt(int position) {
-        intakeLift.setTargetPosition((int) position);
-        intakeLift.setPower(beltPower);
-    }
-
-    public void moveBelt(Constants.IntakeTargets input) {
-        switch (input) {
-            case PICKUP:
-                moveBelt(-500);
-                break;
-            case HOLD: // init
-                moveBelt(-262);
-                break;
-            case DROPOFF:
-                moveBelt(-554);
-                break;
-        }
     }
 
     public void moveClaw(Constants.ClawTargets input) {
@@ -73,11 +31,7 @@ public class Claw {
         }
     }
 
-    public int getBeltPosition() {
-        return intakeLift.getCurrentPosition();
-    }
-
-    public double getServoPosition() {
+    public double getClawPosition() {
         return clawServo.getPosition();
     }
 }
