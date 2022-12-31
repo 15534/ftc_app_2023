@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Lift {
     public static double leftPowerBase = 50;
     public static double rightPowerBase = -leftPowerBase;
+    private double gain = -.01;
+
 
     private DcMotorEx left, right;
 
@@ -20,30 +22,31 @@ public class Lift {
 
     public static int target = 0;
 
-    public Lift(double power) {
-        power = leftPowerBase;
-    }
-
-    public void goTo(Constants.LiftTargets input) {
+    public void moveLift(Constants.LiftTargets input) {
         switch (input) {
             case PICKUP:
-                moveLift(0);
+                setLiftPosition(0);
+                updateLiftPosition();
                 break;
 
             case LOW:
-                moveLift(100);
+                setLiftPosition(100);
+                updateLiftPosition();
                 break;
 
             case MEDIUM:
-                moveLift(300);
+                setLiftPosition(300);
+                updateLiftPosition();
                 break;
 
             case HIGH:
-                moveLift(500);
+                setLiftPosition(500);
+                updateLiftPosition();
                 break;
 
             case PUTDOWN:
-                moveLift(50);
+                setLiftPosition(50);
+                updateLiftPosition();
                 break;
         }
     }
@@ -54,21 +57,36 @@ public class Lift {
 
         right = hardwareMap.get(DcMotorEx.class, "rightLift");
         right.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        moveLift(Constants.LiftTargets.PICKUP);
     }
 
-    public void moveLift(int height) {
+    public void setLiftPosition(int height) {
         target = height;
 
-        left.setTargetPosition((int) height);
+        /* left.setTargetPosition((int) height);
         right.setTargetPosition((int) -height);
 
         left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         left.setPower(leftPowerBase);
-        right.setPower(rightPowerBase);
+        right.setPower(rightPowerBase); */
     }
 
+    public void updateLiftPosition(){
+        if (4>Math.abs(target-left.getCurrentPosition())){
+            left.getCurrentPosition();
+        }
+        else{
+            double newPower = (left.getCurrentPosition()-target)*gain;
+            left.setPower(newPower); // positive if below target, negative if above target
+            right.setPower(-newPower);
+        }
+    }
+
+
+    /*
     public void update() {
         if (left.getCurrentPosition() > target - 5 && left.getCurrentPosition() < -target + 5) {
             motorAtTarget = false;
@@ -86,5 +104,5 @@ public class Lift {
         } else {
             motorAtTarget = true;
         }
-    }
+    } */
 }

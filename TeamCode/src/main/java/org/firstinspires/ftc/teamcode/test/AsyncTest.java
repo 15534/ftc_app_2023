@@ -22,8 +22,8 @@ public class AsyncTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        TurnTable ourTurntable = new TurnTable(hardwareMap);
-        ourTurntable.init();
+        TurnTable ourTurntable = new TurnTable();
+        ourTurntable.init(hardwareMap);
 
         Trajectory trajectoryForward =
                 drive.trajectoryBuilder(new Pose2d())

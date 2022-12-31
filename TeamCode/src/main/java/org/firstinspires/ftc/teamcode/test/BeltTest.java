@@ -26,8 +26,6 @@ public class BeltTest extends LinearOpMode {
 
         myBelt.init(hardwareMap);
 
-        myBelt.belt.setDirection(DcMotorEx.Direction.REVERSE);
-
         waitForStart();
         while (opModeIsActive()) {
 //            myBelt.belt.setTargetPosition(0);  //-280

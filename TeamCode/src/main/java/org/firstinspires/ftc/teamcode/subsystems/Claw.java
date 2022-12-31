@@ -12,11 +12,11 @@ public class Claw {
 
     public static double beltPower = 0.05;
 
-    private DcMotorEx intakeLift;
     private Servo clawServo;
 
-    public Claw(HardwareMap hardwareMap) {
+    public void init(HardwareMap hardwareMap) {
         clawServo =  hardwareMap.get(Servo.class, "claw");
+        moveClaw(Constants.ClawTargets.CLOSECLAW);
     }
 
     public void moveClaw(Constants.ClawTargets input) {

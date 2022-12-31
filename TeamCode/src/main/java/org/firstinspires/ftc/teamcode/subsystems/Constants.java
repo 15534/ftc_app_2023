@@ -22,7 +22,7 @@ public class Constants {
         PICKUP,
         HOLD,
         DROPOFF
-    }// pick up 49, 25 drop off, 310 maxheight
+    }// -261 pick up, 0 hold, -285 drop off
 
     public enum ClawTargets {
         OPENCLAW,
