@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-@TeleOp(name="beltLimits")
+@TeleOp(name="BeltLimits")
 @Config
 public class BeltLimits extends LinearOpMode {
 
@@ -24,7 +24,7 @@ public class BeltLimits extends LinearOpMode {
             // intakeLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             // intakeLift.setPower(powerInitial);
 
-            telemetry.addData("IntakeLiftPos", intakeLift.getCurrentPosition());
+            telemetry.addData("Belt Position", intakeLift.getCurrentPosition());
             telemetry.update();
         }
     }
