@@ -14,8 +14,8 @@ public class TurnTableTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        TurnTable turntable = new TurnTable(hardwareMap);
-        turntable.init();
+        TurnTable turntable = new TurnTable();
+        turntable.init(hardwareMap);
 
 
 

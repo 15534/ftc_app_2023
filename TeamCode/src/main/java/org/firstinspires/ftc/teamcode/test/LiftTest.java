@@ -14,7 +14,7 @@ public class LiftTest extends LinearOpMode {
 
     public static Constants.LiftTargets LIFT_HEIGHT_FIRST = Constants.LiftTargets.HIGH;
     public static Constants.LiftTargets LIFT_HEIGHT_LAST = Constants.LiftTargets.PICKUP;
-    public Lift myLift = new Lift(POWER);
+    public Lift myLift = new Lift();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -23,9 +23,9 @@ public class LiftTest extends LinearOpMode {
 
         waitForStart();
 
-        myLift.goTo(LIFT_HEIGHT_FIRST);
+        myLift.moveLift(LIFT_HEIGHT_FIRST);
         sleep(2000);
-        myLift.goTo(LIFT_HEIGHT_LAST);
+        myLift.moveLift(LIFT_HEIGHT_LAST);
 
         while (opModeIsActive()) {
             myLift.update();

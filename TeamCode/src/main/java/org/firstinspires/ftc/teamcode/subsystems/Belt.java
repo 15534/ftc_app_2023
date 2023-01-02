@@ -10,24 +10,29 @@ public class Belt {
     public static double BELT_POWER = 0.001;
     public static double targetPos = 0;
     private double gain = -.01;
-    public Belt() {
-    }
 
     public void init(HardwareMap hardwareMap) {
         belt = hardwareMap.get(DcMotorEx.class, "intakeLift");
         belt.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        belt.setDirection(DcMotorEx.Direction.REVERSE);
+        moveBelt(Constants.IntakeTargets.HOLD);
     }
 
-    public void goUp(){
-        belt.setTargetPosition(-140);  //-280
-        belt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        belt.setPower(BELT_POWER);
-    }
-
-    public void moveBelt(int position) {
-        belt.setTargetPosition((int) position);
-        belt.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        belt.setPower(BELT_POWER);
+    public void moveBelt(Constants.IntakeTargets input) {
+        switch (input) {
+            case PICKUP:
+                setBeltPosition(-261);
+                updateBeltPosition();
+                break;
+            case HOLD:
+                setBeltPosition(0);
+                updateBeltPosition();
+                break;
+            case DROPOFF:
+                setBeltPosition(-285);
+                updateBeltPosition();
+                break;
+        }
     }
 
     public void setBeltPosition(double targetPosition){

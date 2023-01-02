@@ -20,14 +20,10 @@ public class TurnTable {
     // -19975 : -5045 : 180 deg
     // 9600 : 2424 : -90 deg
 
-    public TurnTable(HardwareMap hardwareMap) {
+    public void init(HardwareMap hardwareMap) {
         motor = hardwareMap.get(DcMotorEx.class, "turnTable");
-    }
-
-    public void init() {
         motor.setTargetPosition(0); // mx + b (setTarget Position accepts motor ticks)
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
         motor.setPower(MOTOR_POWER);
     }
 
