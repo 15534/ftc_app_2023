@@ -7,14 +7,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Belt {
     public DcMotorEx belt;
 
-    public static double BELT_POWER = 0.001;
     public static double targetPos = 0;
-    private double gain = -.01;
+    private double gain = -.001;
 
     public void init(HardwareMap hardwareMap) {
         belt = hardwareMap.get(DcMotorEx.class, "intakeLift");
         belt.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        belt.setDirection(DcMotorEx.Direction.REVERSE);
         moveBelt(Constants.IntakeTargets.HOLD);
     }
 
@@ -50,11 +48,11 @@ public class Belt {
     }
 
     public void updateBeltPosition(){
-        if (4>Math.abs(targetPos-belt.getCurrentPosition())){
+        if (4 > Math.abs(targetPos-belt.getCurrentPosition())){
             belt.getCurrentPosition();
         }
         else{
-            double newPower = (targetPos-belt.getCurrentPosition())*gain;
+            double newPower = (targetPos-belt.getCurrentPosition()) * gain;
             belt.setPower(newPower);
         }
     }

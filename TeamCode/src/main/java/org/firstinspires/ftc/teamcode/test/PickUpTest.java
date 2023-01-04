@@ -78,6 +78,6 @@ public class PickUpTest extends LinearOpMode {
                 requestOpModeStop();
             }
         }
-
+        // termination code
     }
 }
