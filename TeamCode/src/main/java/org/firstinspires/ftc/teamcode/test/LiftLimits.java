@@ -26,7 +26,7 @@ public class LiftLimits extends LinearOpMode {
 
         waitForStart();
 
-        while (opModeIsActive()) {
+        while (opModeIsActive() && !isStopRequested()) {
 
             if (left.getCurrentPosition() > leftPos - 5
                     && left.getCurrentPosition() < leftPos + 5) {
@@ -35,6 +35,7 @@ public class LiftLimits extends LinearOpMode {
                 while (leftPower >= 0.02) { // quick fix - write better, smoother function later
                     left.setPower(leftPower - leftPower / 5);
                     right.setPower(rightPower + rightPower/ 5); // power same for both, just opposite direction
+                    leftPower = left.getPower();
                 }
                 left.setPower(0); // full break
                 right.setPower(0); // full break

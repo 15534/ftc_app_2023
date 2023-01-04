@@ -19,18 +19,27 @@ public class Belt {
     }
 
     public void moveBelt(Constants.IntakeTargets input) {
+//        Actual Values
+//        switch (input) {
+//            case PICKUP:
+//                setBeltPosition(-261);
+//                break;
+//            case HOLD:
+//                setBeltPosition(0);
+//                break;
+//            case DROPOFF:
+//                setBeltPosition(-285);
+//                break;
+//        }
         switch (input) {
             case PICKUP:
-                setBeltPosition(-261);
-                updateBeltPosition();
+                setBeltPosition(-295);
                 break;
             case HOLD:
                 setBeltPosition(0);
-                updateBeltPosition();
                 break;
             case DROPOFF:
-                setBeltPosition(-285);
-                updateBeltPosition();
+                setBeltPosition(-296);
                 break;
         }
     }
