@@ -54,6 +54,6 @@ public class AsyncTest extends LinearOpMode {
         //         turnTableThread.start();
         // End Git praise: Eric
 
-        while (opModeIsActive()) {}
+        while (opModeIsActive() && !isStopRequested()) {}
     }
 }

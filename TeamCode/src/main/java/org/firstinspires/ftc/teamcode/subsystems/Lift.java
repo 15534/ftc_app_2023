@@ -15,7 +15,7 @@ public class Lift {
     public static double rightPowerBase = -leftPowerBase;
     private double gain = -.01;
 
-
+    public boolean requestStop = false;
     private DcMotorEx left, right;
 
     public static boolean motorAtTarget = true;
@@ -74,12 +74,15 @@ public class Lift {
         right.setPower(rightPowerBase); */
     }
 
-    public void updateLiftPosition(){
-        if (4>Math.abs(target-left.getCurrentPosition())){
-            left.getCurrentPosition();
+    public void updateLiftPosition() {
+        // safety, in case lift is doing something unreasonable
+        if (left.getCurrentPosition() > 600 || left.getCurrentPosition() < 0) {
+            left.setPower(0);
+            right.setPower(0);
+            requestStop = true;
         }
-        else{
-            double newPower = (left.getCurrentPosition()-target)*gain;
+        else if (Math.abs(target-left.getCurrentPosition()) > 4){
+            double newPower = (left.getCurrentPosition() - target) * gain;
             left.setPower(newPower); // positive if below target, negative if above target
             right.setPower(-newPower);
         }

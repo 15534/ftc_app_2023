@@ -21,20 +21,17 @@ public class BeltTest extends LinearOpMode {
 
     public Belt myBelt = new Belt();
 
+
     @Override
     public void runOpMode() throws InterruptedException {
 
         myBelt.init(hardwareMap);
 
         waitForStart();
-        while (opModeIsActive()) {
-//            myBelt.belt.setTargetPosition(0);  //-280
-//            myBelt.belt.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//            myBelt.belt.setPower(0.5);
-//            telemetry.addData("position: ", myBelt.getPosition());
-//            telemetry.update()
+        while (opModeIsActive() && !isStopRequested()) {
             myBelt.setBeltPosition(beltPosition);
             myBelt.updateBeltPosition();
+
         }
 
     }
