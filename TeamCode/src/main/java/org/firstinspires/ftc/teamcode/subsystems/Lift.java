@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+
 public class Lift {
     public static double leftPowerBase = 50;
     public static double rightPowerBase = -leftPowerBase;
@@ -26,27 +27,22 @@ public class Lift {
         switch (input) {
             case PICKUP:
                 setLiftPosition(0);
-                updateLiftPosition();
                 break;
 
             case LOW:
                 setLiftPosition(100);
-                updateLiftPosition();
                 break;
 
             case MEDIUM:
                 setLiftPosition(300);
-                updateLiftPosition();
                 break;
 
             case HIGH:
-                setLiftPosition(500);
-                updateLiftPosition();
+                setLiftPosition(550); // previous high limit: 500
                 break;
 
             case PUTDOWN:
                 setLiftPosition(50);
-                updateLiftPosition();
                 break;
         }
     }
@@ -59,6 +55,7 @@ public class Lift {
         right.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         moveLift(Constants.LiftTargets.PICKUP);
+        // just setting position, not actually moving there - no moving during init!
     }
 
     public void setLiftPosition(int height) {
@@ -90,6 +87,7 @@ public class Lift {
 
 
     /*
+    old update function - git blame: riya
     public void update() {
         if (left.getCurrentPosition() > target - 5 && left.getCurrentPosition() < -target + 5) {
             motorAtTarget = false;

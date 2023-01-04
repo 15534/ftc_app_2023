@@ -10,9 +10,13 @@ public class TurnTable {
     DcMotorEx motor;
 
     double TICKS_PER_DEGREE = -27.7593;
-    int OFFSET = -50;
+    // int OFFSET = -50;
 
     public static double MOTOR_POWER = 1;
+
+    public static double targetPos = 0;
+    private double gain = -.01;
+
 
     // Our data: Telemetry: Degrees
     // -200 : -50 : 0 deg
@@ -22,14 +26,29 @@ public class TurnTable {
 
     public void init(HardwareMap hardwareMap) {
         motor = hardwareMap.get(DcMotorEx.class, "turnTable");
-        motor.setTargetPosition(0); // mx + b (setTarget Position accepts motor ticks)
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motor.setPower(MOTOR_POWER);
+        setTablePosition(0); // mx + b (setTarget Position accepts motor ticks)
     }
 
+    public void setTablePosition(double degrees) {
+        targetPos = (int)(degrees * TICKS_PER_DEGREE) ;
+
+        /*motor.setTargetPosition((int) (degrees * TICKS_PER_DEGREE) + OFFSET); // mx + b (setTarget Position accepts motor ticks)
+        motor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        motor.setPower(MOTOR_POWER);*/
+    }
+
+    public void updateTablePosition(){ // set a safety for turntable later
+        if (Math.abs(targetPos - motor.getCurrentPosition()) > 4) {
+            double newPower = (motor.getCurrentPosition() - targetPos) * gain;
+            motor.setPower(newPower);
+        }
+    }
+
+    // TO-DO: don't use turn - it is deprecated (remove in future from AsyncTest & TurnTableTest)
     public void turn(double degrees) {
-        motor.setTargetPosition((int) (degrees * TICKS_PER_DEGREE) + OFFSET); // mx + b (setTarget Position accepts motor ticks)
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motor.setTargetPosition((int) (degrees * TICKS_PER_DEGREE)); // mx + b (setTarget Position accepts motor ticks)
+        motor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         motor.setPower(MOTOR_POWER);
     }
