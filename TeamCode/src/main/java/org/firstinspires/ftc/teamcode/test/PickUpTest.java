@@ -54,19 +54,19 @@ public class PickUpTest extends LinearOpMode {
                 myBelt.moveBelt(Constants.IntakeTargets.HOLD);
             }
 
-            else if (myTimer.seconds() > 20 && myTimer.seconds() < 25) {
-                // step 4: claw open, lift up, belt in dropoff, table at 180
-                myBelt.moveBelt(Constants.IntakeTargets.DROPOFF);
-                myClaw.moveClaw(Constants.ClawTargets.OPENCLAW);
-            }
-
-            else if (myTimer.seconds() > 25 && myTimer.seconds() < 30) {
-                myLift.moveLift(Constants.LiftTargets.MEDIUM);
-            }
-
-            else if (myTimer.seconds() > 35 && myTimer.seconds() < 40) {
-                myLift.moveLift(Constants.LiftTargets.PUTDOWN);
-            }
+//            else if (myTimer.seconds() > 20 && myTimer.seconds() < 25) {
+//                // step 4: claw open, lift up, belt in dropoff, table at 180
+//                myBelt.moveBelt(Constants.IntakeTargets.DROPOFF);
+//                myClaw.moveClaw(Constants.ClawTargets.OPENCLAW);
+//            }
+//
+//            else if (myTimer.seconds() > 25 && myTimer.seconds() < 30) {
+//                myLift.moveLift(Constants.LiftTargets.MEDIUM);
+//            }
+//
+//            else if (myTimer.seconds() > 35 && myTimer.seconds() < 40) {
+//                myLift.moveLift(Constants.LiftTargets.PUTDOWN);
+//            }
 
             myBelt.updateBeltPosition();
             myLift.updateLiftPosition();
