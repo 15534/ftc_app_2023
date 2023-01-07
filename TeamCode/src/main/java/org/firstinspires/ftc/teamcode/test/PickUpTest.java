@@ -49,7 +49,7 @@ public class PickUpTest extends LinearOpMode {
 
             else if (myTimer.seconds() > 10 && myTimer.seconds() < 20) {
                 // step 3: claw closed, lift up, belt in hold, table at 180
-                myTable.setTablePosition(180);
+//                myTable.setTablePosition(180);
                 myLift.moveLift(Constants.LiftTargets.HIGH);
                 myBelt.moveBelt(Constants.IntakeTargets.HOLD);
             }
@@ -60,9 +60,9 @@ public class PickUpTest extends LinearOpMode {
 //                myClaw.moveClaw(Constants.ClawTargets.OPENCLAW);
 //            }
 //
-//            else if (myTimer.seconds() > 25 && myTimer.seconds() < 30) {
-//                myLift.moveLift(Constants.LiftTargets.MEDIUM);
-//            }
+            else if (myTimer.seconds() > 25 && myTimer.seconds() < 30) {
+                myLift.moveLift(Constants.LiftTargets.MEDIUM);
+            }
 //
 //            else if (myTimer.seconds() > 35 && myTimer.seconds() < 40) {
 //                myLift.moveLift(Constants.LiftTargets.PUTDOWN);

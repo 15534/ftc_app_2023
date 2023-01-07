@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.checkerframework.checker.units.qual.C;
+
+@Config("Constants")
 public class Constants {
     /*
     Lift Constants
@@ -29,11 +32,18 @@ public class Constants {
         CLOSECLAW
     }// 0, 1
 
+
+
     /*
     Lift Init Variables
     */
     public static double leftPowerInitial = 0.1; // counterclockwise
     public static double rightPowerInitial = -0.1; // clockwise
+
+    public static int BELT_POSITION_START = -280;
+    public static int BELT_POSITION_END = 280; // this is the difference! we go down 280, then we have to go back up 280 to get back to 0
+//    public static int BELT_POSITION_UP = ;
+
 
     public Constants(){
     }
