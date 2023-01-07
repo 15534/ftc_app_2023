@@ -34,4 +34,6 @@ public class Claw {
     public double getClawPosition() {
         return clawServo.getPosition();
     }
+
+
 }
