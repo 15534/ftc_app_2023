@@ -10,23 +10,27 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-
 public class Lift {
     public static double leftPowerBase = 50;
     public static double rightPowerBase = -leftPowerBase;
-    private double gain = -.01;
-
+    public static boolean motorAtTarget = true;
+    public static int target = 0;
     public boolean requestStop = false;
-    private DcMotorEx left, right;
+    double baseGain = -.01;
+    double negativeGain = -.002;
+    private double gain;
+    public DcMotorEx left, right;
+    private Constants.LiftTargets targetEnum;
 
     public static boolean motorAtTarget = true;
 
     public static int target = 0;
 
     public void moveLift(Constants.LiftTargets input) {
+        targetEnum = input;
         switch (input) {
             case PICKUP:
-                setLiftPosition(0);
+//                setLiftPosition();
                 break;
 
             case LOW:
@@ -77,14 +81,21 @@ public class Lift {
             left.setPower(0);
             right.setPower(0);
             requestStop = true;
-        }
-        else if (Math.abs(target-left.getCurrentPosition()) > 4){
+        } else if (Math.abs(target - left.getCurrentPosition()) > 4) {
+            if (left.getCurrentPosition() - target > 0) {
+                gain = negativeGain;
+            } else {
+                gain = baseGain;
+            }
             double newPower = (left.getCurrentPosition() - target) * gain;
             left.setPower(newPower); // positive if below target, negative if above target
             right.setPower(-newPower);
         }
     }
 
+    public int getPosition() {
+        return left.getCurrentPosition();
+    }
 
     /*
     old update function - git blame: riya
