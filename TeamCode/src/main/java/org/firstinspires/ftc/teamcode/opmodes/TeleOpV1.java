@@ -5,9 +5,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.arcrobotics.ftclib.gamepad.ButtonReader;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -19,6 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Belt;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 
 @TeleOp(name = "TeleOp")
 @Config
@@ -27,6 +25,7 @@ public class TeleOpV1 extends LinearOpMode {
     public static double BUMPER_ROTATION_SPEED = 0.35;
     public static double ROTATION_MULTIPLIER = 2.05;
     public static boolean TURN_FRONT_BACK = true;
+    public static double turntableSensitivity = 1.2;
     boolean gp2AReleased = true;
     boolean gp2BReleased = true;
     boolean currentAbtn;
@@ -104,6 +103,7 @@ public class TeleOpV1 extends LinearOpMode {
             // B: Toggle belt
             // X:
             // Y:
+            // dpad up: slides max height
 
             telemetry.addData("gamepad2A", gamepad2.a);
             telemetry.addData("released", gp2AReleased);
