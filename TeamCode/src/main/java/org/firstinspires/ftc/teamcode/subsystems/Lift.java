@@ -1,12 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static org.firstinspires.ftc.teamcode.subsystems.Constants.LiftTargets.PICKUP;
-
-import org.firstinspires.ftc.teamcode.subsystems.Constants;
-import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -21,10 +14,6 @@ public class Lift {
     private double gain;
     public DcMotorEx left, right;
     private Constants.LiftTargets targetEnum;
-
-    public static boolean motorAtTarget = true;
-
-    public static int target = 0;
 
     public void moveLift(Constants.LiftTargets input) {
         targetEnum = input;
@@ -76,6 +65,24 @@ public class Lift {
     }
 
     public void updateLiftPosition() {
+        if (targetEnum == Constants.LiftTargets.PICKUP) {
+
+            // start easing 100 ticks away
+            // start at 500, go to 0
+            // Reaches 104, sets position to 0
+            // ??
+            if (left.getCurrentPosition()<100){
+
+                double newPower = (left.getCurrentPosition() - target) * gain;
+                right.setPower(-newPower);
+                setLiftPosition(0);
+            }
+            else{
+                setLiftPosition(100);
+            }
+
+        }
+
         // safety, in case lift is doing something unreasonable
         if (left.getCurrentPosition() > 600 || left.getCurrentPosition() < 0) {
             left.setPower(0);
@@ -88,8 +95,10 @@ public class Lift {
                 gain = baseGain;
             }
             double newPower = (left.getCurrentPosition() - target) * gain;
+
             left.setPower(newPower); // positive if below target, negative if above target
-            right.setPower(-newPower);
+
+
         }
     }
 

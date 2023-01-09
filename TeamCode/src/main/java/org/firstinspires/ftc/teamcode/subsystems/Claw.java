@@ -7,10 +7,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import static org.firstinspires.ftc.teamcode.subsystems.Constants.clawCloseLimit;
+import static org.firstinspires.ftc.teamcode.subsystems.Constants.clawOpenLimit;
 
 public class Claw {
 
-    public static double beltPower = 0.05;
+//    public static double beltPower = 0.05;
 
     private Servo clawServo;
 
@@ -23,10 +25,10 @@ public class Claw {
         // limits are 0 and 1
         switch (input) {
             case OPENCLAW:
-                clawServo.setPosition(0);
+                clawServo.setPosition(clawOpenLimit);
                 break;
             case CLOSECLAW:
-                clawServo.setPosition(1);
+                clawServo.setPosition(clawCloseLimit);
                 break;
         }
     }
