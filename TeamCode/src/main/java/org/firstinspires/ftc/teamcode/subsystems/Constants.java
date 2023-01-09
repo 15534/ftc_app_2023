@@ -44,6 +44,9 @@ public class Constants {
     public static int BELT_POSITION_END = 280; // this is the difference! we go down 280, then we have to go back up 280 to get back to 0
 //    public static int BELT_POSITION_UP = ;
 
+    public static double closeLimit = 0;
+    public static double openLimit = 1;
+
 
     public Constants(){
     }

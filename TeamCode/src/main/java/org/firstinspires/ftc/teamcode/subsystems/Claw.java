@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Claw {
 
-    public static double beltPower = 0.05;
+//    public static double beltPower = 0.05;
 
     private Servo clawServo;
 
