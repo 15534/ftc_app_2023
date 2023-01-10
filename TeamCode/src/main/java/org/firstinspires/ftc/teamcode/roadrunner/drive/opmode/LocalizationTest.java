@@ -26,6 +26,8 @@ public class LocalizationTest extends LinearOpMode {
 
         waitForStart();
 
+        drive.setPoseEstimate(new Pose2d(12, 62, Math.toRadians(-90)));
+
         while (!isStopRequested()) {
             drive.setWeightedDrivePower(
                     new Pose2d(
