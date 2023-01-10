@@ -58,6 +58,10 @@ public class BlueAutoV1 extends LinearOpMode {
         loop:
         placeHighPole
         coneStack
+
+        insert amount of cycles
+
+        park
         */
 
         firstHighPole = drive.trajectoryBuilder(startingPos).lineTo(new Vector2d(12, 24)).build();
@@ -87,6 +91,7 @@ public class BlueAutoV1 extends LinearOpMode {
 
         // hardware map only accessible in runOpMode()
         drive = new SampleMecanumDrive(hardwareMap);
+        // sets initial drive position and heading for roadrunner
         drive.setPoseEstimate(new Pose2d(12, 62, Math.toRadians(-90)));
 
         buildTrajectories();
@@ -109,28 +114,39 @@ public class BlueAutoV1 extends LinearOpMode {
                 case GO_SUBSTATION_HIGHJUNC:
                     if (!drive.isBusy()) {
                         drive.followTrajectoryAsync(firstHighPole);
-                        next(State.GO_HIGHJUNC_CONESTACKS);
+                        cyclesCompleted++;
+                        next(State.FIRST_CONESTACK);
                     }
                     break;
-                case DROP_OFF_HIGH_CONE:
+                case FIRST_CONESTACK:
                     if (!drive.isBusy()) {
-                        drive.followTrajectoryAsync(placeHighPole);
-                        cyclesCompleted++;
-                        next(State.GO_HIGHJUNC_CONESTACKS);
+                        drive.followTrajectoryAsync(firstConeStack);
+                        next(State.PLACE_HIGHJUNC_CONE);
                     }
                     break;
                 case GO_HIGHJUNC_CONESTACKS:
                     if (!drive.isBusy()) {
                         drive.followTrajectoryAsync(coneStack);
-                        next(State.PICK_UP_FROM_CONESTACKS);
+                        next(State.PLACE_HIGHJUNC_CONE);
                     }
                     break;
-                case PICK_UP_FROM_CONESTACKS:
+                case PLACE_HIGHJUNC_CONE:
                     if (!drive.isBusy()) {
                         drive.followTrajectoryAsync(placeHighPole);
-                        next(State.GO_CONESTACKS_HIGHJUNC);
+                        cyclesCompleted++;
+                        if (cyclesCompleted == 6) {
+                            next(State.PARK);
+                        }
+                        else {
+                            next(State.GO_CONESTACKS_HIGHJUNC);
+                        }
                     }
                     break;
+                case PARK:
+                    if (!drive.isBusy()) {
+                        drive.followTrajectoryAsync(park);
+                        next(State.IDLE);
+                    }
             }
 
             drive.update();
@@ -149,10 +165,11 @@ public class BlueAutoV1 extends LinearOpMode {
     // For drivetrain states/trajectories, GO_{FIRST PLACE}_{LAST PLACE}
     enum State {
         GO_SUBSTATION_HIGHJUNC,
-        DROP_OFF_HIGH_CONE,
+        FIRST_CONESTACK,
         GO_HIGHJUNC_CONESTACKS,
-        PICK_UP_FROM_CONESTACKS,
+        PLACE_HIGHJUNC_CONE,
         GO_CONESTACKS_HIGHJUNC,
+        PARK,
         IDLE
     }
 }
