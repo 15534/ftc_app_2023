@@ -19,7 +19,10 @@ public class PID {
     double out;
     ElapsedTime timer;
 
-    public void init(ElapsedTime newTimer){
+    public void init(ElapsedTime newTimer, double newp, double newi, double newd){
+        Kp = newp;
+        Ki = newi;
+        Kd = newd;
         timer = newTimer;
         lastError = 0;
     }
