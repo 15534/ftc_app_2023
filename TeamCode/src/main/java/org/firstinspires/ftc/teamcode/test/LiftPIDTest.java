@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-@TeleOp(name = "LiftPID")
+@TeleOp(name = "LiftLimits")
 @Config()
 public class LiftPIDTest extends LinearOpMode {
 
@@ -28,28 +28,6 @@ public class LiftPIDTest extends LinearOpMode {
 
         while (opModeIsActive() && !isStopRequested()) {
 
-            if (left.getCurrentPosition() > leftPos - 5
-                    && left.getCurrentPosition() < leftPos + 5) {
-                double leftPower = left.getPower();
-                double rightPower = right.getPower();
-                while (leftPower >= 0.02) { // quick fix - write better, smoother function later
-                    left.setPower(leftPower - leftPower / 5);
-                    right.setPower(rightPower + rightPower/ 5); // power same for both, just opposite direction
-                    leftPower = left.getPower();
-                }
-                left.setPower(0); // full break
-                right.setPower(0); // full break
-
-            } else {
-                left.setTargetPosition((int) leftPos);
-                right.setTargetPosition((int) rightPos);
-
-                left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-                left.setPower(leftPowerInitial);
-                right.setPower(rightPowerInitial);
-            }
 
             telemetry.addData("Left: ", left.getCurrentPosition());
             telemetry.addData("Right: ", right.getCurrentPosition());
