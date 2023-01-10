@@ -9,8 +9,8 @@ public class Lift {
     public static boolean motorAtTarget = true;
     public static int target = 0;
     public boolean requestStop = false;
-    double baseGain = -.01;
-    double negativeGain = -.002;
+    public static double baseGain = -.01;
+    public static double negativeGain = -.002;
     private double gain;
     public DcMotorEx left, right;
     private Constants.LiftTargets targetEnum;
@@ -23,6 +23,8 @@ public class Lift {
                 break;
 
             case LOW:
+
+
                 setLiftPosition(100);
                 break;
 

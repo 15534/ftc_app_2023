@@ -65,7 +65,7 @@ public class TeleOpV1 extends LinearOpMode {
         lift.init(hardwareMap);
         //        belt.setBeltPosition(beltDownPos);
 
-        while (!isStopRequested()) {
+        while (!isStopRequested() && !lift.requestStop) {
             drive.update();
             Pose2d poseEstimate = drive.getPoseEstimate();
             PoseStorage.currentPose = poseEstimate;
