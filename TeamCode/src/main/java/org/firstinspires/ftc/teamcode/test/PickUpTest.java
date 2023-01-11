@@ -51,7 +51,6 @@ public class PickUpTest extends LinearOpMode {
             }
 
             // Update functions means everything moves asynchronously.
-            myBelt.updateBeltPosition();
             myTable.updateTablePosition();
 
             if (myLift.requestStop) {

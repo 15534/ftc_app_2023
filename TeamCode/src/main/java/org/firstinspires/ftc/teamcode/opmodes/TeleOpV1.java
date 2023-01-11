@@ -151,8 +151,6 @@ public class TeleOpV1 extends LinearOpMode {
                 tableRotation = -270;
             }
 
-            turntable.turn(tableRotation);
-
             // Moving lift
             if (gamepad2.dpad_up) {
                 lift.moveLift(Constants.LiftTargets.HIGH);
@@ -161,8 +159,24 @@ public class TeleOpV1 extends LinearOpMode {
             } else if (gamepad2.dpad_left) {
                 lift.moveLift(Constants.LiftTargets.MEDIUM);
             } else if (gamepad2.dpad_down) {
+                belt.moveBelt(Constants.IntakeTargets.PICKUP);
                 lift.moveLift(Constants.LiftTargets.PICKUP);
             }
+
+            // X: reset subsystems for intaking action
+            // turn table turned
+            // lift up
+            // claw open
+            // belt is down
+            // belt up -> claw close -> turntable turn back -> lift down
+
+            if (gamepad2.x) {
+                belt.moveBelt(Constants.IntakeTargets.PICKUP);
+                tableRotation = 0;
+                lift.moveLift(Constants.LiftTargets.PICKUP);
+            }
+
+            turntable.turn(tableRotation);
 
             drive.setWeightedDrivePower(new Pose2d(translation, rotation));
             belt.updateBeltPosition();
@@ -179,6 +193,8 @@ public class TeleOpV1 extends LinearOpMode {
             telemetry.addData("Dpad right", gamepad2.dpad_right);
             telemetry.addData("Dpad down", gamepad2.dpad_down);
             telemetry.addData("Dpad left", gamepad2.dpad_left);
+            telemetry.addData("gamepad 2 x button", gamepad2.x);
+            telemetry.addData("turn table position", turntable.getCurrentPosition());
 
             telemetry.update();
         }

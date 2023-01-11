@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Belt;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.subsystems.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 
@@ -63,18 +64,31 @@ public class BlueAutoV1 extends LinearOpMode {
         Park
         */
 
-        firstHighPole = drive.trajectoryBuilder(startingPos).lineTo(new Vector2d(11, 20)).build();
+        firstHighPole =
+                drive.trajectoryBuilder(startingPos)
+                        .addDisplacementMarker(
+                                () -> {
+                                    turntable.turn(-90);
+                                    lift.moveLift(Constants.LiftTargets.HIGH);
+                                })
+                        .lineTo(new Vector2d(12, 22.5))
+                        .build();
 
         firstConeStack =
                 drive.trajectoryBuilder(firstHighPole.end())
-                        .splineTo(new Vector2d(15, 15), Math.toRadians(0))
-                        .splineTo(new Vector2d(24, 12), Math.toRadians(0))
-                        .splineTo(new Vector2d(30, 12), Math.toRadians(0))
-                        .splineTo(new Vector2d(35, 12), Math.toRadians(0))
-                        .splineTo(new Vector2d(40, 12), Math.toRadians(0))
-                        .splineTo(new Vector2d(45, 12), Math.toRadians(0))
-                        .splineTo(new Vector2d(50, 12), Math.toRadians(0))
-                        .splineTo(new Vector2d(52, 12), Math.toRadians(0))
+                        .lineTo(new Vector2d(12, 8))
+                        .addDisplacementMarker(
+                                2,
+                                () -> {
+                                    claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
+                                    belt.moveBelt(Constants.IntakeTargets.HOLD);
+                                    lift.moveLift(Constants.LiftTargets.PICKUP);
+                                })
+                        .addDisplacementMarker(
+                                12,
+                                () -> {
+                                    drive.turnAsync(Math.toRadians(90));
+                                })
                         .build();
 
         placeHighPole =
@@ -110,24 +124,43 @@ public class BlueAutoV1 extends LinearOpMode {
 
         currentState = State.GO_SUBSTATION_HIGHJUNC;
 
+        // TODO: lift while driving to first traj
         while (opModeIsActive()) {
             telemetry.addLine("running");
 
             // @TODO: Determine cycle-time using "elapsed" variable
-//            double elapsed = runtime.seconds() - time;
+            //            double elapsed = runtime.seconds() - time;
 
             switch (currentState) {
                 case GO_SUBSTATION_HIGHJUNC:
                     if (!drive.isBusy()) {
                         drive.followTrajectoryAsync(firstHighPole);
-                        cyclesCompleted++;
-                        next(State.FIRST_CONESTACK);
+                        //                        cyclesCompleted++;
+                        next(State.DROP_FIRST_CONE);
+                    }
+                    break;
+                case DROP_FIRST_CONE:
+                    if (!drive.isBusy()) {
+                        sleep(275);
+
+                        belt.moveBelt(Constants.IntakeTargets.DROPOFF);
+
+                        long t = System.currentTimeMillis();
+                        long end = t + 1250;
+
+                        while (System.currentTimeMillis() < end) {
+                            belt.updateBeltPosition();
+                        }
+
+                        claw.moveClaw(Constants.ClawTargets.OPENCLAW);
+                        sleep(2000);
+                        next(State.IDLE);
                     }
                     break;
                 case FIRST_CONESTACK:
                     if (!drive.isBusy()) {
                         drive.followTrajectoryAsync(firstConeStack);
-                        next(State.PLACE_HIGHJUNC_CONE);
+                        next(State.IDLE);
                     }
                     break;
                 case GO_HIGHJUNC_CONESTACKS:
@@ -170,6 +203,7 @@ public class BlueAutoV1 extends LinearOpMode {
     // For drivetrain states/trajectories, GO_{FIRST PLACE}_{LAST PLACE}
     enum State {
         GO_SUBSTATION_HIGHJUNC,
+        DROP_FIRST_CONE,
         FIRST_CONESTACK,
         GO_HIGHJUNC_CONESTACKS,
         PLACE_HIGHJUNC_CONE,
