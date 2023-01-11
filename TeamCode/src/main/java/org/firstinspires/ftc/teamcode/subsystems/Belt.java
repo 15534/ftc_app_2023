@@ -9,6 +9,7 @@ public class Belt {
 
     public static double targetPos = 0;
     private double gain = -.001;
+    private boolean startTimer = false;
 
     public void init(HardwareMap hardwareMap) {
         belt = hardwareMap.get(DcMotorEx.class, "intakeLift");
@@ -47,14 +48,20 @@ public class Belt {
 //        belt.getCurrentPosition();
     }
 
+    public void goDown(){
+        belt.setPower(-.1);
+        startTimer = true;
+    }
+
     public void updateBeltPosition(){
-        if (4 > Math.abs(targetPos-belt.getCurrentPosition())){
-            belt.getCurrentPosition();
-        }
-        else{
-            double newPower = (targetPos-belt.getCurrentPosition()) * gain;
-            belt.setPower(newPower);
-        }
+//        if (4 > Math.abs(targetPos-belt.getCurrentPosition())){
+//            belt.getCurrentPosition();
+//        }
+//        else{
+//            double newPower = (targetPos-belt.getCurrentPosition()) * gain;
+//            belt.setPower(newPower);
+//        }
+        
     }
 
     public int getPosition() {
