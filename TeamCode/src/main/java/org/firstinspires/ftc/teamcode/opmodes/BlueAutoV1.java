@@ -55,19 +55,25 @@ public class BlueAutoV1 extends LinearOpMode {
         firstHighPole
         firstConeStack
 
-        loop:
-        placeHighPole
-        coneStack
+        Loop for x amount of cycles {
+            placeHighPole
+            coneStack
+        }
 
-        insert amount of cycles
-
-        park
+        Park
         */
 
-        firstHighPole = drive.trajectoryBuilder(startingPos).lineTo(new Vector2d(12, 24)).build();
+        firstHighPole = drive.trajectoryBuilder(startingPos).lineTo(new Vector2d(11, 20)).build();
 
         firstConeStack =
                 drive.trajectoryBuilder(firstHighPole.end())
+                        .splineTo(new Vector2d(15, 15), Math.toRadians(0))
+                        .splineTo(new Vector2d(24, 12), Math.toRadians(0))
+                        .splineTo(new Vector2d(30, 12), Math.toRadians(0))
+                        .splineTo(new Vector2d(35, 12), Math.toRadians(0))
+                        .splineTo(new Vector2d(40, 12), Math.toRadians(0))
+                        .splineTo(new Vector2d(45, 12), Math.toRadians(0))
+                        .splineTo(new Vector2d(50, 12), Math.toRadians(0))
                         .splineTo(new Vector2d(52, 12), Math.toRadians(0))
                         .build();
 
@@ -89,9 +95,7 @@ public class BlueAutoV1 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        // hardware map only accessible in runOpMode()
         drive = new SampleMecanumDrive(hardwareMap);
-        // sets initial drive position and heading for roadrunner
         drive.setPoseEstimate(new Pose2d(12, 62, Math.toRadians(-90)));
 
         buildTrajectories();
@@ -108,7 +112,9 @@ public class BlueAutoV1 extends LinearOpMode {
 
         while (opModeIsActive()) {
             telemetry.addLine("running");
-            double elapsed = runtime.seconds() - time;
+
+            // @TODO: Determine cycle-time using "elapsed" variable
+//            double elapsed = runtime.seconds() - time;
 
             switch (currentState) {
                 case GO_SUBSTATION_HIGHJUNC:
@@ -136,8 +142,7 @@ public class BlueAutoV1 extends LinearOpMode {
                         cyclesCompleted++;
                         if (cyclesCompleted == 6) {
                             next(State.PARK);
-                        }
-                        else {
+                        } else {
                             next(State.GO_CONESTACKS_HIGHJUNC);
                         }
                     }
