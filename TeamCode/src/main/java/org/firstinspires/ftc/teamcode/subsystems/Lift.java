@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Lift {
-    public static double leftPowerBase = 50;
-    public static double rightPowerBase = -leftPowerBase;
+
+    double leftPower;
+    double rightPower;
     public static boolean motorAtTarget = true;
     public static int target = 0;
     public boolean requestStop = false;
@@ -19,12 +21,10 @@ public class Lift {
         targetEnum = input;
         switch (input) {
             case PICKUP:
-//                setLiftPosition();
+                setLiftPosition(0);
                 break;
 
             case LOW:
-
-
                 setLiftPosition(100);
                 break;
 
@@ -49,23 +49,41 @@ public class Lift {
         right = hardwareMap.get(DcMotorEx.class, "rightLift");
         right.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        moveLift(Constants.LiftTargets.PICKUP);
+        left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         // just setting position, not actually moving there - no moving during init!
     }
 
     public void setLiftPosition(int height) {
         target = height;
+        double currentPos = left.getCurrentPosition();
 
-        /* left.setTargetPosition((int) height);
-        right.setTargetPosition((int) -height);
+        if (currentPos < target) {
+            // going up
+            leftPower = 1;
+            rightPower = -1;
+        } else if (currentPos > target) {
+            // going down
+            leftPower = -0.5;
+            rightPower = 0.5;
+        }
 
-        left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        left.setTargetPosition((int) target);
+        right.setTargetPosition((int) -target);
 
-        left.setPower(leftPowerBase);
-        right.setPower(rightPowerBase); */
+        left.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        right.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        left.setPower(leftPower);
+        right.setPower(rightPower);
     }
 
+    public int getPosition() {
+        return (left.getCurrentPosition() - (right.getCurrentPosition())) / 2;
+    }
+
+    /*
     public void updateLiftPosition() {
         if (targetEnum == Constants.LiftTargets.PICKUP) {
 
@@ -104,11 +122,7 @@ public class Lift {
         }
     }
 
-    public int getPosition() {
-        return left.getCurrentPosition();
-    }
-
-    /*
+x    /*
     old update function - git blame: riya
     public void update() {
         if (left.getCurrentPosition() > target - 5 && left.getCurrentPosition() < -target + 5) {
@@ -129,3 +143,4 @@ public class Lift {
         }
     } */
 }
+

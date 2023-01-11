@@ -163,18 +163,21 @@ public class TeleOpV1 extends LinearOpMode {
 
             if (gamepad2.dpad_up) {
                 lift.moveLift(Constants.LiftTargets.HIGH);
-            } else if (gamepad2.dpad_right) {
+            }
+            else if (gamepad2.dpad_right) {
                 lift.moveLift(Constants.LiftTargets.LOW);
-            } else if (gamepad2.dpad_left) {
+            }
+            else if (gamepad2.dpad_left) {
                 lift.moveLift(Constants.LiftTargets.MEDIUM);
-            } else if (gamepad2.dpad_down) {
+            }
+            else if (gamepad2.dpad_down) {
                 lift.moveLift(Constants.LiftTargets.PICKUP);
             }
 
             // drive and subsystem updates
             drive.setWeightedDrivePower(new Pose2d(translation, rotation));
             belt.updateBeltPosition();
-            lift.updateLiftPosition();
+//            lift.updateLiftPosition();
 
             // telemetry updates
             telemetry.addData("x", poseEstimate.getX());

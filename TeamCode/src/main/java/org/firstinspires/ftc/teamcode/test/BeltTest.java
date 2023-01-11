@@ -32,6 +32,8 @@ public class BeltTest extends LinearOpMode {
             myBelt.setBeltPosition(beltPosition);
             myBelt.updateBeltPosition();
 
+
+
         }
 
     }
