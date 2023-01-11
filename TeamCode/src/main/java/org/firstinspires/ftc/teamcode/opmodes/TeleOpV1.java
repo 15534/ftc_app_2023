@@ -60,8 +60,8 @@ public class TeleOpV1 extends LinearOpMode {
         double rotation = 0;
         double tableRotation = 0;
 
-        double beltUpPos = Constants.BELT_POSITION_END;
-        double beltDownPos = Constants.BELT_POSITION_START;
+        double beltUpPos = Constants.BELT_UP_POSITION;
+        double beltDownPos = Constants.BELT_DOWN_POSITION;
 
         Claw claw = new Claw();
         Belt belt = new Belt();
@@ -132,10 +132,11 @@ public class TeleOpV1 extends LinearOpMode {
             if (currentBbtn && gp2BReleased) {
                 gp2BReleased = false;
                 if (beltUp) {
-                    belt.setBeltPosition(beltDownPos);
+                    belt.moveBelt(Constants.IntakeTargets.DROPOFF);
                     beltUp = false;
-                } else {
-                    belt.setBeltPosition(beltUpPos);
+                }
+                else {
+                    belt.moveBelt(Constants.IntakeTargets.PICKUP);
                     beltUp = true;
                 }
             }

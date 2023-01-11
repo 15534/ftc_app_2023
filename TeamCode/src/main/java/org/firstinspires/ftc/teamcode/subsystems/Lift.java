@@ -23,7 +23,7 @@ public class Lift {
                 break;
 
             case MEDIUM:
-                setLiftPosition(400);
+                setLiftPosition(400); 
                 break;
 
             case HIGH:
