@@ -36,9 +36,8 @@ public class Constants {
     /*
     Lift Init Variables
     */
-    public static int BELT_POSITION_START = -280;
-    public static int BELT_POSITION_END = 280; // this is the difference! we go down 280, then we have to go back up 280 to get
-    // back to 0
+    public static int BELT_DOWN_POSITION = -269;
+    public static int BELT_UP_POSITION = 269;// this is the difference! we go down 280, then we have to go back up 280 to get back to 0
 
     // @TODO: Verify claw limit with constants above
     public static double clawCloseLimit = .69;

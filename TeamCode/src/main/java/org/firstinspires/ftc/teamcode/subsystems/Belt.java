@@ -8,23 +8,25 @@ public class Belt {
 
     public static double targetPos = 0;
     private final double gain = -.001;
+    double beltUpPos = Constants.BELT_UP_POSITION;
+    double beltDownPos = Constants.BELT_DOWN_POSITION;
 
     public void init(HardwareMap hardwareMap) {
         belt = hardwareMap.get(DcMotorEx.class, "intakeLift");
         belt.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        moveBelt(Constants.IntakeTargets.HOLD);
+//        moveBelt(Constants.IntakeTargets.HOLD);
     }
 
     public void moveBelt(Constants.IntakeTargets input) {
         switch (input) {
             case PICKUP:
-                setBeltPosition(-261);
+                setBeltPosition(269);
                 break;
             case HOLD:
                 setBeltPosition(0);
                 break;
             case DROPOFF:
-                setBeltPosition(-281);
+                setBeltPosition(-269);
                 break;
         }
     }
