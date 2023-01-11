@@ -18,13 +18,13 @@ public class Belt {
     public void moveBelt(Constants.IntakeTargets input) {
         switch (input) {
             case PICKUP:
-                setBeltPosition(-295);
+                setBeltPosition(-261);
                 break;
             case HOLD:
                 setBeltPosition(0);
                 break;
             case DROPOFF:
-                setBeltPosition(-296);
+                setBeltPosition(-281);
                 break;
         }
     }

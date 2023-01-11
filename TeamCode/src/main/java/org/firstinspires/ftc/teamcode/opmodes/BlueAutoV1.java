@@ -63,10 +63,17 @@ public class BlueAutoV1 extends LinearOpMode {
         Park
         */
 
-        firstHighPole = drive.trajectoryBuilder(startingPos).lineTo(new Vector2d(12, 24)).build();
+        firstHighPole = drive.trajectoryBuilder(startingPos).lineTo(new Vector2d(11, 20)).build();
 
         firstConeStack =
                 drive.trajectoryBuilder(firstHighPole.end())
+                        .splineTo(new Vector2d(15, 15), Math.toRadians(0))
+                        .splineTo(new Vector2d(24, 12), Math.toRadians(0))
+                        .splineTo(new Vector2d(30, 12), Math.toRadians(0))
+                        .splineTo(new Vector2d(35, 12), Math.toRadians(0))
+                        .splineTo(new Vector2d(40, 12), Math.toRadians(0))
+                        .splineTo(new Vector2d(45, 12), Math.toRadians(0))
+                        .splineTo(new Vector2d(50, 12), Math.toRadians(0))
                         .splineTo(new Vector2d(52, 12), Math.toRadians(0))
                         .build();
 
