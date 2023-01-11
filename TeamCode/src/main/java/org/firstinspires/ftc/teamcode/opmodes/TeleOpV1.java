@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Belt;
@@ -17,6 +16,24 @@ import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
+
+/*
+ * Key Map
+ * Gamepad 1
+ * Left joystick: Translation
+ * DPad: Slow translation
+ * Right joystick: Rotation
+ * Bumpers: Slow rotation
+ * -----------------------
+ * Gamepad 2
+ * A: Toggle Claw
+ * B: Toggle Belt
+ * DPad up: Move lift to high
+ * DPad left: Move lift to mid
+ * DPad right: Move lift to low
+ * DPad down: Move lift to zero
+ * Right joystick: Turntable rotation
+ */
 
 @TeleOp(name = "TeleOp")
 @Config
@@ -46,10 +63,6 @@ public class TeleOpV1 extends LinearOpMode {
         double beltUpPos = Constants.BELT_POSITION_END;
         double beltDownPos = Constants.BELT_POSITION_START;
 
-        //        GamepadEx gp1 = new GamepadEx(gamepad1);
-        //        GamepadEx gp2 = new GamepadEx(gamepad2);
-        //        ButtonReader toggleClawButton = new ButtonReader(gp2, GamepadKeys.Button.A);
-
         Claw claw = new Claw();
         Belt belt = new Belt();
         Lift lift = new Lift();
@@ -63,22 +76,19 @@ public class TeleOpV1 extends LinearOpMode {
         belt.init(hardwareMap);
         turntable.init(hardwareMap);
         lift.init(hardwareMap);
-        //        belt.setBeltPosition(beltDownPos);
 
         while (!isStopRequested() && !lift.requestStop) {
             drive.update();
             Pose2d poseEstimate = drive.getPoseEstimate();
             PoseStorage.currentPose = poseEstimate;
-            Vector2d translation = new Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x);
 
+            // Translation
+            Vector2d translation = new Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x);
             if (TURN_FRONT_BACK) {
                 rotation = -ROTATION_MULTIPLIER * gamepad1.right_stick_x;
             }
-            //            else {
-            //                rotation = -ROTATION_MULTIPLIER * gamepad1.right_stick_y;
-            //            }
 
-            // slow translation with dpad
+            // Slow translation
             if (gamepad1.dpad_up) {
                 translation = new Vector2d(DPAD_SPEED, 0);
             } else if (gamepad1.dpad_down) {
@@ -89,28 +99,15 @@ public class TeleOpV1 extends LinearOpMode {
                 translation = new Vector2d(0, -DPAD_SPEED);
             }
 
-            // slow rotation with bumpers
+            // Slow rotation
             if (gamepad1.left_bumper) {
                 rotation = BUMPER_ROTATION_SPEED;
             } else if (gamepad1.right_bumper) {
                 rotation = -BUMPER_ROTATION_SPEED;
             }
 
-            // @TODO: Key map with their corresponding functions
-            // GamePad1: Driver only, no external functions
-            // GamePad2
-            // A: Toggle claw
-            // B: Toggle belt
-            // X:
-            // Y:
-            // dpad up: slides max height
-
-            telemetry.addData("gamepad2A", gamepad2.a);
-            telemetry.addData("released", gp2AReleased);
-
-            currentAbtn = gamepad2.a; // for toggling claw
-            currentBbtn = gamepad2.b; // for toggling belt
-
+            // Toggle claw
+            currentAbtn = gamepad2.a;
             if (!currentAbtn) {
                 gp2AReleased = true;
             }
@@ -126,6 +123,8 @@ public class TeleOpV1 extends LinearOpMode {
                 }
             }
 
+            // Toggle belt
+            currentBbtn = gamepad2.b;
             if (!currentBbtn) {
                 gp2BReleased = true;
             }
@@ -141,6 +140,7 @@ public class TeleOpV1 extends LinearOpMode {
                 }
             }
 
+            // Turntable rotation
             tableRotation += (turntableSensitivity * gamepad2.right_stick_x);
             if (tableRotation >= 270) {
                 tableRotation = 270;
@@ -150,36 +150,22 @@ public class TeleOpV1 extends LinearOpMode {
                 tableRotation = -270;
             }
 
-            // 279
             turntable.turn(tableRotation);
 
-            // moving linear slides
-
-            // mappings
-            // dpad_up -> high
-            // dpad_left -> mid
-            // dpad_right -> low
-            // dpad_down -> all the back to 0
-
+            // Moving lift
             if (gamepad2.dpad_up) {
                 lift.moveLift(Constants.LiftTargets.HIGH);
-            }
-            else if (gamepad2.dpad_right) {
+            } else if (gamepad2.dpad_right) {
                 lift.moveLift(Constants.LiftTargets.LOW);
-            }
-            else if (gamepad2.dpad_left) {
+            } else if (gamepad2.dpad_left) {
                 lift.moveLift(Constants.LiftTargets.MEDIUM);
-            }
-            else if (gamepad2.dpad_down) {
+            } else if (gamepad2.dpad_down) {
                 lift.moveLift(Constants.LiftTargets.PICKUP);
             }
 
-            // drive and subsystem updates
             drive.setWeightedDrivePower(new Pose2d(translation, rotation));
             belt.updateBeltPosition();
-//            lift.updateLiftPosition();
 
-            // telemetry updates
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
@@ -194,9 +180,6 @@ public class TeleOpV1 extends LinearOpMode {
             telemetry.addData("Dpad left", gamepad2.dpad_left);
 
             telemetry.update();
-
         }
     }
-
-    public void toggleClaw() {}
 }

@@ -9,18 +9,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.subsystems.Lift;
-import org.firstinspires.ftc.teamcode.subsystems.LiftPID;
-
 @TeleOp(name = "LiftLimits")
 @Config()
 public class LiftLimits extends LinearOpMode {
-    public static int liftTarget = 20;
 
     private DcMotorEx right;
     private DcMotorEx left;
     private ElapsedTime timer = new ElapsedTime();
-
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -58,10 +53,6 @@ public class LiftLimits extends LinearOpMode {
 
         left.setPower(-0.5);
         right.setPower(0.5);
-
-
-
-
 
         while (opModeIsActive() && !isStopRequested()) {
             telemetry.addData("left ", left.getCurrentPosition());

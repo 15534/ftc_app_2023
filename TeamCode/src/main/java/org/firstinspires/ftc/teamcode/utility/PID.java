@@ -3,24 +3,25 @@ package org.firstinspires.ftc.teamcode.utility;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+// @TODO: Verify if file is still needed
+
 @Config()
 public class PID {
-//    For the up movement
-//    public static double Kp = 0.1;
-//    public static double Ki = 0.05;
-//    public static double Kd = .0008;
+    //    For the up movement
+    //    public static double Kp = 0.1;
+    //    public static double Ki = 0.05;
+    //    public static double Kd = .0008;
 
-//    For the down movement
-//    public static double Kp = .05;
-//    public static double Ki = 0;
-//    public static double Kd = .001;
+    //    For the down movement
+    //    public static double Kp = .05;
+    //    public static double Ki = 0;
+    //    public static double Kd = .001;
 
-//    for upwards new
+    //    for upwards new
 
     public static double Kp = .15;
     public static double Ki = .07;
     public static double Kd = .001;
-
 
     double target = 69;
     double error;
@@ -32,16 +33,16 @@ public class PID {
     double out;
     ElapsedTime timer;
 
-    public void init(ElapsedTime newTimer){
+    public void init(ElapsedTime newTimer) {
         timer = newTimer;
         lastError = 0;
     }
 
-    public void setTarget(double newTarget){
+    public void setTarget(double newTarget) {
         target = newTarget;
     }
 
-    public double update(int motorPosition){
+    public double update(int motorPosition) {
         error = target - motorPosition;
 
         derivative = (error - lastError) / timer.seconds();

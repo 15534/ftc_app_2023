@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.utility.PID;
 
+// @TODO: Verify if the file is still needed
+
 public class LiftPID {
     public static double leftPowerBase = 50;
     public static double rightPowerBase = -leftPowerBase;
@@ -23,20 +25,19 @@ public class LiftPID {
     private double pidOut;
     private boolean canMove = true;
 
-
     public void init(HardwareMap hardwareMap) {
         left = hardwareMap.get(DcMotorEx.class, "leftLift");
         left.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-//        left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //        left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         right = hardwareMap.get(DcMotorEx.class, "rightLift");
         right.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-//        right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //        right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         pid.init(pidTimer);
 
-//        left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //        left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //        right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void setLiftPosition(int height) {
@@ -45,14 +46,14 @@ public class LiftPID {
     }
 
     public void updateLiftPosition() {
-        pidOut = pid.update(getPosition());// set curr pos
+        pidOut = pid.update(getPosition()); // set curr pos
         left.setPower(pidOut);
         right.setPower(-1 * pidOut);
     }
 
     public int getPosition() {
-        return ((left.getCurrentPosition()-right.getCurrentPosition())/2);
-//        return left.getCurrentPosition();
+        return ((left.getCurrentPosition() - right.getCurrentPosition()) / 2);
+        //        return left.getCurrentPosition();
     }
 
     public int getRight() {
@@ -63,7 +64,7 @@ public class LiftPID {
         return left.getCurrentPosition();
     }
 
-
-    public int getTarget(){return target;}
-
+    public int getTarget() {
+        return target;
+    }
 }
