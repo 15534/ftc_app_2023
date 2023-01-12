@@ -36,17 +36,23 @@ import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
  */
 
 @TeleOp(name = "TeleOp")
-@Config
+@Config()
 public class TeleOpV1 extends LinearOpMode {
     public static double DPAD_SPEED = 0.35;
     public static double BUMPER_ROTATION_SPEED = 0.35;
+    public static double DEFAULT_MOVE_MULTIPLIER = .7;
+    public static double SLOW_MOVEMENT_MULTIPLIER = .7;
+    public static double FAST_MOVEMENT_MULTIPLIER = .7;
     public static double ROTATION_MULTIPLIER = 2.05;
-    public static boolean TURN_FRONT_BACK = true;
+    public static double SLOW_ROTATION_MULTIPLIER = .6;
+    public static boolean TURN_X_JOYSTICK = true;
     public static double turntableSensitivity = 1.2;
     boolean gp2AReleased = true;
     boolean gp2BReleased = true;
     boolean currentAbtn;
     boolean currentBbtn;
+
+    private Vector2d translation;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -83,9 +89,22 @@ public class TeleOpV1 extends LinearOpMode {
             PoseStorage.currentPose = poseEstimate;
 
             // Translation
-            Vector2d translation = new Vector2d(-gamepad1.left_stick_y, -gamepad1.left_stick_x);
-            if (TURN_FRONT_BACK) {
+            if (gamepad1.right_trigger > .3){
+                translation = new Vector2d(-1* FAST_MOVEMENT_MULTIPLIER *gamepad1.left_stick_y, -1* FAST_MOVEMENT_MULTIPLIER *gamepad1.left_stick_x);
+            }
+            else if (gamepad1.left_trigger > .3){
+                translation = new Vector2d(-1*SLOW_MOVEMENT_MULTIPLIER*gamepad1.left_stick_y, -1*SLOW_MOVEMENT_MULTIPLIER*gamepad1.left_stick_x);
+            }
+            else{
+                translation = new Vector2d(-1*DEFAULT_MOVE_MULTIPLIER*gamepad1.left_stick_y, -1*DEFAULT_MOVE_MULTIPLIER*gamepad1.left_stick_x);
+            }
+
+
+            if (TURN_X_JOYSTICK) {
                 rotation = -ROTATION_MULTIPLIER * gamepad1.right_stick_x;
+            }
+            if (gamepad1.right_bumper){
+                rotation = rotation * SLOW_ROTATION_MULTIPLIER;
             }
 
             // Slow translation
@@ -100,11 +119,15 @@ public class TeleOpV1 extends LinearOpMode {
             }
 
             // Slow rotation
-            if (gamepad1.left_bumper) {
-                rotation = BUMPER_ROTATION_SPEED;
-            } else if (gamepad1.right_bumper) {
-                rotation = -BUMPER_ROTATION_SPEED;
-            }
+//            if (gamepad1.left_bumper) {
+//                rotation = BUMPER_ROTATION_SPEED;
+//            }
+//            else if (gamepad1.right_bumper) {
+//                rotation = -BUMPER_ROTATION_SPEED;
+//            }
+
+
+
 
             // Toggle claw
             currentAbtn = gamepad2.a;
