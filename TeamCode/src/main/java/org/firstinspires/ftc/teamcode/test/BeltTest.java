@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Belt;
 import org.firstinspires.ftc.teamcode.subsystems.Constants;
 
 @TeleOp(name = "BeltTest")
-@Config
+@Config()
 public class BeltTest extends LinearOpMode {
     public static int beltPosition = 0;
 
@@ -23,7 +23,6 @@ public class BeltTest extends LinearOpMode {
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
             myBelt.setBeltPosition(beltPosition);
-            myBelt.updateBeltPosition();
         }
     }
 }

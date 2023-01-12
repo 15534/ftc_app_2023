@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -14,19 +15,21 @@ public class Belt {
     public void init(HardwareMap hardwareMap) {
         belt = hardwareMap.get(DcMotorEx.class, "intakeLift");
         belt.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        belt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        belt.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        moveBelt(Constants.IntakeTargets.HOLD);
     }
 
     public void moveBelt(Constants.IntakeTargets input) {
         switch (input) {
             case PICKUP:
-                setBeltPosition(269);
+                setBeltPosition(250);
                 break;
             case HOLD:
                 setBeltPosition(0);
                 break;
             case DROPOFF:
-                setBeltPosition(-269);
+                setBeltPosition(-250);
                 break;
         }
     }
@@ -38,6 +41,8 @@ public class Belt {
     public void updateBeltPosition() {
         if (4 > Math.abs(targetPos - belt.getCurrentPosition())) {
             belt.getCurrentPosition();
+            belt.setPower(0);
+
         } else {
             double newPower = (targetPos - belt.getCurrentPosition()) * gain;
             belt.setPower(newPower);

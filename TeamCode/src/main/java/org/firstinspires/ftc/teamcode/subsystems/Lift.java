@@ -27,7 +27,7 @@ public class Lift {
                 break;
 
             case HIGH:
-                setLiftPosition(600); // previous high limit: 500
+                setLiftPosition(695); // previous high limit: 500
                 break;
 
             case PUTDOWN:

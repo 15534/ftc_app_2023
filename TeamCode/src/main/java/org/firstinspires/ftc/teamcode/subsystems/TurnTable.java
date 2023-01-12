@@ -19,6 +19,8 @@ public class TurnTable {
 
     public void init(HardwareMap hardwareMap) {
         motor = hardwareMap.get(DcMotorEx.class, "turnTable");
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         setTablePosition(0);
     }
 
