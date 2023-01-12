@@ -41,10 +41,10 @@ public class TeleOpV1 extends LinearOpMode {
     public static double DPAD_SPEED = 0.35;
     public static double BUMPER_ROTATION_SPEED = 0.35;
     public static double DEFAULT_MOVE_MULTIPLIER = .7;
-    public static double SLOW_MOVEMENT_MULTIPLIER = .7;
-    public static double FAST_MOVEMENT_MULTIPLIER = .7;
+    public static double SLOW_MOVEMENT_MULTIPLIER = .4;
+    public static double FAST_MOVEMENT_MULTIPLIER = 1;
     public static double ROTATION_MULTIPLIER = 2.05;
-    public static double SLOW_ROTATION_MULTIPLIER = .6;
+    public static double SLOW_ROTATION_MULTIPLIER = .1;
     public static boolean TURN_X_JOYSTICK = true;
     public static double turntableSensitivity = 1.2;
     boolean gp2AReleased = true;
@@ -103,20 +103,21 @@ public class TeleOpV1 extends LinearOpMode {
             if (TURN_X_JOYSTICK) {
                 rotation = -ROTATION_MULTIPLIER * gamepad1.right_stick_x;
             }
+
             if (gamepad1.right_bumper){
                 rotation = rotation * SLOW_ROTATION_MULTIPLIER;
             }
 
             // Slow translation
-            if (gamepad1.dpad_up) {
-                translation = new Vector2d(DPAD_SPEED, 0);
-            } else if (gamepad1.dpad_down) {
-                translation = new Vector2d(-DPAD_SPEED, 0);
-            } else if (gamepad1.dpad_left) {
-                translation = new Vector2d(0, DPAD_SPEED);
-            } else if (gamepad1.dpad_right) {
-                translation = new Vector2d(0, -DPAD_SPEED);
-            }
+//            if (gamepad1.dpad_up) {
+//                translation = new Vector2d(DPAD_SPEED, 0);
+//            } else if (gamepad1.dpad_down) {
+//                translation = new Vector2d(-DPAD_SPEED, 0);
+//            } else if (gamepad1.dpad_left) {
+//                translation = new Vector2d(0, DPAD_SPEED);
+//            } else if (gamepad1.dpad_right) {
+//                translation = new Vector2d(0, -DPAD_SPEED);
+//            }
 
             // Slow rotation
 //            if (gamepad1.left_bumper) {
@@ -204,6 +205,8 @@ public class TeleOpV1 extends LinearOpMode {
             drive.setWeightedDrivePower(new Pose2d(translation, rotation));
             belt.updateBeltPosition();
 
+            telemetry.addData("rTrigger ", gamepad1.right_trigger);
+            telemetry.addData("lTrigger ", gamepad1.left_trigger);
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
@@ -218,7 +221,7 @@ public class TeleOpV1 extends LinearOpMode {
             telemetry.addData("Dpad left", gamepad2.dpad_left);
             telemetry.addData("gamepad 2 x button", gamepad2.x);
             telemetry.addData("turn table position", turntable.getCurrentPosition());
-
+            telemetry.addData("translation ", translation);
             telemetry.update();
         }
     }
