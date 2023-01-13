@@ -18,9 +18,9 @@ import org.firstinspires.ftc.teamcode.subsystems.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 
-@Autonomous(name = "BlueAutoV1")
+@Autonomous(name = "BlueAutoV2")
 @Config
-public class BlueAutoV1 extends LinearOpMode {
+public class BlueAutoV2 extends LinearOpMode {
 
     State currentState = State.IDLE;
     SampleMecanumDrive drive;
@@ -66,29 +66,12 @@ public class BlueAutoV1 extends LinearOpMode {
 
         firstHighPole =
                 drive.trajectoryBuilder(startingPos)
-                        .addDisplacementMarker(
-                                () -> {
-                                    turntable.turn(-90);
-                                    lift.moveLift(Constants.LiftTargets.HIGH);
-                                })
-                        .lineTo(new Vector2d(12, 22.5))
+                        .lineToSplineHeading(new Pose2d(12, 12, 0))
                         .build();
 
         firstConeStack =
                 drive.trajectoryBuilder(firstHighPole.end())
-                        .lineTo(new Vector2d(12, 8))
-                        .addDisplacementMarker(
-                                2,
-                                () -> {
-                                    claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
-                                    belt.moveBelt(Constants.IntakeTargets.HOLD);
-                                    lift.moveLift(Constants.LiftTargets.PICKUP);
-                                })
-                        .addDisplacementMarker(
-                                12,
-                                () -> {
-                                    drive.turnAsync(Math.toRadians(90));
-                                })
+                        .lineTo(new Vector2d(52, 12))
                         .build();
 
         placeHighPole =
@@ -143,16 +126,16 @@ public class BlueAutoV1 extends LinearOpMode {
                     if (!drive.isBusy()) {
                         sleep(275);
 
-                        belt.moveBelt(Constants.IntakeTargets.DROPOFF);
+//                        belt.moveBelt(Constants.IntakeTargets.DROPOFF);
 
                         long t = System.currentTimeMillis();
                         long end = t + 1250;
+//
+//                        while (System.currentTimeMillis() < end) {
+//                            belt.updateBeltPosition();
+//                        }
 
-                        while (System.currentTimeMillis() < end) {
-                            belt.updateBeltPosition();
-                        }
-
-                        claw.moveClaw(Constants.ClawTargets.OPENCLAW);
+//                        claw.moveClaw(Constants.ClawTargets.OPENCLAW);
                         sleep(2000);
                         next(State.IDLE);
                     }
