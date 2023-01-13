@@ -20,8 +20,8 @@ public class BlueAutoCaseHighCycle1 {
                 .setDimensions(16, 16)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(12, 62, Math.toRadians(90)))
-                                .lineTo(new Vector2d(12, 24))
-                                .splineTo(new Vector2d(52,12), Math.toRadians(0))
+                                .lineToSplineHeading(new Pose2d(12, 12, 0))
+                                .lineTo(new Vector2d(52, 12))
                                 .waitSeconds(0.75)
                                 .lineTo(new Vector2d(20, 12))
                                 .waitSeconds(0.75)
