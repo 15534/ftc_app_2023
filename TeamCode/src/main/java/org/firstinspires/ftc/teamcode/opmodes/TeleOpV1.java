@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.subsystems.Belt;
+import org.firstinspires.ftc.teamcode.subsystems.OldBelt;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
@@ -75,7 +75,7 @@ public class TeleOpV1 extends LinearOpMode {
         double beltDownPos = Constants.BELT_DOWN_POSITION;
 
         Claw claw = new Claw();
-        Belt belt = new Belt();
+        OldBelt oldBelt = new OldBelt();
         Lift lift = new Lift();
         TurnTable turntable = new TurnTable();
 
@@ -84,7 +84,7 @@ public class TeleOpV1 extends LinearOpMode {
         waitForStart();
 
         claw.init(hardwareMap);
-        belt.init(hardwareMap);
+        oldBelt.init(hardwareMap);
         turntable.init(hardwareMap);
         lift.init(hardwareMap);
 
@@ -171,11 +171,11 @@ public class TeleOpV1 extends LinearOpMode {
             if (currentBbtn && gp2BReleased) {
                 gp2BReleased = false;
                 if (beltUp) {
-                    belt.moveBelt(Constants.IntakeTargets.DROPOFF);
+                    oldBelt.moveBelt(Constants.IntakeTargets.DROPOFF);
                     beltUp = false;
                 }
                 else {
-                    belt.moveBelt(Constants.IntakeTargets.PICKUP);
+                    oldBelt.moveBelt(Constants.IntakeTargets.PICKUP);
                     beltUp = true;
                 }
             }
@@ -190,15 +190,18 @@ public class TeleOpV1 extends LinearOpMode {
 
             if (currentRBumper && gp2RBumperReleased) {
                 gp2RBumperReleased = false;
-                if (tableRotation < 90){
+                if (tableRotation < 0){
+                    tableRotation = 0;
+                }
+                else if (tableRotation < 90){
                     tableRotation = 90;
                 }
                 else if (tableRotation < 180){
                     tableRotation = 180;
                 }
-                else if (tableRotation < 270){
-                    tableRotation = 270;
-                }
+//                else if (tableRotation < 270){
+//                    tableRotation = 270;
+//                }
             }
 
             currentLBumper = gamepad2.left_bumper;
@@ -208,15 +211,18 @@ public class TeleOpV1 extends LinearOpMode {
 
             if (currentLBumper && gp2LBumperReleased) {
                 gp2LBumperReleased = false;
-                if (tableRotation > -90){
+                if (tableRotation > 0){
+                    tableRotation = 0;
+                }
+                else if (tableRotation > -90){
                     tableRotation = -90;
                 }
                 else if (tableRotation > -180){
                     tableRotation = -180;
                 }
-                else if (tableRotation > -270){
-                    tableRotation = -270;
-                }
+//                else if (tableRotation > -270){
+//                    tableRotation = -270;
+//                }
             }
 
             tableRotation += (turntableSensitivity * gamepad2.right_stick_x);
@@ -229,7 +235,7 @@ public class TeleOpV1 extends LinearOpMode {
             } else if (gamepad2.dpad_left) {
                 lift.moveLift(Constants.LiftTargets.MEDIUM);
             } else if (gamepad2.dpad_down) {
-                belt.moveBelt(Constants.IntakeTargets.PICKUP);
+                oldBelt.moveBelt(Constants.IntakeTargets.PICKUP);
                 lift.moveLift(Constants.LiftTargets.PICKUP);
             }
 
@@ -241,21 +247,21 @@ public class TeleOpV1 extends LinearOpMode {
             // belt up -> claw close -> turntable turn back -> lift down
 
             if (gamepad2.x) {
-                belt.moveBelt(Constants.IntakeTargets.PICKUP);
+                oldBelt.moveBelt(Constants.IntakeTargets.PICKUP);
                 tableRotation = 0;
                 lift.moveLift(Constants.LiftTargets.PICKUP);
             }
 
-            if (tableRotation >= 270) {
-                tableRotation = 270;
+            if (tableRotation >= 180) {
+                tableRotation = 180;
             }
-            if (tableRotation <= -270) {
-                tableRotation = -270;
+            if (tableRotation <= -180) {
+                tableRotation = -180;
             }
             turntable.turn(tableRotation);
 
             drive.setWeightedDrivePower(new Pose2d(translation, rotation));
-            belt.updateBeltPosition();
+            oldBelt.updateBeltPosition();
 
             telemetry.addData("rTrigger ", gamepad1.right_trigger);
             telemetry.addData("lTrigger ", gamepad1.left_trigger);
@@ -266,7 +272,7 @@ public class TeleOpV1 extends LinearOpMode {
             telemetry.addData("right stick x pos", gamepad1.right_stick_x);
             telemetry.addData("right stick y pos", gamepad1.right_stick_y);
             telemetry.addData("rotation", rotation);
-            telemetry.addData("Belt Position", belt.getPosition());
+            telemetry.addData("Belt Position", oldBelt.getPosition());
             telemetry.addData("Lift Position", lift.getPosition());
             telemetry.addData("Dpad Up", gamepad2.dpad_up);
             telemetry.addData("Dpad right", gamepad2.dpad_right);

@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.subsystems.Belt;
+import org.firstinspires.ftc.teamcode.subsystems.OldBelt;
 import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 import org.firstinspires.ftc.teamcode.subsystems.Constants;
 
@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Constants;
 public class PickUpTest extends LinearOpMode {
     public Lift myLift = new Lift();
     public Claw myClaw = new Claw();
-    public Belt myBelt = new Belt();
+    public OldBelt myOldBelt = new OldBelt();
     public TurnTable myTable = new TurnTable();
     private ElapsedTime myTimer = new ElapsedTime();
 
@@ -25,7 +25,7 @@ public class PickUpTest extends LinearOpMode {
 
         myClaw.init(hardwareMap);
         myLift.init(hardwareMap);
-        myBelt.init(hardwareMap);
+        myOldBelt.init(hardwareMap);
         myTable.init(hardwareMap);
 
         // After init: claw closed, lift down, belt up, turntable oriented at 0
@@ -38,14 +38,14 @@ public class PickUpTest extends LinearOpMode {
             if (myTimer.seconds() > 0 && myTimer.seconds() < 5) {
                 // Step 1: claw open, lift down, belt in pickup, table at 0
                 myClaw.moveClaw(Constants.ClawTargets.OPENCLAW);
-                myBelt.moveBelt(Constants.IntakeTargets.PICKUP);
+                myOldBelt.moveBelt(Constants.IntakeTargets.PICKUP);
             } else if (myTimer.seconds() > 5 && myTimer.seconds() < 10) {
                 // Step 2: claw closed, lift down, belt in pickup, table at 0
                 myClaw.moveClaw(Constants.ClawTargets.CLOSECLAW);
             } else if (myTimer.seconds() > 10 && myTimer.seconds() < 20) {
                 // Step 3: claw closed, lift up, belt in hold, table at 180
                 myLift.moveLift(Constants.LiftTargets.HIGH);
-                myBelt.moveBelt(Constants.IntakeTargets.HOLD);
+                myOldBelt.moveBelt(Constants.IntakeTargets.HOLD);
             } else if (myTimer.seconds() > 25 && myTimer.seconds() < 30) {
                 myLift.moveLift(Constants.LiftTargets.MEDIUM);
             }

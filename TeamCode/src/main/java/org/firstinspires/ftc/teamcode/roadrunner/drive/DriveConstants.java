@@ -47,7 +47,7 @@ public class DriveConstants {
 
     // robot has direct drive, so gear ratio is 1:1
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 14.45; // in
+    public static double TRACK_WIDTH = 15; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
