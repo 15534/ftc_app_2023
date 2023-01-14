@@ -19,14 +19,14 @@ import org.firstinspires.ftc.teamcode.subsystems.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 
-@Autonomous(name = "BlueAutoV1")
+@Autonomous(name = "RedAutoV1")
 @Config
-public class BlueAutoV1 extends LinearOpMode {
+public class RedAutoV1 extends LinearOpMode {
 
     State currentState = State.IDLE;
     SampleMecanumDrive drive;
 
-    Pose2d startingPos = new Pose2d(12, 62, Math.toRadians(-90));
+    Pose2d startingPos = new Pose2d(12, -62, Math.toRadians(90));
     ElapsedTime runtime = new ElapsedTime();
     int cyclesCompleted = 0;
 
@@ -68,44 +68,52 @@ public class BlueAutoV1 extends LinearOpMode {
 
         firstHighPole =
                 drive.trajectoryBuilder(startingPos)
-                        .addSpatialMarker(new Vector2d(12, 46), () -> {
+                        /*
+                        .addSpatialMarker(new Vector2d(12, -46), () -> {
                             lift.moveLift(Constants.LiftTargets.HIGH);
                         })
                         .addDisplacementMarker(
                                 () -> {
-                                    turntable.turn(-90);
+                                    turntable.turn(90);
                                 })
-                        .lineTo(new Vector2d(12, 22.5))
+
+                         */
+                        .lineTo(new Vector2d(12, -24))
                         .build();
 
         firstConeStack =
                 drive.trajectoryBuilder(firstHighPole.end())
-                        .lineTo(new Vector2d(12, 12))
+                        .lineTo(new Vector2d(12, -12))
+                        /*
+
                         .addDisplacementMarker(
                                 2,
                                 () -> {
                                     turntable.turn(0);
                                     lift.moveLift(Constants.LiftTargets.PICKUP);
                                 })
+
+                         */
                         .build();
 
         turnAfterHighPole =
                 drive.trajectorySequenceBuilder(firstConeStack.end())
-                        .turn(Math.toRadians(90))
+                        .turn(Math.toRadians(-90))
                         .build();
 
         coneStack =
                 drive.trajectoryBuilder(turnAfterHighPole.end())
-                        .lineTo(new Vector2d(56, 12))
+                        .lineTo(new Vector2d(60, -12))
                         .build();
 
         placeHighPole =
-                drive.trajectoryBuilder(firstConeStack.end()).lineTo(new Vector2d(20, 12)).build();
-
+                drive.trajectoryBuilder(coneStack.end())
+                        .lineTo(new Vector2d(12, -12))
+                        .build();
 
         park =
                 drive.trajectoryBuilder(placeHighPole.end())
-                        .splineToConstantHeading(new Vector2d(10, 35), Math.toRadians(90))
+                        .splineToConstantHeading(new Vector2d(12, -30), Math.toRadians(90))
                         .build();
     }
 
@@ -114,7 +122,7 @@ public class BlueAutoV1 extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         drive = new SampleMecanumDrive(hardwareMap);
-        drive.setPoseEstimate(new Pose2d(12, 62, Math.toRadians(-90)));
+        drive.setPoseEstimate(new Pose2d(12, -62, Math.toRadians(90)));
 
         buildTrajectories();
 
@@ -146,7 +154,7 @@ public class BlueAutoV1 extends LinearOpMode {
                     if (!drive.isBusy()) {
                         sleep(275);
 
-                        oldBelt.moveBelt(Constants.IntakeTargets.DROPOFF);
+                        /*oldBelt.moveBelt(Constants.IntakeTargets.DROPOFF);
 
                         long t = System.currentTimeMillis();
                         long end = t + 1250;
@@ -157,11 +165,15 @@ public class BlueAutoV1 extends LinearOpMode {
 
                         claw.moveClaw(Constants.ClawTargets.OPENCLAW);
                         sleep(2000);
+
+                         */
                         next(State.FIRST_CONESTACK);
                     }
                     break;
                 case FIRST_CONESTACK:
                     if (!drive.isBusy()) {
+
+                        /*
                         oldBelt.moveBelt(Constants.IntakeTargets.PICKUP); // moves it up
 
                         long t = System.currentTimeMillis();
@@ -170,6 +182,7 @@ public class BlueAutoV1 extends LinearOpMode {
                         while (System.currentTimeMillis() < end) {
                             oldBelt.updateBeltPosition();
                         }
+                        */
 
                         drive.followTrajectoryAsync(firstConeStack);
                         next(State.TURN_AFTER_FIRST_SCORE); //change to turn after first score
@@ -183,12 +196,10 @@ public class BlueAutoV1 extends LinearOpMode {
                     break;
                 case GO_HIGHJUNC_CONESTACKS:
                     if (!drive.isBusy()) {
-                        turntable.turn(10);
                         drive.followTrajectoryAsync(coneStack);
-                        next(State.IDLE);
+                        next(State.PLACE_HIGHJUNC_CONE);
                     }
                     break;
-//                case PICKUP
                 case PLACE_HIGHJUNC_CONE:
                     if (!drive.isBusy()) {
                         drive.followTrajectoryAsync(placeHighPole);
@@ -196,7 +207,7 @@ public class BlueAutoV1 extends LinearOpMode {
                         if (cyclesCompleted == 6) {
                             next(State.PARK);
                         } else {
-                            next(State.GO_CONESTACKS_HIGHJUNC);
+                            next(State.GO_HIGHJUNC_CONESTACKS);
                         }
                     }
                     break;
@@ -217,9 +228,13 @@ public class BlueAutoV1 extends LinearOpMode {
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
             telemetry.addData("current state", currentState);
+            telemetry.addData("busy", drive.isBusy());
+            telemetry.addData("cycles ", cyclesCompleted);
             telemetry.update();
         }
     }
+    // TODO: 1/14/2023
+    // get the translational pids tuned
 
     // For drivetrain states/trajectories, GO_{FIRST PLACE}_{LAST PLACE}
     enum State {

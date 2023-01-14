@@ -199,9 +199,9 @@ public class TeleOpV1 extends LinearOpMode {
                 else if (tableRotation < 180){
                     tableRotation = 180;
                 }
-                else if (tableRotation < 270){
-                    tableRotation = 270;
-                }
+//                else if (tableRotation < 270){
+//                    tableRotation = 270;
+//                }
             }
 
             currentLBumper = gamepad2.left_bumper;
@@ -220,9 +220,9 @@ public class TeleOpV1 extends LinearOpMode {
                 else if (tableRotation > -180){
                     tableRotation = -180;
                 }
-                else if (tableRotation > -270){
-                    tableRotation = -270;
-                }
+//                else if (tableRotation > -270){
+//                    tableRotation = -270;
+//                }
             }
 
             tableRotation += (turntableSensitivity * gamepad2.right_stick_x);
@@ -252,11 +252,11 @@ public class TeleOpV1 extends LinearOpMode {
                 lift.moveLift(Constants.LiftTargets.PICKUP);
             }
 
-            if (tableRotation >= 270) {
-                tableRotation = 270;
+            if (tableRotation >= 180) {
+                tableRotation = 180;
             }
-            if (tableRotation <= -270) {
-                tableRotation = -270;
+            if (tableRotation <= -180) {
+                tableRotation = -180;
             }
             turntable.turn(tableRotation);
 
