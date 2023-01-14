@@ -10,7 +10,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class TurnTable {
     DcMotorEx motor;
 
-    double TICKS_PER_DEGREE = -27.7593;
+    // 537.7 ticks per revolution, but one revolution of motor is NOT one revolution of turntable AT ALL
+
+    // 90 degrees: -925
+    // 180: -1863
+    // 270: -2805
+
+
+    double TICKS_PER_DEGREE = -10.3698;
 
     public static double MOTOR_POWER = 1;
 
@@ -21,7 +28,7 @@ public class TurnTable {
         motor = hardwareMap.get(DcMotorEx.class, "turnTable");
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        setTablePosition(0);
+//        setTablePosition(0);
     }
 
     public void setTablePosition(double degrees) {
@@ -38,8 +45,14 @@ public class TurnTable {
     // @TODO: Verify deprecation
     // TO-DO: don't use turn - it is deprecated (remove in future from AsyncTest & TurnTableTest)
     public void turn(double degrees) {
-        motor.setTargetPosition(
-                (int) (degrees * TICKS_PER_DEGREE)); // mx + b (setTarget Position accepts motor
+        int target = (int)(degrees);
+        if (target >= 270) {
+            target = 270;
+        }
+        if (target <= -270) {
+            target = -270;
+        }
+        motor.setTargetPosition((int) (target * TICKS_PER_DEGREE)); // mx + b (setTarget Position accepts motor
         // ticks)
         motor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 

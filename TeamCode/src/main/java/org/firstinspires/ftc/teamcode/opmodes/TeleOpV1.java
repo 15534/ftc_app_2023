@@ -44,12 +44,13 @@ public class TeleOpV1 extends LinearOpMode {
     public static double SLOW_MOVEMENT_MULTIPLIER = .4;
     public static double FAST_MOVEMENT_MULTIPLIER = 1;
     public static double ROTATION_MULTIPLIER = 2.05;
-    public static double SLOW_ROTATION_MULTIPLIER = .1;
+    public static double SLOW_ROTATION_MULTIPLIER = .4;
     public static boolean TURN_X_JOYSTICK = true;
-    public static double turntableSensitivity = 1.2;
+    public static double turntableSensitivity = 2.2;
     boolean gp2AReleased = true;
     boolean gp2BReleased = true;
     boolean currentAbtn;
+    boolean currentYbtn;
     boolean currentBbtn;
 
     private Vector2d translation;
@@ -132,20 +133,30 @@ public class TeleOpV1 extends LinearOpMode {
 
             // Toggle claw
             currentAbtn = gamepad2.a;
-            if (!currentAbtn) {
-                gp2AReleased = true;
+            currentYbtn = gamepad2.y;
+
+            if (currentYbtn) {
+                claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
+            }
+            else if (currentAbtn) {
+                claw.moveClaw(Constants.ClawTargets.OPENCLAW);
             }
 
-            if (currentAbtn && gp2AReleased) {
-                gp2AReleased = false;
-                if (clawOpen) {
-                    claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
-                    clawOpen = false;
-                } else {
-                    claw.moveClaw(Constants.ClawTargets.OPENCLAW);
-                    clawOpen = true;
-                }
-            }
+
+//            if (!currentAbtn) {
+//                gp2AReleased = true;
+//            }
+//
+//            if (currentAbtn && gp2AReleased) {
+//                gp2AReleased = false;
+//                if (clawOpen) {
+//                    claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
+//                    clawOpen = false;
+//                } else {
+//                    claw.moveClaw(Constants.ClawTargets.OPENCLAW);
+//                    clawOpen = true;
+//                }
+//            }
 
             // Toggle belt
             currentBbtn = gamepad2.b;
@@ -167,13 +178,6 @@ public class TeleOpV1 extends LinearOpMode {
 
             // Turntable rotation
             tableRotation += (turntableSensitivity * gamepad2.right_stick_x);
-            if (tableRotation >= 270) {
-                tableRotation = 270;
-            }
-
-            if (tableRotation <= -270) {
-                tableRotation = -270;
-            }
 
             // Moving lift
             if (gamepad2.dpad_up) {
@@ -207,6 +211,7 @@ public class TeleOpV1 extends LinearOpMode {
 
             telemetry.addData("rTrigger ", gamepad1.right_trigger);
             telemetry.addData("lTrigger ", gamepad1.left_trigger);
+            telemetry.addData("clawOpen", clawOpen);
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
