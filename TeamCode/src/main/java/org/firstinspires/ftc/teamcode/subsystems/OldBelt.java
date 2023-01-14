@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class Belt {
+public class OldBelt {
     public DcMotorEx belt;
 
     public static double targetPosition = 0;

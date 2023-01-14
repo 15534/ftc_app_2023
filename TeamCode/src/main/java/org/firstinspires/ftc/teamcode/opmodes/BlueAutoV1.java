@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.subsystems.Belt;
+import org.firstinspires.ftc.teamcode.subsystems.OldBelt;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
@@ -32,7 +32,7 @@ public class BlueAutoV1 extends LinearOpMode {
 
     Lift lift = new Lift();
     Claw claw = new Claw();
-    Belt belt = new Belt();
+    OldBelt oldBelt = new OldBelt();
     TurnTable turntable = new TurnTable();
 
     Trajectory firstHighPole, firstConeStack, coneStack, placeHighPole, park;
@@ -84,14 +84,14 @@ public class BlueAutoV1 extends LinearOpMode {
                         .addDisplacementMarker(
                                 2,
                                 () -> {
-                                    belt.moveBelt(Constants.IntakeTargets.PICKUP); // moves it up
+                                    oldBelt.moveBelt(Constants.IntakeTargets.PICKUP); // moves it up
                                     turntable.turn(0);
                                     lift.moveLift(Constants.LiftTargets.PICKUP);
                                     long t = System.currentTimeMillis();
                                     long end = t + 1000;
 
                                     while (System.currentTimeMillis() < end) {
-                                        belt.updateBeltPosition();
+                                        oldBelt.updateBeltPosition();
                                     }
                                 })
                         .build();
@@ -129,13 +129,12 @@ public class BlueAutoV1 extends LinearOpMode {
         waitForStart();
 
         claw.init(hardwareMap);
-        belt.init(hardwareMap);
+        oldBelt.init(hardwareMap);
         turntable.init(hardwareMap);
         lift.init(hardwareMap);
 
         currentState = State.GO_SUBSTATION_HIGHJUNC;
 
-        // TODO: lift while driving to first traj
         while (opModeIsActive()) {
             telemetry.addLine("running");
 
@@ -154,13 +153,13 @@ public class BlueAutoV1 extends LinearOpMode {
                     if (!drive.isBusy()) {
                         sleep(275);
 
-                        belt.moveBelt(Constants.IntakeTargets.DROPOFF);
+                        oldBelt.moveBelt(Constants.IntakeTargets.DROPOFF);
 
                         long t = System.currentTimeMillis();
                         long end = t + 1250;
 
                         while (System.currentTimeMillis() < end) {
-                            belt.updateBeltPosition();
+                            oldBelt.updateBeltPosition();
                         }
 
                         claw.moveClaw(Constants.ClawTargets.OPENCLAW);
@@ -208,7 +207,7 @@ public class BlueAutoV1 extends LinearOpMode {
 
             Pose2d poseEstimate = drive.getPoseEstimate();
             PoseStorage.currentPose = poseEstimate;
-            belt.updateBeltPosition();
+            oldBelt.updateBeltPosition();
 
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
