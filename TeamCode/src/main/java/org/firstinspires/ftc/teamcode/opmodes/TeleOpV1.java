@@ -49,9 +49,13 @@ public class TeleOpV1 extends LinearOpMode {
     public static double turntableSensitivity = 2.2;
     boolean gp2AReleased = true;
     boolean gp2BReleased = true;
+    boolean gp2RBumperReleased = true;
+    boolean gp2LBumperReleased = true;
     boolean currentAbtn;
     boolean currentYbtn;
     boolean currentBbtn;
+    boolean currentRBumper;
+    boolean currentLBumper;
 
     private Vector2d translation;
 
@@ -177,6 +181,44 @@ public class TeleOpV1 extends LinearOpMode {
             }
 
             // Turntable rotation
+
+
+            currentRBumper = gamepad2.right_bumper;
+            if (!currentRBumper) {
+                gp2RBumperReleased = true;
+            }
+
+            if (currentRBumper && gp2RBumperReleased) {
+                gp2RBumperReleased = false;
+                if (tableRotation < 90){
+                    tableRotation = 90;
+                }
+                else if (tableRotation < 180){
+                    tableRotation = 180;
+                }
+                else if (tableRotation < 270){
+                    tableRotation = 270;
+                }
+            }
+
+            currentLBumper = gamepad2.left_bumper;
+            if (!currentLBumper) {
+                gp2LBumperReleased = true;
+            }
+
+            if (currentLBumper && gp2LBumperReleased) {
+                gp2LBumperReleased = false;
+                if (tableRotation > -90){
+                    tableRotation = -90;
+                }
+                else if (tableRotation > -180){
+                    tableRotation = -180;
+                }
+                else if (tableRotation > -270){
+                    tableRotation = -270;
+                }
+            }
+
             tableRotation += (turntableSensitivity * gamepad2.right_stick_x);
 
             // Moving lift
@@ -204,6 +246,12 @@ public class TeleOpV1 extends LinearOpMode {
                 lift.moveLift(Constants.LiftTargets.PICKUP);
             }
 
+            if (tableRotation >= 270) {
+                tableRotation = 270;
+            }
+            if (tableRotation <= -270) {
+                tableRotation = -270;
+            }
             turntable.turn(tableRotation);
 
             drive.setWeightedDrivePower(new Pose2d(translation, rotation));
