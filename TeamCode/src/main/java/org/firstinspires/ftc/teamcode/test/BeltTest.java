@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.Belt;
+import org.firstinspires.ftc.teamcode.subsystems.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.OldBelt;
 
 @TeleOp(name = "BeltTest")
@@ -28,7 +29,7 @@ public class BeltTest extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
-            belt.moveBelt(beltPosition);
+            belt.moveBelt(Constants.IntakeTargets.PICKUP);
 
             telemetry.addData("Belt pos", belt.belt.getCurrentPosition());
             telemetry.addData("Belt power", belt.belt.getPower());
