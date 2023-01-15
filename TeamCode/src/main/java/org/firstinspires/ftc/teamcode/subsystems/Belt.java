@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -13,7 +14,7 @@ public class Belt {
     public void moveBelt(Constants.IntakeTargets target) {
         switch (target) {
             case PICKUP:
-                belt.setTargetPosition(-10);
+                belt.setTargetPosition(0);
                 break;
                 //            case HOLD:
                 //                setBeltPosition(0);

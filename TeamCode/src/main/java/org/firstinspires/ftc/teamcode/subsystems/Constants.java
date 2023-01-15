@@ -12,7 +12,12 @@ public class Constants {
         LOW,
         MEDIUM,
         HIGH,
-        PUTDOWN
+        PUTDOWN,
+        AUTO_CONE_1,
+        AUTO_CONE_2,
+        AUTO_CONE_3,
+        AUTO_CONE_4,
+        AUTO_CONE_5
     } // PICKUP: 0, LOW: 100, MEDIUM: 300, HIGH: 550, PUTDOWN: 50
     // @TODO Verify if PUTDOWN should be swapped with PICKUP
 
@@ -40,7 +45,7 @@ public class Constants {
     public static int BELT_UP_POSITION = 250;// this is the difference! we go down 280, then we have to go back up 280 to get back to 0
 
     // @TODO: Verify claw limit with constants above
-    public static double clawCloseLimit = .69;
+    public static double clawCloseLimit = .8;
     public static double clawOpenLimit = .4;
 
     public Constants() {}
