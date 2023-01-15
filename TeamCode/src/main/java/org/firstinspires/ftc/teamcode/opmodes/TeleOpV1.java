@@ -138,31 +138,31 @@ public class TeleOpV1 extends LinearOpMode {
 
 
             // Toggle claw
-            currentAbtn = gamepad2.a;
-            currentYbtn = gamepad2.y;
 
-            if (currentYbtn) {
-                claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
-            }
-            else if (currentAbtn) {
-                claw.moveClaw(Constants.ClawTargets.OPENCLAW);
-            }
-
-
-//            if (!currentAbtn) {
-//                gp2AReleased = true;
-//            }
+//            currentYbtn = gamepad2.y;
 //
-//            if (currentAbtn && gp2AReleased) {
-//                gp2AReleased = false;
-//                if (clawOpen) {
-//                    claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
-//                    clawOpen = false;
-//                } else {
-//                    claw.moveClaw(Constants.ClawTargets.OPENCLAW);
-//                    clawOpen = true;
-//                }
+//            if (currentYbtn) {
+//                claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
 //            }
+//            else if (currentAbtn) {
+//                claw.moveClaw(Constants.ClawTargets.OPENCLAW);
+//            }
+
+            currentAbtn = gamepad2.a;
+            if (!currentAbtn) {
+                gp2AReleased = true;
+            }
+
+            if (currentAbtn && gp2AReleased) {
+                gp2AReleased = false;
+                if (clawOpen) {
+                    claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
+                    clawOpen = false;
+                } else {
+                    claw.moveClaw(Constants.ClawTargets.OPENCLAW);
+                    clawOpen = true;
+                }
+            }
 
             // Toggle belt
             currentBbtn = gamepad2.b;

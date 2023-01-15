@@ -6,7 +6,7 @@ import static org.firstinspires.ftc.teamcode.subsystems.Constants.clawCloseLimit
 import static org.firstinspires.ftc.teamcode.subsystems.Constants.clawOpenLimit;
 
 public class Claw {
-    private Servo clawServo;
+    public Servo clawServo;
 
     public void init(HardwareMap hardwareMap) {
         clawServo = hardwareMap.get(Servo.class, "claw");
@@ -23,6 +23,12 @@ public class Claw {
                 clawServo.setPosition(clawCloseLimit);
                 break;
         }
+    }
+
+    public void moveClaw(double target) {
+        // Servo limits go from 0 to 1
+
+        clawServo.setPosition(target);
     }
 
     // @TODO: Unused method

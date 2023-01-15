@@ -13,7 +13,7 @@ public class Belt {
     public void moveBelt(Constants.IntakeTargets target) {
         switch (target) {
             case PICKUP:
-                belt.setTargetPosition(-10);
+                belt.setTargetPosition(0);
                 break;
                 //            case HOLD:
                 //                setBeltPosition(0);
