@@ -12,11 +12,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 
 @TeleOp(name = "LiftLimits")
-@Config()
+@Config
 public class LiftLimits extends LinearOpMode {
 
-
-    private ElapsedTime timer = new ElapsedTime();
+    public static int target = 0;
 
     private Lift lift = new Lift();
 
@@ -29,6 +28,8 @@ public class LiftLimits extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
+            lift.moveLift(target);
+
             telemetry.addData("Lift Position ", lift.getPosition());
             telemetry.update();
         }
