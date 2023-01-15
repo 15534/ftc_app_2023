@@ -275,16 +275,19 @@ public class TeleOpProMax extends LinearOpMode {
             if (gamepad1.a && !gp1APressed && !followingTrajectory){
                 gp1APressed = true;
                 followingTrajectory = true;
-                currentATrajectory = drive.trajectoryBuilder(poseEstimate).lineTo(new Vector2d(12, 22.5)).build();
+//                currentATrajectory = drive.trajectoryBuilder(poseEstimate).lineTo(new Vector2d(12, 22.5)).build();
+                currentATrajectory = drive.trajectoryBuilder(poseEstimate).forward(33.5).build();
                 drive.followTrajectoryAsync(currentATrajectory);
             }
             if (!gamepad1.a){
                 gp1APressed = false;
             }
+
             if (gamepad1.b && !gp1BPressed && !followingTrajectory){
                 gp1BPressed = true;
                 followingTrajectory = true;
-                currentBTrajectory = drive.trajectoryBuilder(poseEstimate).lineTo(new Vector2d(12, 56)).build();
+//                currentBTrajectory = drive.trajectoryBuilder(poseEstimate).lineTo(new Vector2d(12, 56)).build();
+                currentBTrajectory = drive.trajectoryBuilder(poseEstimate).back(33.5).build();
                 drive.followTrajectoryAsync(currentATrajectory);
             }
             if (!gamepad1.b){

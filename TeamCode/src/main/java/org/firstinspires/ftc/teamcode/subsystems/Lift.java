@@ -11,6 +11,7 @@ public class Lift {
     public static int target = 0;
     public boolean requestStop = false;
     public DcMotorEx left, right;
+    public int mainTarget = 0;
 
     public void moveLift(Constants.LiftTargets input) {
         switch (input) {
@@ -54,6 +55,7 @@ public class Lift {
 
     public void moveLift(int target) {
         setLiftPosition(target);
+        mainTarget = target;
     }
 
     public void init(HardwareMap hardwareMap) {
@@ -94,5 +96,9 @@ public class Lift {
     public int getPosition() {
         // Using the average of two left and right
         return (left.getCurrentPosition() - (right.getCurrentPosition())) / 2;
+    }
+
+    public int getTarget(){
+        return mainTarget;
     }
 }

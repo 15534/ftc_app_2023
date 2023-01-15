@@ -73,6 +73,7 @@ public class DeBruh extends LinearOpMode {
         Belt belt = new Belt();
         Lift lift = new Lift();
         TurnTable turntable = new TurnTable();
+        Constants.IntakeTargets beltTarget = Constants.IntakeTargets.PICKUP;
 
         drive.setPoseEstimate(PoseStorage.currentPose);
 
@@ -140,16 +141,23 @@ public class DeBruh extends LinearOpMode {
             if (currentBbtn && gp2BReleased) {
                 gp2BReleased = false;
                 if (beltUp) {
-                    belt.moveBelt(Constants.IntakeTargets.DROPOFF);
+                    if (lift.getTarget() == 0){
+                        claw.moveClaw(Constants.ClawTargets.OPENCLAW);
+                    }
+                    beltTarget = Constants.IntakeTargets.DROPOFF;
+
                     beltUp = false;
                 } else {
-                    belt.moveBelt(Constants.IntakeTargets.PICKUP);
+                    beltTarget = Constants.IntakeTargets.PICKUP;
                     beltUp = true;
                 }
             }
 
+
+            belt.moveBelt(beltTarget);
+
             // Turntable rotation
-            currentRBumper = gamepad2.right_bumper;
+            currentRBumper = gamepad2.left_bumper; //flipped on purpouse
             if (!currentRBumper) {
                 gp2RBumperReleased = true;
             }
@@ -165,7 +173,7 @@ public class DeBruh extends LinearOpMode {
                 }
             }
 
-            currentLBumper = gamepad2.left_bumper;
+            currentLBumper = gamepad2.right_bumper; //flipped on purpouse
             if (!currentLBumper) {
                 gp2LBumperReleased = true;
             }
@@ -181,7 +189,7 @@ public class DeBruh extends LinearOpMode {
                 }
             }
 
-            tableRotation += (turntableSensitivity * gamepad2.left_stick_x);
+            tableRotation += (turntableSensitivity * -gamepad2.right_stick_x);
 
             // Moving lift
             if (gamepad2.dpad_up) {
@@ -191,7 +199,7 @@ public class DeBruh extends LinearOpMode {
             } else if (gamepad2.dpad_right) {
                 lift.moveLift(Constants.LiftTargets.MEDIUM);
             } else if (gamepad2.dpad_down) {
-                belt.moveBelt(Constants.IntakeTargets.PICKUP);
+//                belt.moveBelt(Constants.IntakeTargets.PICKUP);
                 lift.moveLift(Constants.LiftTargets.PICKUP);
             }
 

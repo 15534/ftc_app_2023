@@ -3,9 +3,15 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Belt {
     public DcMotorEx belt;
+    double encoderPos = 0;
+    double previousEncoderPos = 0;
+    boolean goBackCalled = false;
+    ElapsedTime timer = new ElapsedTime();
+
 
     public void init(HardwareMap hardwareMap) {
         belt = hardwareMap.get(DcMotorEx.class, "intakeLift");
@@ -13,20 +19,22 @@ public class Belt {
     }
 
     public void moveBelt(Constants.IntakeTargets target) {
+
         switch (target) {
             case PICKUP:
                 belt.setTargetPosition(0);
+                belt.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                belt.setPower(.5);
                 break;
-                //            case HOLD:
-                //                setBeltPosition(0);
-                //                break;
             case DROPOFF:
                 belt.setTargetPosition(-269);
+                belt.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                belt.setPower(0.5);
                 break;
         }
 
-        belt.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        belt.setPower(0.5);
+
+
     }
 
     public void moveBeltAbsolute(int target){
