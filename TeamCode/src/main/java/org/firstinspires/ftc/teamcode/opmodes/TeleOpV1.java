@@ -181,7 +181,7 @@ public class TeleOpV1 extends LinearOpMode {
                 }
             }
 
-            tableRotation += (turntableSensitivity * gamepad2.right_stick_x);
+            tableRotation += (turntableSensitivity * -gamepad2.right_stick_x);
 
             // Moving lift
             if (gamepad2.dpad_up) {
