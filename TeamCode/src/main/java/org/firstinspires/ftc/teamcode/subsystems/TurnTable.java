@@ -43,7 +43,7 @@ public class TurnTable {
     }
 
     // @TODO: Verify deprecation
-    // TO-DO: don't use turn - it is deprecated (remove in future from AsyncTest & TurnTableTest)
+    // @TODO: don't use turn - it is deprecated (remove in future from AsyncTest & TurnTableTest)
     public void turn(double degrees) {
         int target = (int)(degrees);
         if (target >= 270) {
