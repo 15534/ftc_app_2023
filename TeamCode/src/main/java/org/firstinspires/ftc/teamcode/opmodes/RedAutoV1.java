@@ -36,7 +36,7 @@ public class RedAutoV1 extends LinearOpMode {
     Belt belt = new Belt();
     TurnTable turntable = new TurnTable();
 
-    Trajectory firstHighPole, firstConeStack, coneStack, placeHighPole, park;
+    Trajectory firstHighPole, firstConeStack, coneStackFirst, coneStack, placeHighPole, park;
     TrajectorySequence turnAfterHighPole;
 
     void next(State s) {
@@ -97,7 +97,7 @@ public class RedAutoV1 extends LinearOpMode {
                         .turn(Math.toRadians(-90))
                         .build();
 
-        coneStack =
+        coneStackFirst =
                 drive.trajectoryBuilder(turnAfterHighPole.end())
                         .addDisplacementMarker(
                                 0,
@@ -115,6 +115,18 @@ public class RedAutoV1 extends LinearOpMode {
                             sleep(200);
                         })
 
+                        .build();
+
+        placeHighPole =
+                drive.trajectoryBuilder(new Pose2d(54, -12))
+                        .lineTo(new Vector2d(24, -14))
+                        .addDisplacementMarker(
+                                3,
+                                () -> {
+//                                    belt.moveBelt(Constants.IntakeTargets.PICKUP);
+                                    lift.moveLift(Constants.LiftTargets.HIGH);
+                                    turntable.turn(90);
+                                })
                         .build();
 
         coneStack =
