@@ -33,7 +33,27 @@ public class Lift {
             case PUTDOWN:
                 setLiftPosition(50);
                 break;
+
+            case AUTO_CONE_1:
+                setLiftPosition(100);
+                break;
+            case AUTO_CONE_2:
+                setLiftPosition(80);
+                break;
+            case AUTO_CONE_3:
+                setLiftPosition(60);
+                break;
+            case AUTO_CONE_4:
+                setLiftPosition(30);
+                break;
+            case AUTO_CONE_5:
+                setLiftPosition(0);
+                break;
         }
+    }
+
+    public void moveLift(int target) {
+        setLiftPosition(target);
     }
 
     public void init(HardwareMap hardwareMap) {
