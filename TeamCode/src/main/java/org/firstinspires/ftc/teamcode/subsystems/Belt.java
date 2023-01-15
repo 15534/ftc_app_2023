@@ -9,6 +9,7 @@ public class Belt {
 
     public void init(HardwareMap hardwareMap) {
         belt = hardwareMap.get(DcMotorEx.class, "intakeLift");
+        belt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public void moveBelt(Constants.IntakeTargets target) {
@@ -25,6 +26,13 @@ public class Belt {
         }
 
         belt.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        belt.setPower(0.5);
+    }
+
+    public void moveBeltAbsolute(int target){
+        belt.setTargetPosition(target);
+        belt.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
         belt.setPower(0.5);
     }
 }
