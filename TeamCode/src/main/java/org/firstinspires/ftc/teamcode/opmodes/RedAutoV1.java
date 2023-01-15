@@ -68,7 +68,6 @@ public class RedAutoV1 extends LinearOpMode {
 
         firstHighPole =
                 drive.trajectoryBuilder(startingPos)
-                        /*
                         .addSpatialMarker(new Vector2d(12, -46), () -> {
                             lift.moveLift(Constants.LiftTargets.HIGH);
                         })
@@ -76,15 +75,12 @@ public class RedAutoV1 extends LinearOpMode {
                                 () -> {
                                     turntable.turn(90);
                                 })
-
-                         */
                         .lineTo(new Vector2d(12, -24))
                         .build();
 
         firstConeStack =
                 drive.trajectoryBuilder(firstHighPole.end())
                         .lineTo(new Vector2d(12, -12))
-                        /*
 
                         .addDisplacementMarker(
                                 2,
@@ -93,7 +89,6 @@ public class RedAutoV1 extends LinearOpMode {
                                     lift.moveLift(Constants.LiftTargets.PICKUP);
                                 })
 
-                         */
                         .build();
 
         turnAfterHighPole =
@@ -144,17 +139,24 @@ public class RedAutoV1 extends LinearOpMode {
 
             switch (currentState) {
                 case GO_SUBSTATION_HIGHJUNC:
+                    // move to first high pole
+                    // (12, -24)
+                    // lift high
+                    // turn table 90
                     if (!drive.isBusy()) {
                         drive.followTrajectoryAsync(firstHighPole);
-                        //                        cyclesCompleted++;
+                        cyclesCompleted++;
                         next(State.DROP_FIRST_CONE);
                     }
                     break;
                 case DROP_FIRST_CONE:
+                    // drop off cone
+                    // move belt to drop off
+                    // open claw
                     if (!drive.isBusy()) {
                         sleep(275);
 
-                        /*oldBelt.moveBelt(Constants.IntakeTargets.DROPOFF);
+                        oldBelt.moveBelt(Constants.IntakeTargets.DROPOFF);
 
                         long t = System.currentTimeMillis();
                         long end = t + 1250;
@@ -166,14 +168,15 @@ public class RedAutoV1 extends LinearOpMode {
                         claw.moveClaw(Constants.ClawTargets.OPENCLAW);
                         sleep(2000);
 
-                         */
                         next(State.FIRST_CONESTACK);
                     }
                     break;
                 case FIRST_CONESTACK:
+                    // move belt upwards
+                    // move to
+                    // (12, 12)
                     if (!drive.isBusy()) {
 
-                        /*
                         oldBelt.moveBelt(Constants.IntakeTargets.PICKUP); // moves it up
 
                         long t = System.currentTimeMillis();
@@ -182,25 +185,30 @@ public class RedAutoV1 extends LinearOpMode {
                         while (System.currentTimeMillis() < end) {
                             oldBelt.updateBeltPosition();
                         }
-                        */
 
                         drive.followTrajectoryAsync(firstConeStack);
                         next(State.TURN_AFTER_FIRST_SCORE); //change to turn after first score
                     }
                     break;
                 case TURN_AFTER_FIRST_SCORE:
+                    // turn 90 deg to face cone stack
                     if (!drive.isBusy()) {
                         drive.followTrajectorySequenceAsync(turnAfterHighPole);
                         next(State.GO_HIGHJUNC_CONESTACKS);
                     }
                     break;
                 case GO_HIGHJUNC_CONESTACKS:
+                    // go to
+                    // (60, -12)
                     if (!drive.isBusy()) {
                         drive.followTrajectoryAsync(coneStack);
                         next(State.PLACE_HIGHJUNC_CONE);
                     }
                     break;
                 case PLACE_HIGHJUNC_CONE:
+                    // go to
+                    // (12, -12)
+                    // increment cycles count
                     if (!drive.isBusy()) {
                         drive.followTrajectoryAsync(placeHighPole);
                         cyclesCompleted++;
@@ -212,6 +220,8 @@ public class RedAutoV1 extends LinearOpMode {
                     }
                     break;
                 case PARK:
+                    // parks to splineConstantHeading
+                    // (12, -30, 90˚)
                     if (!drive.isBusy()) {
                         drive.followTrajectoryAsync(park);
                         next(State.IDLE);
@@ -244,7 +254,6 @@ public class RedAutoV1 extends LinearOpMode {
         TURN_AFTER_FIRST_SCORE,
         GO_HIGHJUNC_CONESTACKS,
         PLACE_HIGHJUNC_CONE,
-        GO_CONESTACKS_HIGHJUNC,
         PARK,
         IDLE
     }

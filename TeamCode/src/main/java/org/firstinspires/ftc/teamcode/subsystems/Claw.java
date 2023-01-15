@@ -25,7 +25,6 @@ public class Claw {
         }
     }
 
-    // @TODO: Unused method
     public double getClawPosition() {
         return clawServo.getPosition();
     }
