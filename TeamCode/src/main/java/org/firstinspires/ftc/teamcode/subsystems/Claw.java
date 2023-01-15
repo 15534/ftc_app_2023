@@ -30,8 +30,7 @@ public class Claw {
 
         clawServo.setPosition(target);
     }
-
-    // @TODO: Unused method
+    
     public double getClawPosition() {
         return clawServo.getPosition();
     }

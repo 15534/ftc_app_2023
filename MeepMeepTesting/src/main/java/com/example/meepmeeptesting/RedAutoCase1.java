@@ -19,8 +19,10 @@ public class RedAutoCase1 {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(12, -62, Math.toRadians(90)))
                                 .lineTo(new Vector2d(12, -24))
-                                .splineTo(new Vector2d(52,-12), Math.toRadians(0))
-                                .lineTo(new Vector2d(20, -12))
+                                .waitSeconds(0.5)
+                                .lineTo(new Vector2d(12, -12))
+                                .turn(Math.toRadians(-90))
+                                .lineTo(new Vector2d(60, -12))
                                 .build()
                 );
 
