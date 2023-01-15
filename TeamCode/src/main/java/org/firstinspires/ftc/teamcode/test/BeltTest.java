@@ -29,7 +29,7 @@ public class BeltTest extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
-            belt.moveBelt(Constants.IntakeTargets.PICKUP);
+            belt.moveBeltAbsolute(beltPosition);
 
             telemetry.addData("Belt pos", belt.belt.getCurrentPosition());
             telemetry.addData("Belt power", belt.belt.getPower());
