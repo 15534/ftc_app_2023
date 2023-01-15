@@ -36,9 +36,9 @@ import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
  * Right joystick: Turntable rotation
  */
 
-@TeleOp(name = "TeleOp")
+@TeleOp(name = "DeBruh")
 @Config()
-public class TeleOpV1 extends LinearOpMode {
+public class DeBruh extends LinearOpMode {
     public static double DEFAULT_MOVE_MULTIPLIER = .7;
     public static double SLOW_MOVEMENT_MULTIPLIER = .4;
     public static double FAST_MOVEMENT_MULTIPLIER = 1;
@@ -50,7 +50,7 @@ public class TeleOpV1 extends LinearOpMode {
     boolean gp2BReleased = true;
     boolean gp2RBumperReleased = true;
     boolean gp2LBumperReleased = true;
-    boolean currentAbtn;
+    boolean rightTriggerRelased;
     boolean currentBbtn;
     boolean currentRBumper;
     boolean currentLBumper;
@@ -115,12 +115,12 @@ public class TeleOpV1 extends LinearOpMode {
             }
 
             // Toggle claw
-            currentAbtn = gamepad2.a;
-            if (!currentAbtn) {
+            rightTriggerRelased = gamepad2.right_trigger > 0;
+            if (!rightTriggerRelased) {
                 gp2AReleased = true;
             }
 
-            if (currentAbtn && gp2AReleased) {
+            if (rightTriggerRelased && gp2AReleased) {
                 gp2AReleased = false;
                 if (clawOpen) {
                     claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
@@ -181,14 +181,14 @@ public class TeleOpV1 extends LinearOpMode {
                 }
             }
 
-            tableRotation += (turntableSensitivity * gamepad2.right_stick_x);
+            tableRotation += (turntableSensitivity * gamepad2.left_stick_x);
 
             // Moving lift
             if (gamepad2.dpad_up) {
                 lift.moveLift(Constants.LiftTargets.HIGH);
-            } else if (gamepad2.dpad_right) {
-                lift.moveLift(Constants.LiftTargets.LOW);
             } else if (gamepad2.dpad_left) {
+                lift.moveLift(Constants.LiftTargets.LOW);
+            } else if (gamepad2.dpad_right) {
                 lift.moveLift(Constants.LiftTargets.MEDIUM);
             } else if (gamepad2.dpad_down) {
                 belt.moveBelt(Constants.IntakeTargets.PICKUP);
@@ -202,7 +202,7 @@ public class TeleOpV1 extends LinearOpMode {
             // belt is down
             // belt up -> claw close -> turntable turn back -> lift down
 
-            if (gamepad2.x) {
+            if (gamepad2.a) {
                 belt.moveBelt(Constants.IntakeTargets.PICKUP);
                 tableRotation = 0;
                 lift.moveLift(Constants.LiftTargets.PICKUP);
