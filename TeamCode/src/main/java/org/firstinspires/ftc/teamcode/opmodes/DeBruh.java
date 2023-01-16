@@ -84,6 +84,8 @@ public class DeBruh extends LinearOpMode {
         turntable.init(hardwareMap);
         lift.init(hardwareMap);
 
+        belt.belt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         while (!isStopRequested() && !lift.requestStop) {
             drive.update();
             Pose2d poseEstimate = drive.getPoseEstimate();
@@ -141,20 +143,17 @@ public class DeBruh extends LinearOpMode {
             if (currentBbtn && gp2BReleased) {
                 gp2BReleased = false;
                 if (beltUp) {
-                    if (lift.getTarget() == 0){
-                        claw.moveClaw(Constants.ClawTargets.OPENCLAW);
-                    }
-                    beltTarget = Constants.IntakeTargets.DROPOFF;
+                    belt.moveBelt(Constants.IntakeTargets.DROPOFF);
 
                     beltUp = false;
                 } else {
-                    beltTarget = Constants.IntakeTargets.PICKUP;
+                    belt.moveBelt(Constants.IntakeTargets.PICKUP);
                     beltUp = true;
                 }
             }
 
 
-            belt.moveBelt(beltTarget);
+
 
             // Turntable rotation
             currentRBumper = gamepad2.left_bumper; //flipped on purpouse
@@ -237,6 +236,7 @@ public class DeBruh extends LinearOpMode {
             telemetry.addData("right stick y pos", gamepad1.right_stick_y);
             telemetry.addData("rotation", rotation);
             telemetry.addData("Belt Position", belt.belt.getCurrentPosition());
+            telemetry.addData("Drift ", belt.drift);
             telemetry.addData("Lift Position", lift.getPosition());
             telemetry.addData("Dpad Up", gamepad2.dpad_up);
             telemetry.addData("Dpad right", gamepad2.dpad_right);
