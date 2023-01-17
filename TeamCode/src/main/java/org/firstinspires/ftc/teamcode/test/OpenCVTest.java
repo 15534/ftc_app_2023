@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.utility.OpenCV;
 import org.openftc.easyopencv.*;
 
-@Autonomous
+@Autonomous(name = "OpenCVTest")
 
 public class OpenCVTest extends LinearOpMode{
 
@@ -38,8 +38,8 @@ public class OpenCVTest extends LinearOpMode{
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener(){
             @Override
             public void onOpened(){
-                webcam.startStreaming(1280,720,OpenCvCameraRotation.UPRIGHT);
                 webcam.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
+                webcam.startStreaming(1280,720,OpenCvCameraRotation.UPRIGHT);
             }
             @Override
             public void onError(int errorCode){
@@ -49,7 +49,7 @@ public class OpenCVTest extends LinearOpMode{
         });
 
         snapshotAnalysis = pipeline.getAnalysis();
-
+        FtcDashboard.getInstance().startCameraStream(webcam, 0);
 
         waitForStart();
         while (opModeIsActive())
