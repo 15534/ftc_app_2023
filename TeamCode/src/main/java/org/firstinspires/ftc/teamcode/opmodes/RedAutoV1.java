@@ -186,7 +186,19 @@ public class RedAutoV1 extends LinearOpMode {
                     // lift high
                     // turn table 90
                     if (!drive.isBusy()) {
-                        drive.followTrajectoryAsync(firstHighPole);
+                        drive.followTrajectoryAsync(
+                                drive.trajectoryBuilder(startingPos)
+                                        .lineTo(new Vector2d(12, -22))
+                                        .addSpatialMarker(
+                                                new Vector2d(12, -46),
+                                                () -> {
+                                                    lift.moveLift(Constants.LiftTargets.HIGH);
+                                                })
+                                        .addDisplacementMarker(2, ()->{
+                                            turntable.turn(90)
+;                                        })
+                                        .build()
+                        );
                         next(State.DROP_FIRST_CONE);
                     }
                     break;
@@ -229,7 +241,11 @@ public class RedAutoV1 extends LinearOpMode {
                 case TURN_AFTER_FIRST_SCORE:
                     // turn 90 deg to face cone stack
                     if (!drive.isBusy()) {
-                        drive.followTrajectorySequenceAsync(turnAfterHighPole);
+                        drive.followTrajectorySequenceAsync(
+                                drive.trajectorySequenceBuilder(new Pose2d(12, -12, Math.toRadians(90)))
+                                        .turn(Math.toRadians(-90))
+                                        .build()
+                        );
                         next(State.GO_HIGHJUNC_CONESTACKS);
                     }
                     break;
@@ -240,10 +256,44 @@ public class RedAutoV1 extends LinearOpMode {
                     if (!drive.isBusy()) {
 //                        claw.moveClaw(Constants.ClawTargets.OPENCLAW);
                         if (cyclesCompleted == 0) {
-                            drive.followTrajectoryAsync(coneStackFirst);
+                            drive.followTrajectoryAsync(
+                                    drive.trajectoryBuilder(new Pose2d(12, -12, Math.toRadians(0)))
+                                            .addDisplacementMarker(1, () -> {
+                                                        belt.moveBelt(Constants.IntakeTargets.DOWN);
+                                                        lift.moveLift(liftPosition[(cyclesCompleted)]);
+                                                        claw.moveClaw(Constants.ClawTargets.OPENCLAW);
+                                                        turntable.turn(0);
+                                                    })
+                                            .lineTo(new Vector2d(54, -12))
+                                            .addDisplacementMarker(() ->{
+                                                claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
+                                                sleep(200);
+                                                lift.moveLift(Constants.LiftTargets.HIGH);
+                                                sleep(200);
+                                            })
+
+                                            .build()
+                            );
                         }
                         else {
-                            drive.followTrajectoryAsync(coneStack);
+                            drive.followTrajectoryAsync(
+                                    drive.trajectoryBuilder(new Pose2d(24, -14, Math.toRadians(0)))
+                                            .addDisplacementMarker(1, () -> {
+                                                        belt.moveBelt(Constants.IntakeTargets.DOWN);
+                                                        lift.moveLift(liftPosition[(cyclesCompleted)]);
+                                                        claw.moveClaw(Constants.ClawTargets.OPENCLAW);
+                                                        turntable.turn(0);
+                                                    })
+                                            .lineTo(new Vector2d(54, -12))
+                                            .addDisplacementMarker(() ->{
+                                                claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
+                                                sleep(200);
+                                                lift.moveLift(Constants.LiftTargets.HIGH);
+                                                sleep(200);
+                                            })
+
+                                            .build()
+                            );
                         }
                         claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
                         lift.moveLift(Constants.LiftTargets.LOW);
@@ -257,8 +307,19 @@ public class RedAutoV1 extends LinearOpMode {
                     // high junction
                     // increment cycles count
                     if (!drive.isBusy()) {
-                        drive.followTrajectoryAsync(placeHighPole);
-                        belt.moveBelt(Constants.IntakeTargets.DROPOFF);
+                        drive.followTrajectoryAsync(
+                            drive.trajectoryBuilder(new Pose2d(54, -12, Math.toRadians(0)))
+                                    .lineTo(new Vector2d(24, -14))
+                                    .addDisplacementMarker(
+                                            3,
+                                            () -> {
+            //                                    belt.moveBelt(Constants.IntakeTargets.PICKUP);
+                                                lift.moveLift(Constants.LiftTargets.HIGH);
+                                                turntable.turn(90);
+                                            })
+                                    .build()
+                        );
+                        belt.moveBelt(Constants.IntakeTargets.DOWN);
 
 //                        claw.moveClaw(Constants.ClawTargets.OPENCLAW);
                         cyclesCompleted++;
@@ -274,7 +335,11 @@ public class RedAutoV1 extends LinearOpMode {
                     // parks to splineConstantHeading
                     // (12, -30, 90˚)
                     if (!drive.isBusy()) {
-                        drive.followTrajectoryAsync(park);
+                        drive.followTrajectoryAsync(
+                                drive.trajectoryBuilder(new Pose2d(24, -14))
+                                        .splineToConstantHeading(new Vector2d(12, -30), Math.toRadians(90))
+                                        .build()
+                        );
                         next(State.IDLE);
                     }
             }
