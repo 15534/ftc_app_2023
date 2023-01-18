@@ -5,7 +5,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -203,9 +202,6 @@ public class RedAutoV1 extends LinearOpMode {
                     }
                     break;
                 case DROP_FIRST_CONE:
-                    // drop off cone
-                    // move belt to drop off
-                    // open claw
                     if (!drive.isBusy()) {
                         sleep(275);
                         belt.moveBelt(Constants.IntakeTargets.DOWN);
@@ -216,15 +212,12 @@ public class RedAutoV1 extends LinearOpMode {
                         belt.moveBelt(Constants.IntakeTargets.UP);
                         claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
 
-                        sleep(4000);
+                        sleep(1000);
 
                         next(State.FIRST_CONESTACK);
                     }
                     break;
                 case FIRST_CONESTACK:
-                    // move belt upwards
-                    // move to
-                    // (12, 12)
                     if (!drive.isBusy()) {
                         drive.followTrajectoryAsync(
                                 drive.trajectoryBuilder(new Pose2d(12, -22, Math.toRadians(90)))
@@ -250,9 +243,6 @@ public class RedAutoV1 extends LinearOpMode {
                     }
                     break;
                 case GO_HIGHJUNC_CONESTACKS:
-                    // go to
-                    // (60, -12)
-                    // conestacks
                     if (!drive.isBusy()) {
 //                        claw.moveClaw(Constants.ClawTargets.OPENCLAW);
                         if (cyclesCompleted == 0) {
@@ -332,6 +322,7 @@ public class RedAutoV1 extends LinearOpMode {
                     }
                     break;
                 case PARK:
+                    // Todo: put in position
                     // parks to splineConstantHeading
                     // (12, -30, 90˚)
                     if (!drive.isBusy()) {

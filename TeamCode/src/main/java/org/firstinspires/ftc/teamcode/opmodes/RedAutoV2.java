@@ -59,7 +59,7 @@ public class RedAutoV2 extends LinearOpMode {
                                 new Vector2d(36, -62),
                                 () -> {
                                     lift.moveLift(Constants.LiftTargets.PICKUP);
-                                    belt.moveBelt(Constants.IntakeTargets.PICKUP);
+                                    belt.moveBelt(Constants.IntakeTargets.UP);
                                     claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
                                 })
                         .addDisplacementMarker(
@@ -199,7 +199,7 @@ public class RedAutoV2 extends LinearOpMode {
                         claw.moveClaw(Constants.ClawTargets.OPENCLAW);
 
                         sleep(200);
-                        belt.moveBelt(Constants.IntakeTargets.PICKUP);
+                        belt.moveBelt(Constants.IntakeTargets.UP);
                         claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
 //                        sleep(400);
 
@@ -218,7 +218,7 @@ public class RedAutoV2 extends LinearOpMode {
                     // (12, 12)
                     if (!drive.isBusy()) {
 
-                        belt.moveBelt(Constants.IntakeTargets.PICKUP); // moves it up
+                        belt.moveBelt(Constants.IntakeTargets.UP); // moves it up
 
                         drive.followTrajectoryAsync(firstMedPole);
                         next(State.TURN_AFTER_FIRST_SCORE); // change to turn after first score

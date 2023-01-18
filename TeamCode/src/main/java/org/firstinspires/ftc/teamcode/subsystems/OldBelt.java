@@ -25,7 +25,7 @@ public class OldBelt {
 
     public void moveBelt(Constants.IntakeTargets input) {
         switch (input) {
-            case PICKUP:
+            case UP:
                 setBeltPosition(-10);
                 break;
 //            case HOLD:

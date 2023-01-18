@@ -184,7 +184,7 @@ public class TeleOpProMax extends LinearOpMode {
                     beltUp = false;
                 }
                 else {
-                    belt.moveBelt(Constants.IntakeTargets.PICKUP);
+                    belt.moveBelt(Constants.IntakeTargets.UP);
                     beltUp = true;
                 }
             }
@@ -244,7 +244,7 @@ public class TeleOpProMax extends LinearOpMode {
             } else if (gamepad2.dpad_left) {
                 lift.moveLift(Constants.LiftTargets.MEDIUM);
             } else if (gamepad2.dpad_down) {
-                belt.moveBelt(Constants.IntakeTargets.PICKUP);
+                belt.moveBelt(Constants.IntakeTargets.UP);
                 lift.moveLift(Constants.LiftTargets.PICKUP);
             }
 
@@ -256,7 +256,7 @@ public class TeleOpProMax extends LinearOpMode {
             // belt up -> claw close -> turntable turn back -> lift down
 
             if (gamepad2.x) {
-                belt.moveBelt(Constants.IntakeTargets.PICKUP);
+                belt.moveBelt(Constants.IntakeTargets.UP);
                 tableRotation = 0;
                 lift.moveLift(Constants.LiftTargets.PICKUP);
             }
