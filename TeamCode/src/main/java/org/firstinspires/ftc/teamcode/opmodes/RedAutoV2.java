@@ -36,7 +36,7 @@ public class RedAutoV2 extends LinearOpMode {
     Belt belt = new Belt();
     TurnTable turntable = new TurnTable();
 
-    Trajectory firstHighPole, moveForwardAfterFirstHighPole, firstConeStack, coneStack, placeHighPole, park;
+    Trajectory firstLowPole, firstMedPole, firstConeStack, coneStack, placeHighPole, park;
     Trajectory currentTrajectory;
     TrajectorySequence turnAfterHighPole;
     TrajectorySequence currentTrajectorySequence;
@@ -53,31 +53,24 @@ public class RedAutoV2 extends LinearOpMode {
 
 
 
-        firstHighPole =
+        firstLowPole =
                 drive.trajectoryBuilder(startingPos)
                         .addSpatialMarker(
                                 new Vector2d(36, -62),
                                 () -> {
-                                    lift.moveLift(Constants.LiftTargets.LOW);
-                                })
-                        .addSpatialMarker(
-                                new Vector2d(36, -24),
-                                () -> {
-                                    claw.moveClaw(Constants.ClawTargets.OPENCLAW);
-                                    sleep(200);
+                                    lift.moveLift(Constants.LiftTargets.PICKUP);
                                     belt.moveBelt(Constants.IntakeTargets.PICKUP);
                                     claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
-                                    turntable.turn(90);
                                 })
                         .addDisplacementMarker(
                                 () -> {
                                     turntable.turn(0);
                                 })
-                        .lineTo(new Vector2d(36, -24))
+                        .lineTo(new Vector2d(36, -40))
                         .build();
 
-        moveForwardAfterFirstHighPole =
-                drive.trajectoryBuilder(firstHighPole.end())
+        firstMedPole =
+                drive.trajectoryBuilder(firstLowPole.end())
                         .lineTo(new Vector2d(12, -12))
                         .addDisplacementMarker(
                                 2,
@@ -88,7 +81,7 @@ public class RedAutoV2 extends LinearOpMode {
                         .build();
 
         turnAfterHighPole =
-                drive.trajectorySequenceBuilder(moveForwardAfterFirstHighPole.end())
+                drive.trajectorySequenceBuilder(firstMedPole.end())
                         .turn(Math.toRadians(-90))
                         .build();
 
@@ -155,7 +148,7 @@ public class RedAutoV2 extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         drive = new SampleMecanumDrive(hardwareMap);
-        drive.setPoseEstimate(new Pose2d(12, -62, Math.toRadians(90)));
+        drive.setPoseEstimate(new Pose2d(36, -62, Math.toRadians(90)));
 
         buildTrajectories();
 
@@ -167,7 +160,7 @@ public class RedAutoV2 extends LinearOpMode {
         turntable.init(hardwareMap);
         lift.init(hardwareMap);
 
-        currentState = State.GO_SUBSTATION_HIGHJUNC;
+        currentState = State.PRELOAD_SCORE_LOW;
 
         while (opModeIsActive()) {
             telemetry.addLine("running");
@@ -176,18 +169,27 @@ public class RedAutoV2 extends LinearOpMode {
             //            double elapsed = runtime.seconds() - time;
 
             switch (currentState) {
-                case GO_SUBSTATION_HIGHJUNC:
-                    // move to first high pole
-                    // (12, -24)
-                    // lift high
-                    // turn table 90
+                case PRELOAD_SCORE_LOW:
+                    // (36, -62) --> (36,-40)move to first low pole
+                    // lift low
+                    // belt down
+                    // open claw
+
                     if (!drive.isBusy()) {
-                        drive.followTrajectoryAsync(firstHighPole);
+                        drive.followTrajectoryAsync(firstLowPole);
+                        lift.moveLift(Constants.LiftTargets.LOW);
+                        belt.moveBelt(Constants.IntakeTargets.DROPOFF);
+                        sleep(400);
+                        claw.moveClaw(Constants.ClawTargets.OPENCLAW);
+
                         next(State.IDLE);
+
                     }
                     break;
-                case DROP_FIRST_CONE:
 
+                ///////////////////////////////////////////////////////////////
+
+                case SLEEVE_SCORE_MED:
                     if (!drive.isBusy()) {
                         sleep(275);
 
@@ -203,9 +205,13 @@ public class RedAutoV2 extends LinearOpMode {
 
                         sleep(4000);
 
+
                         next(State.FIRST_CONESTACK);
                     }
                     break;
+
+
+
                 case FIRST_CONESTACK:
                     // move belt upwards
                     // move to
@@ -214,7 +220,7 @@ public class RedAutoV2 extends LinearOpMode {
 
                         belt.moveBelt(Constants.IntakeTargets.PICKUP); // moves it up
 
-                        drive.followTrajectoryAsync(moveForwardAfterFirstHighPole);
+                        drive.followTrajectoryAsync(firstMedPole);
                         next(State.TURN_AFTER_FIRST_SCORE); // change to turn after first score
                     }
                     break;
@@ -290,8 +296,8 @@ public class RedAutoV2 extends LinearOpMode {
 
     // For drivetrain states/trajectories, GO_{FIRST PLACE}_{LAST PLACE}
     enum State {
-        GO_SUBSTATION_HIGHJUNC,
-        DROP_FIRST_CONE,
+        PRELOAD_SCORE_LOW,
+        SLEEVE_SCORE_MED,
         FIRST_CONESTACK,
         TURN_AFTER_FIRST_SCORE,
         GO_HIGHJUNC_CONESTACKS,
