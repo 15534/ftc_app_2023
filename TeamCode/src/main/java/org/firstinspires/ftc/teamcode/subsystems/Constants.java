@@ -27,7 +27,7 @@ public class Constants {
     public enum IntakeTargets {
         PICKUP,
         HOLD,
-        DROPOFF
+        DOWN
     } // PICKUP: -261, HOLD: 0 , DROPOFF: -285
 
     /*

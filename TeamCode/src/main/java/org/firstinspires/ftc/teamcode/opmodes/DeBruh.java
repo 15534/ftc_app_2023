@@ -143,7 +143,7 @@ public class DeBruh extends LinearOpMode {
             if (currentBbtn && gp2BReleased) {
                 gp2BReleased = false;
                 if (beltUp) {
-                    belt.moveBelt(Constants.IntakeTargets.DROPOFF);
+                    belt.moveBelt(Constants.IntakeTargets.DOWN);
 
                     beltUp = false;
                 } else {

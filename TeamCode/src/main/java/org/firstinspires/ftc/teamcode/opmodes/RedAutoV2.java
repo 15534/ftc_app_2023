@@ -90,7 +90,7 @@ public class RedAutoV2 extends LinearOpMode {
                         .addDisplacementMarker(
                                 0,
                                 () -> {
-                                    belt.moveBelt(Constants.IntakeTargets.DROPOFF);
+                                    belt.moveBelt(Constants.IntakeTargets.DOWN);
                                     lift.moveLift(liftPosition[(cyclesCompleted)]);
                                     claw.moveClaw(Constants.ClawTargets.OPENCLAW);
                                     turntable.turn(0);
@@ -122,7 +122,7 @@ public class RedAutoV2 extends LinearOpMode {
                         .addDisplacementMarker(
                                 0,
                                 () -> {
-                                    belt.moveBelt(Constants.IntakeTargets.DROPOFF);
+                                    belt.moveBelt(Constants.IntakeTargets.DOWN);
                                     lift.moveLift(liftPosition[(cyclesCompleted)]);
                                     claw.moveClaw(Constants.ClawTargets.OPENCLAW);
                                     turntable.turn(0);
@@ -178,7 +178,7 @@ public class RedAutoV2 extends LinearOpMode {
                     if (!drive.isBusy()) {
                         drive.followTrajectoryAsync(firstLowPole);
                         lift.moveLift(Constants.LiftTargets.LOW);
-                        belt.moveBelt(Constants.IntakeTargets.DROPOFF);
+                        belt.moveBelt(Constants.IntakeTargets.DOWN);
                         sleep(400);
                         claw.moveClaw(Constants.ClawTargets.OPENCLAW);
 
@@ -194,7 +194,7 @@ public class RedAutoV2 extends LinearOpMode {
                         sleep(275);
 
 //                        belt.moveBelt(Constants.IntakeTargets.DROPOFF);
-                        belt.moveBelt(Constants.IntakeTargets.DROPOFF);
+                        belt.moveBelt(Constants.IntakeTargets.DOWN);
                         sleep(400);
                         claw.moveClaw(Constants.ClawTargets.OPENCLAW);
 
@@ -256,7 +256,7 @@ public class RedAutoV2 extends LinearOpMode {
                     // increment cycles count
                     if (!drive.isBusy()) {
                         drive.followTrajectoryAsync(placeHighPole);
-                        belt.moveBelt(Constants.IntakeTargets.DROPOFF);
+                        belt.moveBelt(Constants.IntakeTargets.DOWN);
 
 //                        claw.moveClaw(Constants.ClawTargets.OPENCLAW);
                         cyclesCompleted++;

@@ -31,7 +31,7 @@ public class OldBelt {
 //            case HOLD:
 //                setBeltPosition(0);
 //                break;
-            case DROPOFF:
+            case DOWN:
                 setBeltPosition(-269);
                 break;
         }

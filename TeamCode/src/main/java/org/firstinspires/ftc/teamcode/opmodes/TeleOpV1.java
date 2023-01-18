@@ -140,7 +140,7 @@ public class TeleOpV1 extends LinearOpMode {
             if (currentBbtn && gp2BReleased) {
                 gp2BReleased = false;
                 if (beltUp) {
-                    belt.moveBelt(Constants.IntakeTargets.DROPOFF);
+                    belt.moveBelt(Constants.IntakeTargets.DOWN);
                     beltUp = false;
                 } else {
                     belt.moveBelt(Constants.IntakeTargets.PICKUP);

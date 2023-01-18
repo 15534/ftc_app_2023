@@ -146,7 +146,7 @@ public class BlueAutoV1 extends LinearOpMode {
                     if (!drive.isBusy()) {
                         sleep(275);
 
-                        belt.moveBelt(Constants.IntakeTargets.DROPOFF);
+                        belt.moveBelt(Constants.IntakeTargets.DOWN);
 
                         long t = System.currentTimeMillis();
                         long end = t + 1250;

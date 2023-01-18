@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.subsystems.Belt;
 
 @TeleOp(name = "BeltLimits")
 @Config
@@ -16,13 +17,14 @@ public class BeltLimits extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         Telemetry dashboardTelemetry = dashboard.getTelemetry();
-
-        DcMotorEx intakeLift = hardwareMap.get(DcMotorEx.class, "intakeLift");
+        Belt belt = new Belt();
 
         waitForStart();
 
+        belt.init(hardwareMap);
+
         while (opModeIsActive()) {
-            dashboardTelemetry.addData("Belt Position", intakeLift.getCurrentPosition());
+            dashboardTelemetry.addData("Belt Position", belt.getBeltPosition());
             dashboardTelemetry.update();
         }
     }
