@@ -21,19 +21,20 @@ public class Belt {
     }
 
     public void moveBelt(Constants.IntakeTargets target) {
-        switch (target) {
-            case PICKUP:
-                belt.setTargetPosition(drift);
-                belt.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                belt.setPower(.5);
-                break;
-            case DROPOFF:
-                drift = belt.getCurrentPosition();
-                belt.setTargetPosition(-285 + drift);
-                belt.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                belt.setPower(0.5);
-                break;
-        }
+//        switch (target) {
+//            case UP:
+//                belt.setTargetPosition(drift);
+//                belt.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//                belt.setPower(.5);
+//                break;
+//            case DOWN:
+//                drift = belt.getCurrentPosition();
+//                belt.setTargetPosition(-285 + drift);
+//                belt.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//                belt.setPower(0.5);
+//                break;
+//        }
+        belt.getCurrentPosition();
     }
 
     public void moveBeltAbsolute(int target){
@@ -41,5 +42,8 @@ public class Belt {
         belt.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         belt.setPower(0.5);
+    }
+    public int getBeltPosition(){
+        return belt.getCurrentPosition();
     }
 }

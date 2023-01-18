@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Belt;
-import org.firstinspires.ftc.teamcode.subsystems.OldBelt;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
@@ -73,7 +72,7 @@ public class DeBruh extends LinearOpMode {
         Belt belt = new Belt();
         Lift lift = new Lift();
         TurnTable turntable = new TurnTable();
-        Constants.IntakeTargets beltTarget = Constants.IntakeTargets.PICKUP;
+        Constants.IntakeTargets beltTarget = Constants.IntakeTargets.UP;
 
         drive.setPoseEstimate(PoseStorage.currentPose);
 
@@ -143,11 +142,11 @@ public class DeBruh extends LinearOpMode {
             if (currentBbtn && gp2BReleased) {
                 gp2BReleased = false;
                 if (beltUp) {
-                    belt.moveBelt(Constants.IntakeTargets.DROPOFF);
+                    belt.moveBelt(Constants.IntakeTargets.DOWN);
 
                     beltUp = false;
                 } else {
-                    belt.moveBelt(Constants.IntakeTargets.PICKUP);
+                    belt.moveBelt(Constants.IntakeTargets.UP);
                     beltUp = true;
                 }
             }
@@ -210,7 +209,7 @@ public class DeBruh extends LinearOpMode {
             // belt up -> claw close -> turntable turn back -> lift down
 
             if (gamepad2.a) {
-                belt.moveBelt(Constants.IntakeTargets.PICKUP);
+                belt.moveBelt(Constants.IntakeTargets.UP);
                 tableRotation = 0;
                 lift.moveLift(Constants.LiftTargets.PICKUP);
             }

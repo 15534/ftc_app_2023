@@ -25,9 +25,9 @@ public class Constants {
     Belt constants
     */
     public enum IntakeTargets {
-        PICKUP,
+        UP,
         HOLD,
-        DROPOFF
+        DOWN
     } // PICKUP: -261, HOLD: 0 , DROPOFF: -285
 
     /*

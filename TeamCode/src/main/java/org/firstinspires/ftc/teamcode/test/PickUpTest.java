@@ -38,7 +38,7 @@ public class PickUpTest extends LinearOpMode {
             if (myTimer.seconds() > 0 && myTimer.seconds() < 5) {
                 // Step 1: claw open, lift down, belt in pickup, table at 0
                 myClaw.moveClaw(Constants.ClawTargets.OPENCLAW);
-                myOldBelt.moveBelt(Constants.IntakeTargets.PICKUP);
+                myOldBelt.moveBelt(Constants.IntakeTargets.UP);
             } else if (myTimer.seconds() > 5 && myTimer.seconds() < 10) {
                 // Step 2: claw closed, lift down, belt in pickup, table at 0
                 myClaw.moveClaw(Constants.ClawTargets.CLOSECLAW);
