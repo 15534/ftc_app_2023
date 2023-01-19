@@ -20,35 +20,19 @@ public class Lift {
                 break;
 
             case LOW:
-                setLiftPosition(300);
+                setLiftPosition(727);
                 break;
 
             case MEDIUM:
-                setLiftPosition(400); 
+                setLiftPosition(1242);
                 break;
 
             case HIGH:
-                setLiftPosition(695); // previous high limit: 500
+                setLiftPosition(1952);
                 break;
 
             case PUTDOWN:
                 setLiftPosition(50);
-                break;
-
-            case AUTO_CONE_1:
-                setLiftPosition(100);
-                break;
-            case AUTO_CONE_2:
-                setLiftPosition(80);
-                break;
-            case AUTO_CONE_3:
-                setLiftPosition(60);
-                break;
-            case AUTO_CONE_4:
-                setLiftPosition(30);
-                break;
-            case AUTO_CONE_5:
-                setLiftPosition(0);
                 break;
         }
     }
@@ -79,8 +63,8 @@ public class Lift {
             rightPower = -1;
         } else if (currentPos > target) {
             // Going down
-            leftPower = -0.5;
-            rightPower = 0.5;
+            leftPower = -1;
+            rightPower = 1;
         }
 
         left.setTargetPosition((int) target);
@@ -98,7 +82,7 @@ public class Lift {
         return (left.getCurrentPosition() - (right.getCurrentPosition())) / 2;
     }
 
-    public int getTarget(){
+    public int getTarget() {
         return mainTarget;
     }
 }
