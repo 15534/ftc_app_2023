@@ -75,15 +75,14 @@ public class RedAutoV3 extends LinearOpMode {
                         .build();
 
         Trajectory GO_TOWARDS_CONESTACK =
-                drive.trajectoryBuilder(
-                                PREPARE_TO_TURN.end().plus(new Pose2d(0, 0, Math.toRadians(-90))))
-                        .lineTo(new Vector2d(48, -12))
+                drive.trajectoryBuilder(new Pose2d(36, -12, 0)) // rewrite heading
+                        .lineTo(new Vector2d(54, -12))
                         .build();
 
         Trajectory CYCLE_HIGH_POLE =
                 drive.trajectoryBuilder(GO_TOWARDS_CONESTACK.end())
 
-                        .lineTo(new Vector2d(24, -12),
+                        .lineTo(new Vector2d(22, -12),
                         SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                         .addDisplacementMarker(
@@ -98,7 +97,7 @@ public class RedAutoV3 extends LinearOpMode {
 
         Trajectory CYCLE_CONESTACK =
                 drive.trajectoryBuilder(CYCLE_HIGH_POLE.end())
-                        .lineTo(new Vector2d(48, -12))
+                        .lineTo(new Vector2d(54, -12))
                         .build();
 
         runtime.reset();
@@ -162,18 +161,20 @@ public class RedAutoV3 extends LinearOpMode {
                     break;
 
                 case PICKUP_CONE:
-                    lift.moveLift(liftPosition[cyclesCompleted]);
-                    turntable.turn(0);
-                    sleep(2000);
-                    belt.moveBelt(Constants.IntakeTargets.DOWN);
-                    sleep(1500);
-                    claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
+                    if (!drive.isBusy()) {
+                        lift.moveLift(liftPosition[cyclesCompleted]);
+                        turntable.turn(0);
+                        sleep(2000);
+                        belt.moveBelt(Constants.IntakeTargets.DOWN);
+                        sleep(1000);
+                        claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
 
-                    sleep(1000);
+                        sleep(1000);
 
-                    lift.moveLift(Constants.LiftTargets.MEDIUM);
+                        lift.moveLift(Constants.LiftTargets.MEDIUM);
 
-                    next(State.CYCLE_HIGHPOLE);
+                        next(State.CYCLE_HIGHPOLE);
+                    }
 
                     break;
 
