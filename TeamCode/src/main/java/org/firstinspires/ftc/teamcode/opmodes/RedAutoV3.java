@@ -59,14 +59,12 @@ public class RedAutoV3 extends LinearOpMode {
                 drive.trajectoryBuilder(startingPos)
                         .lineTo(new Vector2d(36, 0))
                         .addDisplacementMarker(
-                                2,
-                                () -> {
+                                1, () -> {
                                     turntable.turn(90);
                                     lift.moveLift(Constants.LiftTargets.HIGH);
                                 })
                         .addDisplacementMarker(
-                                10,
-                                () -> {
+                                10, () -> {
                                     belt.moveBelt(Constants.IntakeTargets.DOWN);
                                 })
                         .build();
@@ -164,21 +162,18 @@ public class RedAutoV3 extends LinearOpMode {
                     break;
 
                 case PICKUP_CONE:
-                   // lift.moveLift(liftPosition[cyclesCompleted]);
-                    // just for testing
-                    lift.moveLift(Constants.LiftTargets.MEDIUM);
+                    lift.moveLift(liftPosition[cyclesCompleted]);
                     turntable.turn(0);
-                    sleep(1000);
+                    sleep(2000);
                     belt.moveBelt(Constants.IntakeTargets.DOWN);
-                    sleep(1000);
+                    sleep(1500);
                     claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
 
                     sleep(1000);
 
                     lift.moveLift(Constants.LiftTargets.MEDIUM);
 
-                    next(State.IDLE);
-                    //next(State.CYCLE_HIGHPOLE);
+                    next(State.CYCLE_HIGHPOLE);
 
                     break;
 
@@ -226,6 +221,7 @@ public class RedAutoV3 extends LinearOpMode {
             telemetry.addData("busy", drive.isBusy());
             telemetry.addData("cycles ", cyclesCompleted);
             telemetry.addData("belt ", belt.getBeltPosition());
+            telemetry.addData("lift ", lift.getPosition());
             telemetry.update();
         }
     }
