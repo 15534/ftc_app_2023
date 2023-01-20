@@ -16,23 +16,23 @@ public class Lift {
     public void moveLift(Constants.LiftTargets input) {
         switch (input) {
             case PICKUP:
-                setLiftPosition(0);
+                moveLift(0);
                 break;
 
             case LOW:
-                setLiftPosition(727);
+                moveLift(727);
                 break;
 
             case MEDIUM:
-                setLiftPosition(1242);
+                moveLift(1242);
                 break;
 
             case HIGH:
-                setLiftPosition(1900);
+                moveLift(1900);
                 break;
 
             case PUTDOWN:
-                setLiftPosition(50);
+                moveLift(50);
                 break;
         }
     }
