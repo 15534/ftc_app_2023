@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -37,13 +38,7 @@ public class RedAutoV3 extends LinearOpMode {
     Belt belt = new Belt();
     TurnTable turntable = new TurnTable();
 
-    Trajectory firstLowPole,
-            firstMedPole,
-            firstConeStack,
-            coneStack,
-            placeHighPole,
-            park,
-            FIRST_HIGH_POLE;
+    Trajectory FIRST_HIGH_POLE;
     Trajectory currentTrajectory;
     TrajectorySequence turnAfterHighPole;
     TrajectorySequence currentTrajectorySequence;
@@ -78,13 +73,34 @@ public class RedAutoV3 extends LinearOpMode {
 
         Trajectory PREPARE_TO_TURN =
                 drive.trajectoryBuilder(FIRST_HIGH_POLE.end())
-                        .lineTo(new Vector2d(36, -11))
+                        .lineTo(new Vector2d(36, -12))
                         .build();
 
         Trajectory GO_TOWARDS_CONESTACK =
                 drive.trajectoryBuilder(
                                 PREPARE_TO_TURN.end().plus(new Pose2d(0, 0, Math.toRadians(-90))))
-                        .lineTo(new Vector2d(44, -11))
+                        .lineTo(new Vector2d(48, -12))
+                        .build();
+
+        Trajectory CYCLE_HIGH_POLE =
+                drive.trajectoryBuilder(GO_TOWARDS_CONESTACK.end())
+
+                        .lineTo(new Vector2d(24, -12),
+                        SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                        .addDisplacementMarker(
+                                1, () -> {
+                                    turntable.turn(90);
+                                })
+                        .addDisplacementMarker(10, () -> {
+                                    turntable.turn(90);
+                                    lift.moveLift(Constants.LiftTargets.HIGH);
+                                })
+                        .build();
+
+        Trajectory CYCLE_CONESTACK =
+                drive.trajectoryBuilder(CYCLE_HIGH_POLE.end())
+                        .lineTo(new Vector2d(48, -12))
                         .build();
 
         runtime.reset();
@@ -146,23 +162,59 @@ public class RedAutoV3 extends LinearOpMode {
                     }
 
                     break;
+
                 case PICKUP_CONE:
-                    lift.moveLift(liftPosition[cyclesCompleted]);
+                   // lift.moveLift(liftPosition[cyclesCompleted]);
+                    // just for testing
+                    lift.moveLift(Constants.LiftTargets.MEDIUM);
+                    turntable.turn(0);
+                    sleep(1000);
                     belt.moveBelt(Constants.IntakeTargets.DOWN);
-
-                    sleep(2000);
-
+                    sleep(1000);
                     claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
 
-                    sleep(2000);
+                    sleep(1000);
 
-                    belt.moveBelt(Constants.IntakeTargets.UP);
-
-                    lift.moveLift(Constants.LiftTargets.HIGH);
+                    lift.moveLift(Constants.LiftTargets.MEDIUM);
 
                     next(State.IDLE);
+                    //next(State.CYCLE_HIGHPOLE);
 
                     break;
+
+                case CYCLE_HIGHPOLE:
+                    if (!drive.isBusy()) {
+                        drive.followTrajectoryAsync(CYCLE_HIGH_POLE);
+
+                        if(cyclesCompleted < 4) {
+                            next(State.DROP_CYCLE_CONE);
+                            cyclesCompleted++;
+                        }
+                        else{
+                            next(State.IDLE);
+                        }
+                    }
+
+                    break;
+
+                case DROP_CYCLE_CONE:
+                    if (!drive.isBusy()) {
+                        sleep(700);
+                        claw.moveClaw(Constants.ClawTargets.OPENCLAW);
+                        sleep(500);
+                        belt.moveBelt(Constants.IntakeTargets.UP);
+                        next(State.CYCLE_CONESTACK);
+                    }
+
+                case CYCLE_CONESTACK:
+                    if (!drive.isBusy()) {
+                        drive.followTrajectoryAsync(CYCLE_CONESTACK);
+
+                        next(State.PICKUP_CONE);
+                    }
+
+                    break;
+
             }
 
             drive.update();
@@ -173,6 +225,7 @@ public class RedAutoV3 extends LinearOpMode {
             telemetry.addData("current state", currentState);
             telemetry.addData("busy", drive.isBusy());
             telemetry.addData("cycles ", cyclesCompleted);
+            telemetry.addData("belt ", belt.getBeltPosition());
             telemetry.update();
         }
     }
@@ -187,6 +240,9 @@ public class RedAutoV3 extends LinearOpMode {
         TURN_TO_CONESTACK,
         GO_TOWARDS_CONESTACK,
         PICKUP_CONE,
+        CYCLE_HIGHPOLE,
+        DROP_CYCLE_CONE,
+        CYCLE_CONESTACK,
         IDLE
     }
 }

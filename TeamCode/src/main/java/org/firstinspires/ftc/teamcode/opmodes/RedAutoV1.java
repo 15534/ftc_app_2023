@@ -25,7 +25,7 @@ public class RedAutoV1 extends LinearOpMode {
     State currentState = State.IDLE;
     SampleMecanumDrive drive;
 
-    Pose2d startingPos = new Pose2d(12, -62, Math.toRadians(90));
+    Pose2d startingPos = new Pose2d(36, -62, Math.toRadians(90));
     ElapsedTime runtime = new ElapsedTime();
     int cyclesCompleted = 0;
     int[] liftPosition = {80, 60, 40, 27, 0};
