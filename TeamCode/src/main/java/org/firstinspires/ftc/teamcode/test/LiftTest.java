@@ -17,6 +17,7 @@ public class LiftTest extends LinearOpMode {
     private DcMotorEx left;
     private ElapsedTime timer = new ElapsedTime();
 
+
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

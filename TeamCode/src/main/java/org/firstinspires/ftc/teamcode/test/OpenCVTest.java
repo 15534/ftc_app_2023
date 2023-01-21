@@ -68,10 +68,4 @@ public class OpenCVTest extends LinearOpMode{
     }
 
 
-
-
-
-
-
-
 }
