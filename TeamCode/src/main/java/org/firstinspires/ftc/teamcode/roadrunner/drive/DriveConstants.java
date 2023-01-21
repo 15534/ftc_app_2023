@@ -88,7 +88,7 @@ public class DriveConstants {
 
      */
     public static double MAX_VEL = 47; // original 52.48291908330528
-    public static double MAX_ACCEL = 47; // original 52.48291908330528
+    public static double MAX_ACCEL = 40; // original 52.48291908330528
     public static double MAX_ANG_VEL = 4.45;
     public static double MAX_ANG_ACCEL = 2.9157177268502936;
 
