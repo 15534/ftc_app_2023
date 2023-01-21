@@ -49,10 +49,11 @@ public class DeBruh extends LinearOpMode {
     boolean gp2AReleased = true;
     boolean gp2BReleased = true;
     boolean gp2YReleased = true;
+    boolean gp2XReleased = true;
     boolean gp2RBumperReleased = true;
     boolean gp2LBumperReleased = true;
     boolean rightTriggerRelased;
-    boolean currentBbtn, currentYbtn;
+    boolean currentBbtn, currentYbtn, currentXbtn;
     boolean currentRBumper;
     boolean currentLBumper;
 
@@ -198,6 +199,22 @@ public class DeBruh extends LinearOpMode {
                 belt.belt.setPower(0.5); // moving up, in positive direction
 
                 if (!gamepad2.y && !gp2YReleased) belt.drift = belt.belt.getCurrentPosition();
+            }
+
+            currentXbtn = gamepad2.x;
+            if (!currentXbtn) {
+                gp2XReleased = true;
+            }
+
+            if (currentXbtn && gp2XReleased) {
+                gp2XReleased = false;
+                if (beltUp) {
+                    belt.moveBeltAbsolute(-300);
+                    beltUp = false;
+                } else {
+                    belt.moveBelt(Constants.IntakeTargets.UP);
+                    beltUp = true;
+                }
             }
 
             // Turntable rotation
