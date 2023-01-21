@@ -56,6 +56,10 @@ public class DeBruh extends LinearOpMode {
     boolean currentBbtn, currentYbtn, currentXbtn;
     boolean currentRBumper;
     boolean currentLBumper;
+    boolean gp1LeftStickYJustPressed = false;
+    boolean liftDown = true;
+    int[] conePositions = {290, 200, 130, 70, 0};
+
 
     double movementHorizontal = 0;
     double movementVertical = 0;
@@ -177,6 +181,9 @@ public class DeBruh extends LinearOpMode {
             if (currentBbtn && gp2BReleased) {
                 gp2BReleased = false;
                 if (beltUp) {
+                    if (liftDown) { // handles case where belt is going down preemptively as you prepare to pick up cone
+                        claw.moveClaw(Constants.ClawTargets.OPENCLAW);
+                    }
                     belt.moveBelt(Constants.IntakeTargets.DOWN);
 
                     beltUp = false;
@@ -197,8 +204,10 @@ public class DeBruh extends LinearOpMode {
                 gp2YReleased = false;
                 belt.belt.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
                 belt.belt.setPower(0.5); // moving up, in positive direction
+            }
 
-                if (!gamepad2.y && !gp2YReleased) belt.drift = belt.belt.getCurrentPosition();
+            if (!gamepad2.y && !gp2YReleased) {
+                belt.drift = belt.belt.getCurrentPosition();
             }
 
             currentXbtn = gamepad2.x;
@@ -265,14 +274,40 @@ public class DeBruh extends LinearOpMode {
             // Moving lift
             if (gamepad2.dpad_up) {
                 lift.moveLift(Constants.LiftTargets.HIGH);
+                liftDown = false;
             } else if (gamepad2.dpad_left) {
                 lift.moveLift(Constants.LiftTargets.LOW);
+                liftDown = false;
             } else if (gamepad2.dpad_right) {
                 lift.moveLift(Constants.LiftTargets.MEDIUM);
+                liftDown = false;
             } else if (gamepad2.dpad_down) {
                 //                belt.moveBelt(Constants.IntakeTargets.PICKUP);
                 lift.moveLift(Constants.LiftTargets.PICKUP);
+                liftDown = true;
             }
+
+            // slow Manual lift control with left joystick. Slightly dysfunctional.
+
+//            if (Math.abs(gamepad2.left_stick_y) > 0.3) {
+//                gp1LeftStickYJustPressed = true;
+//            }
+//
+//            if (Math.abs(gamepad2.left_stick_y) > 0.3 && gp1LeftStickYJustPressed) { // joystick going down
+//                 // go to top of conestakcs
+//                lift.setLiftPosition(conePositions[0]);
+//                gp1LeftStickYJustPressed = false;
+//
+//            if (Math.abs(gamepad2.left_stick_y) > 0.3 && !gp1LeftStickYJustPressed)
+//                lift.left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+//                lift.right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+//
+//                lift.left.setPower(-0.5 * gamepad2.left_stick_y);
+//                lift.right.setPower(0.5 * gamepad2.left_stick_y);
+//
+//                // so that this doesn't happen again when we press left stick y after releasing
+//                gp1LeftStickYJustPressed = true;
+//            }
 
             // X: reset subsystems for intaking action
             // turn table turned
@@ -285,6 +320,7 @@ public class DeBruh extends LinearOpMode {
                 belt.moveBelt(Constants.IntakeTargets.UP);
                 tableRotation = 0;
                 lift.moveLift(Constants.LiftTargets.PICKUP);
+                liftDown = true;
             }
 
             if (tableRotation >= 180) {
@@ -317,6 +353,7 @@ public class DeBruh extends LinearOpMode {
             telemetry.addData("Dpad down", gamepad2.dpad_down);
             telemetry.addData("Dpad left", gamepad2.dpad_left);
             telemetry.addData("gamepad 2 x button", gamepad2.x);
+            telemetry.addData("left joystick", gamepad2.left_stick_y);
             telemetry.addData("turn table position", turntable.getCurrentPosition());
             telemetry.addData("translation ", translation);
             telemetry.update();
