@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.subsystems.Belt;
+import org.firstinspires.ftc.teamcode.subsystems.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 
 @TeleOp(name = "LiftLimits")
@@ -18,19 +20,22 @@ public class LiftLimits extends LinearOpMode {
     public static int target = 0;
 
     private Lift lift = new Lift();
-
+    private Belt belt = new Belt();
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         lift.init(hardwareMap);
+        belt.init(hardwareMap);
+
 
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
             lift.moveLift(target);
-
+            belt.moveBeltNoCorrection(Constants.IntakeTargets.DOWN);
             telemetry.addData("Lift Position ", lift.getPosition());
+            telemetry.addData("Lift Position ", belt.getBeltPosition());
             telemetry.update();
         }
     }
