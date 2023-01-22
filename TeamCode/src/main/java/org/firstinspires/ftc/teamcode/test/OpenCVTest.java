@@ -25,12 +25,13 @@ public class OpenCVTest extends LinearOpMode{
     @Override
     public void runOpMode(){
 
-        //Claw Initialization
+        //Telemetry Initialization
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         //Camera Initialization
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
+
         pipeline = new OpenCV.Pipeline();
         webcam.setPipeline(pipeline);
 
@@ -39,7 +40,7 @@ public class OpenCVTest extends LinearOpMode{
             @Override
             public void onOpened(){
                 webcam.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
-                webcam.startStreaming(1280,720,OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(320,240,OpenCvCameraRotation.SIDEWAYS_LEFT);
             }
             @Override
             public void onError(int errorCode){
@@ -48,13 +49,20 @@ public class OpenCVTest extends LinearOpMode{
             }
         });
 
+        /*
         snapshotAnalysis = pipeline.getAnalysis();
         FtcDashboard.getInstance().startCameraStream(webcam, 0);
 
         waitForStart();
         while (opModeIsActive())
         {
-            telemetry.addData("avg", pipeline.getColorAverage());
+
+            telemetry.addData("anal", pipeline.getAnalysis());
+            telemetry.addData("red", pipeline.getRed());
+            telemetry.addData("blue", pipeline.getBlue());
+            telemetry.addData("green", pipeline.getGreen());
+            telemetry.addData("color", pipeline.getColor());
+
 
             telemetry.update();
 
@@ -65,7 +73,7 @@ public class OpenCVTest extends LinearOpMode{
             sleep(100);
         }
 
+         */
+
     }
-
-
 }
