@@ -57,6 +57,10 @@ public class Camera extends LinearOpMode {
         FtcDashboard.getInstance().startCameraStream(webcam, 0);
     }
 
+    public static OpenCV.Pipeline getPipeline() {
+        return pipeline;
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
     }
