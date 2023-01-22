@@ -114,22 +114,16 @@ public class RightAuto extends LinearOpMode {
         while (!opModeIsActive() && !isStopRequested()) {
             telemetry.addData("READY", "");
 
-            OpenCV.Pipeline pipeline = Camera.getPipeline();
-            int value = pipeline.getColorAverage();
+            String color = OpenCV.Pipeline.getColor();
 
-            String[] colors = new String[]{"yellow", "magenta", "cyan"};
-
-            telemetry.addData("color: ", colors[value - 1]);
+            telemetry.addData("color: ", color);
             telemetry.update();
 
-            if (value == 1) {
-                // color = yellow
+            if (color.equals("Yellow")) {
                 parkPosition = new Vector2d(12,-11.6);
-            } else if (value == 2) {
-                // color = magenta
+            } else if (color.equals("Cyan")) {
                 parkPosition = new Vector2d(36,-11.6);
-            } else {
-                // color = cyan
+            } else if (color.equals("Magenta")){
                 parkPosition = new Vector2d(56, -11.6);
             }
 
