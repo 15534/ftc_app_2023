@@ -16,45 +16,30 @@ import org.openftc.easyopencv.*;
 public class Camera extends LinearOpMode {
 
     OpenCvWebcam webcam;
-    OpenCV.Pipeline pipeline;
+    static OpenCV.Pipeline pipeline;
     OpenCV.Pipeline.Orientation snapshotAnalysis = OpenCV.Pipeline.Orientation.PROCESSING; // default
 
     public void init(HardwareMap hardwareMap) {
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        //Camera Initialization
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
 
-        int cameraMonitorViewId =
-                hardwareMap
-                        .appContext
-                        .getResources()
-                        .getIdentifier(
-                                "cameraMonitorViewId",
-                                "id",
-                                hardwareMap.appContext.getPackageName());
-        webcam =
-                OpenCvCameraFactory.getInstance()
-                        .createWebcam(
-                                hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
         pipeline = new OpenCV.Pipeline();
         webcam.setPipeline(pipeline);
 
         ((OpenCvWebcam) webcam).setMillisecondsPermissionTimeout(5000);
-        webcam.openCameraDeviceAsync(
-                new OpenCvCamera.AsyncCameraOpenListener() {
-                    @Override
-                    public void onOpened() {
-                        webcam.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
-                        webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
-                    }
-
-                    @Override
-                    public void onError(int errorCode) {
-                        telemetry.addData("Camera Initialization: ", "Failed");
-                        telemetry.update();
-                    }
-                });
-
-        snapshotAnalysis = pipeline.getAnalysis();
-        FtcDashboard.getInstance().startCameraStream(webcam, 0);
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener(){
+            @Override
+            public void onOpened(){
+                webcam.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
+                webcam.startStreaming(320,240,OpenCvCameraRotation.SIDEWAYS_LEFT);
+            }
+            @Override
+            public void onError(int errorCode){
+                telemetry.addData("Camera Initialization: ", "Failed");
+                telemetry.update();
+            }
+        });
     }
 
     public static OpenCV.Pipeline getPipeline() {

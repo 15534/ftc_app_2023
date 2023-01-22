@@ -32,7 +32,9 @@ public class OpenCV
         public static final Point REGION_B = new Point(180, 150);
 
         Mat submat;
-        int red, blue, green;
+        static int red;
+        static int blue;
+        static int green;
 
         // Volatile since accessed by OpMode thread w/o synchronization
         private volatile Orientation position = Orientation.PROCESSING;
@@ -80,7 +82,7 @@ public class OpenCV
             return green;
         }
 
-        public String getColor(){
+        public static String getColor(){
 
             // Cyan (0, 255, 255)
             if (red < 20 && blue > 225 && green > 225) {
