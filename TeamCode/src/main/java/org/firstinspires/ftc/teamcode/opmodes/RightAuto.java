@@ -15,13 +15,15 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.Belt;
+import org.firstinspires.ftc.teamcode.subsystems.Camera;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
+import org.firstinspires.ftc.teamcode.utility.OpenCV;
 
 // Implements TeddyPlan
-@Autonomous(name = "RightAuto")
+@Autonomous(name = "RightRedAuto")
 @Config
 public class RightAuto extends LinearOpMode {
 
@@ -39,6 +41,7 @@ public class RightAuto extends LinearOpMode {
     Claw claw = new Claw();
     Belt belt = new Belt();
     TurnTable turntable = new TurnTable();
+    Camera camera = new Camera();
 
     Pose2d coneStackStartPos;
 
@@ -56,6 +59,9 @@ public class RightAuto extends LinearOpMode {
 
         Trajectory FIRST_HIGH_POLE =
                 drive.trajectoryBuilder(startingPos)
+                        // moves to the first high junction (35.6, 0)
+                        // turns turntable 90 deg (counter-clockwise)
+                        // lifts to high
                         .lineTo(new Vector2d(35.6, 0))
                         .addDisplacementMarker(
                                 1, () -> {
@@ -66,6 +72,7 @@ public class RightAuto extends LinearOpMode {
                         })
                         .build();
 
+        // @TODO: combine PREPARE_TO_TURN and the turning
         Trajectory PREPARE_TO_TURN =
                 drive.trajectoryBuilder(FIRST_HIGH_POLE.end())
                         .lineTo(new Vector2d(36, -12))
@@ -74,21 +81,18 @@ public class RightAuto extends LinearOpMode {
         coneStackStartPos = new Pose2d(PREPARE_TO_TURN.end().getX(), PREPARE_TO_TURN.end().getY(), 0);
 
         Trajectory GO_TOWARDS_CONESTACK =
-                //new Pose2d(36, -13, 0) not this
-                drive.trajectoryBuilder(coneStackStartPos) // rewrite heading
+                drive.trajectoryBuilder(coneStackStartPos)
+                        // move to conestacks, can be tuned for more accuracy for pickup
                         .lineTo(new Vector2d(56, -11.6))
                         .build();
 
         Trajectory CYCLE_HIGH_POLE =
                 drive.trajectoryBuilder(GO_TOWARDS_CONESTACK.end())
-
+                        // move back to high pole, slowed down drive constants
+                        // lifts and turntable (counter-clockwise)
                         .lineTo(new Vector2d(22, -12.4),
-                        SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                        .addDisplacementMarker(
-                        1, () -> {
-                            turntable.turn(90);
-                        })
+                                SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                         .addDisplacementMarker(10, () -> {
                             turntable.turn(90);
                             lift.moveLift(Constants.LiftTargets.HIGH);
@@ -97,10 +101,46 @@ public class RightAuto extends LinearOpMode {
 
         Trajectory CYCLE_CONESTACK =
                 drive.trajectoryBuilder(CYCLE_HIGH_POLE.end())
+                        // go back to conestacks after placing at high pole for CYCLING
                         .lineTo(new Vector2d(56, -11.6))
                         .build();
 
         runtime.reset();
+
+        // OpenCV - we want to do this in init mode so this is why it's not with the other subsystems
+        camera.init(hardwareMap);
+        Vector2d parkPosition = new Vector2d();
+
+        while (!opModeIsActive() && !isStopRequested()) {
+            telemetry.addData("READY", "");
+
+            OpenCV.Pipeline pipeline = Camera.getPipeline();
+            int value = pipeline.getColorAverage();
+
+            String[] colors = new String[]{"yellow", "magenta", "cyan"};
+
+            telemetry.addData("color: ", colors[value - 1]);
+            telemetry.update();
+
+            if (value == 1) {
+                // color = yellow
+                parkPosition = new Vector2d(12,-11.6);
+            } else if (value == 2) {
+                // color = magenta
+                parkPosition = new Vector2d(36,-11.6);
+            } else {
+                // color = cyan
+                parkPosition = new Vector2d(56, -11.6);
+            }
+
+            sleep(50);
+        }
+
+        // define park trajectory here because the value will be diff based off opencv values
+        Trajectory PARK = drive.trajectoryBuilder(CYCLE_HIGH_POLE.end())
+            .lineTo(parkPosition)
+            .build();
+
         waitForStart();
 
         claw.init(hardwareMap);
@@ -195,9 +235,8 @@ public class RightAuto extends LinearOpMode {
                             lift.moveLift(Constants.LiftTargets.PICKUP);
                             turntable.turn(0);
                             claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
-                            next(State.IDLE);
+                            next(State.PARK);
                         }
-
                     }
                     break;
 
@@ -213,6 +252,14 @@ public class RightAuto extends LinearOpMode {
                     }
                     break;
 
+                case PARK:
+                    if (!drive.isBusy()) {
+                        drive.followTrajectory(PARK);
+                        turntable.turn(0);
+                        lift.moveLift(Constants.LiftTargets.PICKUP);
+                        claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
+                        belt.moveBelt(Constants.IntakeTargets.UP);
+                    }
             }
 
             drive.update();
@@ -242,6 +289,7 @@ public class RightAuto extends LinearOpMode {
         CYCLE_HIGHPOLE,
         DROP_CYCLE_CONE,
         CYCLE_CONESTACK,
+        PARK,
         IDLE
     }
 }
