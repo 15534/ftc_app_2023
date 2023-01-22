@@ -13,11 +13,6 @@ public class Constants {
         MEDIUM,
         HIGH,
         PUTDOWN,
-        AUTO_CONE_1,
-        AUTO_CONE_2,
-        AUTO_CONE_3,
-        AUTO_CONE_4,
-        AUTO_CONE_5
     } // PICKUP: 0, LOW: 100, MEDIUM: 300, HIGH: 550, PUTDOWN: 50
     // @TODO Verify if PUTDOWN should be swapped with PICKUP
 
@@ -27,7 +22,9 @@ public class Constants {
     public enum IntakeTargets {
         UP,
         HOLD,
-        DOWN
+        DOWN,
+        CONE_DROP
+
     } // PICKUP: -261, HOLD: 0 , DROPOFF: -285
 
     /*

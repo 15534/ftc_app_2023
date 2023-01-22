@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -20,12 +21,13 @@ import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 
 @Autonomous(name = "RedAutoV1")
 @Config
+@Disabled
 public class RedAutoV1 extends LinearOpMode {
 
     State currentState = State.IDLE;
     SampleMecanumDrive drive;
 
-    Pose2d startingPos = new Pose2d(12, -62, Math.toRadians(90));
+    Pose2d startingPos = new Pose2d(36, -62, Math.toRadians(90));
     ElapsedTime runtime = new ElapsedTime();
     int cyclesCompleted = 0;
     int[] liftPosition = {80, 60, 40, 27, 0};

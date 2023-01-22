@@ -42,7 +42,7 @@ public class TeleOpV1 extends LinearOpMode {
     public static double SLOW_MOVEMENT_MULTIPLIER = .4;
     public static double FAST_MOVEMENT_MULTIPLIER = 1;
     public static double ROTATION_MULTIPLIER = 2.05;
-    public static double SLOW_ROTATION_MULTIPLIER = .4;
+    public static double SLOW_ROTATION_MULTIPLIER = .2;
     public static boolean TURN_X_JOYSTICK = true;
     public static double turntableSensitivity = 2.2;
     boolean gp2AReleased = true;
