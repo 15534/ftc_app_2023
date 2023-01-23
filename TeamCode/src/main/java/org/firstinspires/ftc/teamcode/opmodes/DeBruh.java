@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Belt;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.subsystems.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.Consts;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 
@@ -37,7 +37,8 @@ import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
  */
 
 @TeleOp(name = "DeBruh")
-@Config()
+@Config
+
 public class DeBruh extends LinearOpMode {
     public static double DEFAULT_MOVE_MULTIPLIER = .7;
     public static double SLOW_MOVEMENT_MULTIPLIER = .4;
@@ -83,7 +84,7 @@ public class DeBruh extends LinearOpMode {
         Belt belt = new Belt();
         Lift lift = new Lift();
         TurnTable turntable = new TurnTable();
-        Constants.IntakeTargets beltTarget = Constants.IntakeTargets.UP;
+        Consts.Belt beltTarget = Consts.Belt.UP;
 
         drive.setPoseEstimate(PoseStorage.currentPose);
 
@@ -164,10 +165,10 @@ public class DeBruh extends LinearOpMode {
             if (rightTriggerRelased && gp2AReleased) {
                 gp2AReleased = false;
                 if (clawOpen) {
-                    claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
+                    claw.move(Consts.Claw.CLOSECLAW);
                     clawOpen = false;
                 } else {
-                    claw.moveClaw(Constants.ClawTargets.OPENCLAW);
+                    claw.move(Consts.Claw.OPENCLAW);
                     clawOpen = true;
                 }
             }
@@ -182,13 +183,13 @@ public class DeBruh extends LinearOpMode {
                 gp2BReleased = false;
                 if (beltUp) {
                     if (liftDown) { // handles case where belt is going down preemptively as you prepare to pick up cone
-                        claw.moveClaw(Constants.ClawTargets.OPENCLAW);
+                        claw.move(Consts.Claw.OPENCLAW);
                     }
-                    belt.moveBelt(Constants.IntakeTargets.DOWN);
+                    belt.move(Consts.Belt.DOWN);
 
                     beltUp = false;
                 } else {
-                    belt.moveBelt(Constants.IntakeTargets.UP);
+                    belt.move(Consts.Belt.UP);
                     beltUp = true;
                 }
             }
@@ -218,10 +219,10 @@ public class DeBruh extends LinearOpMode {
             if (currentXbtn && gp2XReleased) {
                 gp2XReleased = false;
                 if (beltUp) {
-                    belt.moveBeltAbsolute(-300);
+                    belt.moveNoCorrection(-300);
                     beltUp = false;
                 } else {
-                    belt.moveBelt(Constants.IntakeTargets.UP);
+                    belt.move(Consts.Belt.UP);
                     beltUp = true;
                 }
             }
@@ -234,7 +235,7 @@ public class DeBruh extends LinearOpMode {
 
             if (currentRBumper && gp2RBumperReleased) {
                 if (!beltUp && lift.getTarget() == 0) {
-                    belt.moveBelt(Constants.IntakeTargets.UP);
+                    belt.move(Consts.Belt.UP);
                     beltUp = true;
                 }
 
@@ -255,7 +256,7 @@ public class DeBruh extends LinearOpMode {
 
             if (currentLBumper && gp2LBumperReleased) {
                 if (!beltUp && lift.getTarget() == 0) {
-                    belt.moveBelt(Constants.IntakeTargets.UP);
+                    belt.move(Consts.Belt.UP);
                     beltUp = true;
                 }
 
@@ -273,17 +274,17 @@ public class DeBruh extends LinearOpMode {
 
             // Moving lift
             if (gamepad2.dpad_up) {
-                lift.moveLift(Constants.LiftTargets.HIGH);
+                lift.move(Consts.Lift.HIGH);
                 liftDown = false;
             } else if (gamepad2.dpad_left) {
-                lift.moveLift(Constants.LiftTargets.LOW);
+                lift.move(Consts.Lift.LOW);
                 liftDown = false;
             } else if (gamepad2.dpad_right) {
-                lift.moveLift(Constants.LiftTargets.MEDIUM);
+                lift.move(Consts.Lift.MEDIUM);
                 liftDown = false;
             } else if (gamepad2.dpad_down) {
                 //                belt.moveBelt(Constants.IntakeTargets.PICKUP);
-                lift.moveLift(Constants.LiftTargets.PICKUP);
+                lift.move(Consts.Lift.ZERO);
                 liftDown = true;
             }
 
@@ -317,9 +318,9 @@ public class DeBruh extends LinearOpMode {
             // belt up -> claw close -> turntable turn back -> lift down
 
             if (gamepad2.a) {
-                belt.moveBelt(Constants.IntakeTargets.UP);
+                belt.move(Consts.Belt.UP);
                 tableRotation = 0;
-                lift.moveLift(Constants.LiftTargets.PICKUP);
+                lift.move(Consts.Lift.ZERO);
                 liftDown = true;
             }
 
@@ -331,14 +332,14 @@ public class DeBruh extends LinearOpMode {
             }
 
 
-            turntable.turn(tableRotation);
+            turntable.move(tableRotation);
 
             drive.setWeightedDrivePower(new Pose2d(translation, rotation));
 
             telemetry.addData("rTrigger ", gamepad1.right_trigger);
             telemetry.addData("lTrigger ", gamepad1.left_trigger);
             telemetry.addData("clawOpen", clawOpen);
-            telemetry.addData("claw position ", claw.getClawPosition());
+            telemetry.addData("claw position ", claw.getPosition());
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
@@ -354,7 +355,7 @@ public class DeBruh extends LinearOpMode {
             telemetry.addData("Dpad left", gamepad2.dpad_left);
             telemetry.addData("gamepad 2 x button", gamepad2.x);
             telemetry.addData("left joystick", gamepad2.left_stick_y);
-            telemetry.addData("turn table position", turntable.getCurrentPosition());
+            telemetry.addData("turn table position", turntable.getPosition());
             telemetry.addData("translation ", translation);
             telemetry.update();
         }

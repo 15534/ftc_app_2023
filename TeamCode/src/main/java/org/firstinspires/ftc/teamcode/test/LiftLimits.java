@@ -5,12 +5,9 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.Belt;
-import org.firstinspires.ftc.teamcode.subsystems.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.Consts;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 
 @TeleOp(name = "LiftLimits")
@@ -32,10 +29,10 @@ public class LiftLimits extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
-            lift.moveLift(target);
-            belt.moveBeltNoCorrection(Constants.IntakeTargets.DOWN);
+            lift.move(target);
+            belt.moveNoCorrection(Consts.Belt.DOWN);
             telemetry.addData("Lift Position ", lift.getPosition());
-            telemetry.addData("Lift Position ", belt.getBeltPosition());
+            telemetry.addData("Lift Position ", belt.getPosition());
             telemetry.update();
         }
     }

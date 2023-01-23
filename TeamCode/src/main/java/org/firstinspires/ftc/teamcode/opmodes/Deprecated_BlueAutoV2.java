@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.subsystems.OldBelt;
+import org.firstinspires.ftc.teamcode.subsystems.Belt;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 @Autonomous(name = "BlueAutoV2")
 @Config
 @Disabled
-public class BlueAutoV2 extends LinearOpMode {
+public class Deprecated_BlueAutoV2 extends LinearOpMode {
 
     State currentState = State.IDLE;
     SampleMecanumDrive drive;
@@ -32,7 +32,7 @@ public class BlueAutoV2 extends LinearOpMode {
 
     Lift lift = new Lift();
     Claw claw = new Claw();
-    OldBelt oldBelt = new OldBelt();
+    Belt belt = new Belt();
     TurnTable turntable = new TurnTable();
 
     Trajectory firstHighPole, firstConeStack, coneStack, placeHighPole, park;
@@ -102,7 +102,7 @@ public class BlueAutoV2 extends LinearOpMode {
         waitForStart();
 
         claw.init(hardwareMap);
-        oldBelt.init(hardwareMap);
+        belt.init(hardwareMap);
         turntable.init(hardwareMap);
         lift.init(hardwareMap);
 
