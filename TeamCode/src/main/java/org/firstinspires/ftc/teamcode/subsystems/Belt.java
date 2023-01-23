@@ -17,7 +17,7 @@ public class Belt {
         belt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void move (Consts.Belt target) {
+    public void move(Consts.Belt target) {
             switch (target) {
                 case UP:
                     belt.setTargetPosition(drift);
