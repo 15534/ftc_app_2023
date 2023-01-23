@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -24,10 +22,9 @@ public class TurnTable {
         motor = hardwareMap.get(DcMotorEx.class, "turnTable");
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        setTablePosition(0);
     }
 
-    public void turn(double degrees) {
+    public void move(double degrees) {
         int target = (int) degrees;
 
         if (target >= 270) {
@@ -43,6 +40,10 @@ public class TurnTable {
         motor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         motor.setPower(MOTOR_POWER);
+    }
+
+    public void reset() {
+        move(0);
     }
 
     public int getPosition() {

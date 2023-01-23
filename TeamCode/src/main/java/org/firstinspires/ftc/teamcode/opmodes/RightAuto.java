@@ -13,11 +13,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.Belt;
 import org.firstinspires.ftc.teamcode.subsystems.Camera;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.subsystems.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.Consts;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 import org.firstinspires.ftc.teamcode.utility.OpenCV;
@@ -66,10 +65,10 @@ public class RightAuto extends LinearOpMode {
                         .lineTo(new Vector2d(35.6, 0))
                         .addDisplacementMarker(
                                 1, () -> {
-                                    turntable.turn(90);
+                                    turntable.move(90);
                                 })
                         .addDisplacementMarker(10, ()->{
-                            lift.moveLift(Constants.LiftTargets.HIGH);
+                            lift.move(Consts.Lift.HIGH);
                         })
                         .build();
 
@@ -95,8 +94,8 @@ public class RightAuto extends LinearOpMode {
                                 SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                         .addDisplacementMarker(10, () -> {
-                            turntable.turn(90);
-                            lift.moveLift(Constants.LiftTargets.HIGH);
+                            turntable.move(90);
+                            lift.move(Consts.Lift.HIGH);
                         })
                         .build();
 
@@ -156,9 +155,9 @@ public class RightAuto extends LinearOpMode {
 
                 case DROP_FIRST_CONE:
                     if (!drive.isBusy()) {
-                        belt.moveBelt(Constants.IntakeTargets.CONE_DROP);
+                        belt.move(Consts.Belt.CONE_DROP);
                         sleep(700);
-                        claw.moveClaw(Constants.ClawTargets.OPENCLAW);
+                        claw.move(Consts.Claw.OPENCLAW);
                         sleep(500);
                         next(State.PREPARE_TO_TURN);
                     }
@@ -167,9 +166,9 @@ public class RightAuto extends LinearOpMode {
                 case PREPARE_TO_TURN:
                     if (!drive.isBusy()) {
                         sleep(1000);
-                        belt.moveBelt(Constants.IntakeTargets.UP);
-                        lift.moveLift(Constants.LiftTargets.PICKUP);
-                        turntable.turn(0);
+                        belt.move(Consts.Belt.UP);
+                        lift.move(Consts.Lift.ZERO);
+                        turntable.move(0);
 
                         drive.followTrajectoryAsync(PREPARE_TO_TURN);
 
@@ -187,9 +186,9 @@ public class RightAuto extends LinearOpMode {
                 case GO_TOWARDS_CONESTACK:
                     if (!drive.isBusy()) {
                         sleep(1000);
-                        lift.moveLift(liftPosition[cyclesCompleted]);
-                        turntable.turn(0);
-                        belt.moveBelt(Constants.IntakeTargets.DOWN);
+                        lift.move(liftPosition[cyclesCompleted]);
+                        turntable.move(0);
+                        belt.move(Consts.Belt.DOWN);
                         drive.followTrajectoryAsync(GO_TOWARDS_CONESTACK);
                         next(State.PICKUP_CONE);
                     }
@@ -197,10 +196,10 @@ public class RightAuto extends LinearOpMode {
 
                 case PICKUP_CONE:
                     if (!drive.isBusy()) {
-                        claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
+                        claw.move(Consts.Claw.CLOSECLAW);
 
                         sleep(1000);
-                        lift.moveLift(Constants.LiftTargets.LOW);
+                        lift.move(Consts.Lift.LOW);
 
                         sleep(200);
 
@@ -219,17 +218,17 @@ public class RightAuto extends LinearOpMode {
                 case DROP_CYCLE_CONE:
                     if (!drive.isBusy()) {
                         sleep(1000);
-                        claw.moveClaw(Constants.ClawTargets.OPENCLAW);
+                        claw.move(Consts.Claw.OPENCLAW);
                         sleep(500);
-                        belt.moveBelt(Constants.IntakeTargets.UP);
+                        belt.move(Consts.Belt.UP);
                         if (cyclesCompleted < 1){
                             next(State.CYCLE_CONESTACK);
                         }
                         else{
-                            belt.moveBelt(Constants.IntakeTargets.UP);
-                            lift.moveLift(Constants.LiftTargets.PICKUP);
-                            turntable.turn(0);
-                            claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
+                            belt.move(Consts.Belt.UP);
+                            lift.move(Consts.Lift.ZERO);
+                            turntable.move(0);
+                            claw.move(Consts.Claw.CLOSECLAW);
                             next(State.PARK);
                         }
                     }
@@ -237,11 +236,11 @@ public class RightAuto extends LinearOpMode {
 
                 case CYCLE_CONESTACK:
                     if (!drive.isBusy()) {
-                        lift.moveLift(liftPosition[cyclesCompleted]);
-                        turntable.turn(0);
-                        claw.moveClaw(Constants.ClawTargets.OPENCLAW);
+                        lift.move(liftPosition[cyclesCompleted]);
+                        turntable.move(0);
+                        claw.move(Consts.Claw.OPENCLAW);
                         sleep(1000);
-                        belt.moveBelt(Constants.IntakeTargets.DOWN);
+                        belt.move(Consts.Belt.DOWN);
                         drive.followTrajectoryAsync(CYCLE_CONESTACK);
                         next(State.PICKUP_CONE);
                     }
@@ -250,10 +249,10 @@ public class RightAuto extends LinearOpMode {
                 case PARK:
                     if (!drive.isBusy()) {
                         drive.followTrajectory(PARK);
-                        turntable.turn(0);
-                        lift.moveLift(Constants.LiftTargets.PICKUP);
-                        claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
-                        belt.moveBelt(Constants.IntakeTargets.UP);
+                        turntable.move(0);
+                        lift.move(Consts.Lift.ZERO);
+                        claw.move(Consts.Claw.CLOSECLAW);
+                        belt.move(Consts.Belt.UP);
                     }
             }
 

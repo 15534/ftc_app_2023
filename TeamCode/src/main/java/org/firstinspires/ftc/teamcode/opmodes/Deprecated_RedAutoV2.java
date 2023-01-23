@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.Belt;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.subsystems.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.Consts;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 
@@ -58,11 +58,11 @@ public class Deprecated_RedAutoV2 extends LinearOpMode {
                         .addSpatialMarker(
                                 new Vector2d(36, 0),
                                 () -> {
-                                    claw.moveClaw(Constants.ClawTargets.OPENCLAW);
+                                    claw.move(Consts.Claw.OPENCLAW);
                                 })
                         .addDisplacementMarker(
                                 () -> {
-                                    turntable.turn(0);
+                                    turntable.move(0);
                                 })
                         .lineToConstantHeading(new Vector2d(36, 0))
                         .build();
@@ -82,16 +82,16 @@ public class Deprecated_RedAutoV2 extends LinearOpMode {
                         .addDisplacementMarker(
                                 0,
                                 () -> {
-                                    belt.moveBelt(Constants.IntakeTargets.DOWN);
-                                    lift.moveLift(liftPosition[(cyclesCompleted)]);
-                                    claw.moveClaw(Constants.ClawTargets.OPENCLAW);
-                                    turntable.turn(0);
+                                    belt.move(Consts.Belt.DOWN);
+                                    lift.move(liftPosition[(cyclesCompleted)]);
+                                    claw.move(Consts.Claw.OPENCLAW);
+                                    turntable.move(0);
                                 })
                         .lineTo(new Vector2d(54, -12))
                         .addDisplacementMarker(() ->{
-                            claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
+                            claw.move(Consts.Claw.CLOSECLAW);
                             sleep(200);
-                            lift.moveLift(Constants.LiftTargets.HIGH);
+                            lift.move(Consts.Lift.HIGH);
                             sleep(200);
                         })
 
@@ -104,8 +104,8 @@ public class Deprecated_RedAutoV2 extends LinearOpMode {
                                 3,
                                 () -> {
 //                                    belt.moveBelt(Constants.IntakeTargets.PICKUP);
-                                    lift.moveLift(Constants.LiftTargets.HIGH);
-                                    turntable.turn(90);
+                                    lift.move(Consts.Lift.HIGH);
+                                    turntable.move(90);
                                 })
                         .build();
 
@@ -114,16 +114,16 @@ public class Deprecated_RedAutoV2 extends LinearOpMode {
                         .addDisplacementMarker(
                                 0,
                                 () -> {
-                                    belt.moveBelt(Constants.IntakeTargets.DOWN);
-                                    lift.moveLift(liftPosition[(cyclesCompleted)]);
-                                    claw.moveClaw(Constants.ClawTargets.OPENCLAW);
-                                    turntable.turn(0);
+                                    belt.move(Consts.Belt.DOWN);
+                                    lift.move(liftPosition[(cyclesCompleted)]);
+                                    claw.move(Consts.Claw.OPENCLAW);
+                                    turntable.move(0);
                                 })
                         .lineTo(new Vector2d(54, -12))
                         .addDisplacementMarker(() ->{
-                            claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
+                            claw.move(Consts.Claw.CLOSECLAW);
                             sleep(200);
-                            lift.moveLift(Constants.LiftTargets.HIGH);
+                            lift.move(Consts.Lift.HIGH);
                             sleep(200);
                         })
 
@@ -166,8 +166,8 @@ public class Deprecated_RedAutoV2 extends LinearOpMode {
                     if (!drive.isBusy()) {
                         drive.followTrajectoryAsync(firstHighPole);
 
-                        lift.moveLift(Constants.LiftTargets.HIGH);
-                        belt.moveBelt(Constants.IntakeTargets.DOWN);
+                        lift.move(Consts.Lift.HIGH);
+                        belt.move(Consts.Belt.DOWN);
                         next(State.IDLE);
                     }
                     break;
@@ -179,9 +179,9 @@ public class Deprecated_RedAutoV2 extends LinearOpMode {
                         drive.followTrajectoryAsync(moveAlignCycle);
                         sleep(1000);
 
-                        belt.moveBelt(Constants.IntakeTargets.UP);
-                        claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
-                        lift.moveLift(Constants.LiftTargets.PICKUP);
+                        belt.move(Consts.Belt.UP);
+                        claw.move(Consts.Claw.CLOSECLAW);
+                        lift.move(Consts.Lift.ZERO);
 
 
                         next(State.TURN_ALIGN_CYCLE);

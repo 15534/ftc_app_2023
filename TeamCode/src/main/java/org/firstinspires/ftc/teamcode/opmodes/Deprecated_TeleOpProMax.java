@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Belt;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.subsystems.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.Consts;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 
@@ -81,8 +81,8 @@ public class Deprecated_TeleOpProMax extends LinearOpMode {
         double rotation = 0;
         double tableRotation = 0;
 
-        double beltUpPos = Constants.BELT_UP_POSITION;
-        double beltDownPos = Constants.BELT_DOWN_POSITION;
+        double beltUpPos = Consts.BELT_UP_LIMIT;
+        double beltDownPos = Consts.BELT_DOWN_LIMIT;
 
         Claw claw = new Claw();
 //        OldBelt oldBelt = new OldBelt();
@@ -151,10 +151,10 @@ public class Deprecated_TeleOpProMax extends LinearOpMode {
             currentYbtn = gamepad2.y;
 
             if (currentYbtn) {
-                claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
+                claw.move(Consts.Claw.CLOSECLAW);
             }
             else if (currentAbtn) {
-                claw.moveClaw(Constants.ClawTargets.OPENCLAW);
+                claw.move(Consts.Claw.OPENCLAW);
             }
 
 
@@ -182,11 +182,11 @@ public class Deprecated_TeleOpProMax extends LinearOpMode {
             if (currentBbtn && gp2BReleased) {
                 gp2BReleased = false;
                 if (beltUp) {
-                    belt.moveBelt(Constants.IntakeTargets.DOWN);
+                    belt.move(Consts.Belt.DOWN);
                     beltUp = false;
                 }
                 else {
-                    belt.moveBelt(Constants.IntakeTargets.UP);
+                    belt.move(Consts.Belt.UP);
                     beltUp = true;
                 }
             }
@@ -240,14 +240,14 @@ public class Deprecated_TeleOpProMax extends LinearOpMode {
 
             // Moving lift
             if (gamepad2.dpad_up) {
-                lift.moveLift(Constants.LiftTargets.HIGH);
+                lift.move(Consts.Lift.HIGH);
             } else if (gamepad2.dpad_right) {
-                lift.moveLift(Constants.LiftTargets.LOW);
+                lift.move(Consts.Lift.LOW);
             } else if (gamepad2.dpad_left) {
-                lift.moveLift(Constants.LiftTargets.MEDIUM);
+                lift.move(Consts.Lift.MEDIUM);
             } else if (gamepad2.dpad_down) {
-                belt.moveBelt(Constants.IntakeTargets.UP);
-                lift.moveLift(Constants.LiftTargets.PICKUP);
+                belt.move(Consts.Belt.UP);
+                lift.move(Consts.Lift.ZERO);
             }
 
             // X: reset subsystems for intaking action
@@ -258,9 +258,9 @@ public class Deprecated_TeleOpProMax extends LinearOpMode {
             // belt up -> claw close -> turntable turn back -> lift down
 
             if (gamepad2.x) {
-                belt.moveBelt(Constants.IntakeTargets.UP);
+                belt.move(Consts.Belt.UP);
                 tableRotation = 0;
-                lift.moveLift(Constants.LiftTargets.PICKUP);
+                lift.move(Consts.Lift.ZERO);
             }
 
             if (tableRotation >= 180) {
@@ -269,7 +269,7 @@ public class Deprecated_TeleOpProMax extends LinearOpMode {
             if (tableRotation <= -180) {
                 tableRotation = -180;
             }
-            turntable.turn(tableRotation);
+            turntable.move(tableRotation);
 
 
 

@@ -13,31 +13,27 @@ public class Lift {
     public DcMotorEx left, right;
     public int mainTarget = 0;
 
-    public void moveLift(Constants.LiftTargets input) {
+    public void move(Consts.Lift input) {
         switch (input) {
-            case PICKUP:
-                moveLift(0);
+            case ZERO:
+                move(0);
                 break;
 
             case LOW:
-                moveLift(727);
+                move(727);
                 break;
 
             case MEDIUM:
-                moveLift(1242);
+                move(1242);
                 break;
 
             case HIGH:
-                moveLift(1900);
-                break;
-
-            case PUTDOWN:
-                moveLift(50);
+                move(1900);
                 break;
         }
     }
 
-    public void moveLift(int target) {
+    public void move(int target) {
         setLiftPosition(target);
         mainTarget = target;
     }
@@ -80,6 +76,10 @@ public class Lift {
     public int getPosition() {
         // Using the average of two left and right
         return (left.getCurrentPosition() - (right.getCurrentPosition())) / 2;
+    }
+
+    public void reset() {
+        move(Consts.Lift.ZERO);
     }
 
     public int getTarget() {

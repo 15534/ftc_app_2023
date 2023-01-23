@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.test;
 
-import static org.firstinspires.ftc.teamcode.subsystems.Constants.clawCloseLimit;
+import static org.firstinspires.ftc.teamcode.subsystems.Consts.CLAW_CLOSE_LIMIT;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -20,7 +20,7 @@ public class ClawLimits extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            clawServo.setPosition(clawCloseLimit);
+            clawServo.setPosition(CLAW_CLOSE_LIMIT);
 
             telemetry.addData("Claw Position", clawServo.getPosition());
             telemetry.update();
