@@ -2,36 +2,39 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import static org.firstinspires.ftc.teamcode.subsystems.Constants.clawCloseLimit;
-import static org.firstinspires.ftc.teamcode.subsystems.Constants.clawOpenLimit;
+import static org.firstinspires.ftc.teamcode.subsystems.Consts.CLAW_CLOSE_LIMIT;
+import static org.firstinspires.ftc.teamcode.subsystems.Consts.CLAW_OPEN_LIMIT;
 
 public class Claw {
     public Servo clawServo;
 
     public void init(HardwareMap hardwareMap) {
         clawServo = hardwareMap.get(Servo.class, "claw");
-        moveClaw(Constants.ClawTargets.CLOSECLAW);
+        move(Consts.Claw.CLOSECLAW);
     }
 
-    public void moveClaw(Constants.ClawTargets input) {
+    public void move(Consts.Claw input) {
         // Servo limits go from 0 to 1
         switch (input) {
             case OPENCLAW:
-                clawServo.setPosition(clawOpenLimit);
+                clawServo.setPosition(CLAW_OPEN_LIMIT);
                 break;
             case CLOSECLAW:
-                clawServo.setPosition(clawCloseLimit);
+                clawServo.setPosition(CLAW_CLOSE_LIMIT);
                 break;
         }
     }
 
+    // Raw integer input
     public void moveClaw(double target) {
-        // Servo limits go from 0 to 1
-
         clawServo.setPosition(target);
     }
+
+    public void reset() {
+        move(Consts.Claw.CLOSECLAW);
+    }
     
-    public double getClawPosition() {
+    public double getPosition() {
         return clawServo.getPosition();
     }
 }

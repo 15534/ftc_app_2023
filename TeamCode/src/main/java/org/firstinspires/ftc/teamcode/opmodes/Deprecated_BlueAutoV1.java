@@ -16,14 +16,15 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.Belt;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.subsystems.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.Consts;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 
 @Autonomous(name = "BlueAutoV1")
 @Config
 @Disabled
-public class BlueAutoV1 extends LinearOpMode {
+
+public class Deprecated_BlueAutoV1 extends LinearOpMode {
 
     State currentState = State.IDLE;
     SampleMecanumDrive drive;
@@ -71,11 +72,11 @@ public class BlueAutoV1 extends LinearOpMode {
         firstHighPole =
                 drive.trajectoryBuilder(startingPos)
                         .addSpatialMarker(new Vector2d(12, 46), () -> {
-                            lift.moveLift(Constants.LiftTargets.HIGH);
+                            lift.move(Consts.Lift.HIGH);
                         })
                         .addDisplacementMarker(
                                 () -> {
-                                    turntable.turn(-90);
+                                    turntable.move(-90);
                                 })
                         .lineTo(new Vector2d(12, 22.5))
                         .build();
@@ -86,8 +87,8 @@ public class BlueAutoV1 extends LinearOpMode {
                         .addDisplacementMarker(
                                 2,
                                 () -> {
-                                    turntable.turn(0);
-                                    lift.moveLift(Constants.LiftTargets.PICKUP);
+                                    turntable.move(0);
+                                    lift.move(Consts.Lift.ZERO);
                                 })
                         .build();
 
@@ -148,20 +149,20 @@ public class BlueAutoV1 extends LinearOpMode {
                     if (!drive.isBusy()) {
                         sleep(275);
 
-                        belt.moveBelt(Constants.IntakeTargets.DOWN);
+                        belt.move(Consts.Belt.DOWN);
 
                         long t = System.currentTimeMillis();
                         long end = t + 1250;
 
 
-                        claw.moveClaw(Constants.ClawTargets.OPENCLAW);
+                        claw.move(Consts.Claw.OPENCLAW);
                         sleep(2000);
                         next(State.FIRST_CONESTACK);
                     }
                     break;
                 case FIRST_CONESTACK:
                     if (!drive.isBusy()) {
-                        belt.moveBelt(Constants.IntakeTargets.UP); // moves it up
+                        belt.move(Consts.Belt.UP); // moves it up
 
                         long t = System.currentTimeMillis();
                         long end = t + 1000;
@@ -179,7 +180,7 @@ public class BlueAutoV1 extends LinearOpMode {
                     break;
                 case GO_HIGHJUNC_CONESTACKS:
                     if (!drive.isBusy()) {
-                        turntable.turn(10);
+                        turntable.move(10);
                         drive.followTrajectoryAsync(coneStack);
                         next(State.IDLE);
                     }

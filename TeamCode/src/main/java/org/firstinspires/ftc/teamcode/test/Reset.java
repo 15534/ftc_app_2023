@@ -7,31 +7,40 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.subsystems.Belt;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 
-@TeleOp(name = "ClawTest")
+@TeleOp(name = "Reset")
 @Config
-public class ClawTest extends LinearOpMode {
-    public static double target = 0;
+
+public class Reset extends LinearOpMode {
+    public static int beltPosition = 0;
 
     FtcDashboard dashboard = FtcDashboard.getInstance();
     Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
-    Claw claw = new Claw();
+    public Belt belt = new Belt();
+    public Claw claw = new Claw();
+    public Lift lift = new Lift();
+    public TurnTable turnTable = new TurnTable();
 
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, dashboardTelemetry);
 
+        belt.init(hardwareMap);
         claw.init(hardwareMap);
+        lift.init(hardwareMap);
+        turnTable.init(hardwareMap);
 
         waitForStart();
-
         while (opModeIsActive() && !isStopRequested()) {
-            claw.moveClaw(target);
-
-            telemetry.addData("Claw pos", claw.getPosition());
-            telemetry.update();
+            belt.reset();
+            claw.reset();
+            lift.reset();
+            turnTable.reset();
         }
     }
 }
