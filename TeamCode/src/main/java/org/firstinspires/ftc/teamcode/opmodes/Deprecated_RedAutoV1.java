@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 @Autonomous(name = "RedAutoV1")
 @Config
 @Disabled
-public class RedAutoV1 extends LinearOpMode {
+public class Deprecated_RedAutoV1 extends LinearOpMode {
 
     State currentState = State.IDLE;
     SampleMecanumDrive drive;
@@ -348,7 +348,7 @@ public class RedAutoV1 extends LinearOpMode {
             telemetry.addData("current state", currentState);
             telemetry.addData("busy", drive.isBusy());
             telemetry.addData("cycles ", cyclesCompleted);
-            telemetry.addData("belt ", belt.getBeltPosition());
+            telemetry.addData("belt ", belt.getPosition());
             telemetry.update();
         }
     }

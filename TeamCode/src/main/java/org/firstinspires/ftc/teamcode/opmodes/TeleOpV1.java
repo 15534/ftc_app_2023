@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -36,7 +37,9 @@ import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
  */
 
 @TeleOp(name = "TeleOp")
-@Config()
+@Config
+@Disabled
+
 public class TeleOpV1 extends LinearOpMode {
     public static double DEFAULT_MOVE_MULTIPLIER = .7;
     public static double SLOW_MOVEMENT_MULTIPLIER = .4;
@@ -220,7 +223,7 @@ public class TeleOpV1 extends LinearOpMode {
             telemetry.addData("rTrigger ", gamepad1.right_trigger);
             telemetry.addData("lTrigger ", gamepad1.left_trigger);
             telemetry.addData("clawOpen", clawOpen);
-            telemetry.addData("claw position ", claw.getClawPosition());
+            telemetry.addData("claw position ", claw.getPosition());
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
@@ -234,7 +237,7 @@ public class TeleOpV1 extends LinearOpMode {
             telemetry.addData("Dpad down", gamepad2.dpad_down);
             telemetry.addData("Dpad left", gamepad2.dpad_left);
             telemetry.addData("gamepad 2 x button", gamepad2.x);
-            telemetry.addData("turn table position", turntable.getCurrentPosition());
+            telemetry.addData("turn table position", turntable.getPosition());
             telemetry.addData("translation ", translation);
             telemetry.update();
         }

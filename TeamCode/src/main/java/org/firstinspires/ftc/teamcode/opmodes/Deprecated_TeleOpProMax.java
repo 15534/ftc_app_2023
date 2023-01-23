@@ -40,7 +40,7 @@ import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 @TeleOp(name = "TeleOpProMax")
 @Config()
 @Disabled
-public class TeleOpProMax extends LinearOpMode {
+public class Deprecated_TeleOpProMax extends LinearOpMode {
     public static double DPAD_SPEED = 0.35;
     public static double BUMPER_ROTATION_SPEED = 0.35;
     public static double DEFAULT_MOVE_MULTIPLIER = .7;
@@ -313,7 +313,7 @@ public class TeleOpProMax extends LinearOpMode {
             telemetry.addData("rTrigger ", gamepad1.right_trigger);
             telemetry.addData("lTrigger ", gamepad1.left_trigger);
             telemetry.addData("clawOpen", clawOpen);
-            telemetry.addData("claw position ", claw.getClawPosition());
+            telemetry.addData("claw position ", claw.getPosition());
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
@@ -327,7 +327,7 @@ public class TeleOpProMax extends LinearOpMode {
             telemetry.addData("Dpad down", gamepad2.dpad_down);
             telemetry.addData("Dpad left", gamepad2.dpad_left);
             telemetry.addData("gamepad 2 x button", gamepad2.x);
-            telemetry.addData("turn table position", turntable.getCurrentPosition());
+            telemetry.addData("turn table position", turntable.getPosition());
             telemetry.addData("translation ", translation);
             telemetry.update();
         }

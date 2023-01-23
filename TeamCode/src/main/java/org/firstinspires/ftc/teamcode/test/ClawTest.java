@@ -30,7 +30,7 @@ public class ClawTest extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             claw.moveClaw(target);
 
-            telemetry.addData("Claw pos", claw.getClawPosition());
+            telemetry.addData("Claw pos", claw.getPosition());
             telemetry.update();
         }
     }

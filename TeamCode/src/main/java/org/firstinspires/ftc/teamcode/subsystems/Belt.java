@@ -8,9 +8,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Belt {
     public DcMotorEx belt;
     public int drift = 0;
-    double encoderPos = 0;
-    double previousEncoderPos = 0;
-    boolean goBackCalled = false;
     ElapsedTime timer = new ElapsedTime();
 
     public void init(HardwareMap hardwareMap) {
@@ -21,7 +18,6 @@ public class Belt {
     }
 
     public void moveBelt(Constants.IntakeTargets target) {
-//        if (timer.seconds() > 2){
             switch (target) {
                 case UP:
                     belt.setTargetPosition(drift);
@@ -39,8 +35,6 @@ public class Belt {
                     belt.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
                     belt.setPower(0.5);
                     break;
-//            }
-//            timer.reset();
         }
     }
 
@@ -64,14 +58,14 @@ public class Belt {
         }
     }
 
-    public void moveBeltAbsolute(int target) {
+    // Raw integer input
+    public void moveBeltNoCorrection(int target) {
         belt.setTargetPosition(target);
         belt.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
         belt.setPower(0.5);
     }
 
-    public int getBeltPosition() {
+    public int getPosition() {
         return belt.getCurrentPosition();
     }
 }

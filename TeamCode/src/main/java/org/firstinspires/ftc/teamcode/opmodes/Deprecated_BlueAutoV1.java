@@ -23,7 +23,8 @@ import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 @Autonomous(name = "BlueAutoV1")
 @Config
 @Disabled
-public class BlueAutoV1 extends LinearOpMode {
+
+public class Deprecated_BlueAutoV1 extends LinearOpMode {
 
     State currentState = State.IDLE;
     SampleMecanumDrive drive;

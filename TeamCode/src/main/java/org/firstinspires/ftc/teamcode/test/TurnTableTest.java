@@ -21,7 +21,7 @@ public class TurnTableTest extends LinearOpMode {
         while (opModeIsActive()) {
 //            turntable.turn(degreePosition);
 
-            telemetry.addData("Turntable Position: ", turntable.getCurrentPosition());
+            telemetry.addData("Turntable Position: ", turntable.getPosition());
             telemetry.update();
         }
     }

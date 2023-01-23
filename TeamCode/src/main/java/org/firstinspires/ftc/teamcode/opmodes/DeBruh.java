@@ -37,7 +37,8 @@ import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
  */
 
 @TeleOp(name = "DeBruh")
-@Config()
+@Config
+
 public class DeBruh extends LinearOpMode {
     public static double DEFAULT_MOVE_MULTIPLIER = .7;
     public static double SLOW_MOVEMENT_MULTIPLIER = .4;
@@ -218,7 +219,7 @@ public class DeBruh extends LinearOpMode {
             if (currentXbtn && gp2XReleased) {
                 gp2XReleased = false;
                 if (beltUp) {
-                    belt.moveBeltAbsolute(-300);
+                    belt.moveBeltNoCorrection(-300);
                     beltUp = false;
                 } else {
                     belt.moveBelt(Constants.IntakeTargets.UP);
@@ -338,7 +339,7 @@ public class DeBruh extends LinearOpMode {
             telemetry.addData("rTrigger ", gamepad1.right_trigger);
             telemetry.addData("lTrigger ", gamepad1.left_trigger);
             telemetry.addData("clawOpen", clawOpen);
-            telemetry.addData("claw position ", claw.getClawPosition());
+            telemetry.addData("claw position ", claw.getPosition());
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
@@ -354,7 +355,7 @@ public class DeBruh extends LinearOpMode {
             telemetry.addData("Dpad left", gamepad2.dpad_left);
             telemetry.addData("gamepad 2 x button", gamepad2.x);
             telemetry.addData("left joystick", gamepad2.left_stick_y);
-            telemetry.addData("turn table position", turntable.getCurrentPosition());
+            telemetry.addData("turn table position", turntable.getPosition());
             telemetry.addData("translation ", translation);
             telemetry.update();
         }

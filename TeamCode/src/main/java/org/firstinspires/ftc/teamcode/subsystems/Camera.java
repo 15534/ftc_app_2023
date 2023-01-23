@@ -12,7 +12,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.utility.OpenCV;
 import org.openftc.easyopencv.*;
 
-
 public class Camera extends LinearOpMode {
 
     OpenCvWebcam webcam;

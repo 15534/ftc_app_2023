@@ -35,7 +35,7 @@ public class LiftLimits extends LinearOpMode {
             lift.moveLift(target);
             belt.moveBeltNoCorrection(Constants.IntakeTargets.DOWN);
             telemetry.addData("Lift Position ", lift.getPosition());
-            telemetry.addData("Lift Position ", belt.getBeltPosition());
+            telemetry.addData("Lift Position ", belt.getPosition());
             telemetry.update();
         }
     }

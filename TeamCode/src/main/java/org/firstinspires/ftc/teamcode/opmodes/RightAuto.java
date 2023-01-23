@@ -25,6 +25,7 @@ import org.firstinspires.ftc.teamcode.utility.OpenCV;
 // Implements TeddyPlan
 @Autonomous(name = "RightRedAuto")
 @Config
+
 public class RightAuto extends LinearOpMode {
 
     State currentState = State.IDLE;
@@ -264,15 +265,17 @@ public class RightAuto extends LinearOpMode {
             telemetry.addData("current state", currentState);
             telemetry.addData("busy", drive.isBusy());
             telemetry.addData("cycles ", cyclesCompleted);
-            telemetry.addData("belt ", belt.getBeltPosition());
+            telemetry.addData("belt ", belt.getPosition());
             telemetry.addData("lift ", lift.getPosition());
             telemetry.update();
         }
     }
-    // TODO: 1/14/2023
+
+    // @TODO: 1/14/2023
     // get the translational pids tuned
 
     // For drivetrain states/trajectories, GO_{FIRST PLACE}_{LAST PLACE}
+
     enum State {
         FIRST_HIGH_POLE,
         DROP_FIRST_CONE,

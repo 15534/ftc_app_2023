@@ -24,7 +24,7 @@ public class BeltLimits extends LinearOpMode {
         belt.init(hardwareMap);
 
         while (opModeIsActive()) {
-            dashboardTelemetry.addData("Belt Position", belt.getBeltPosition());
+            dashboardTelemetry.addData("Belt Position", belt.getPosition());
             dashboardTelemetry.update();
         }
     }

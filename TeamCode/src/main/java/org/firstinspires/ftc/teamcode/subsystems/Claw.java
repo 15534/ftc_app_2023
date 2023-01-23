@@ -25,13 +25,12 @@ public class Claw {
         }
     }
 
+    // Raw integer input
     public void moveClaw(double target) {
-        // Servo limits go from 0 to 1
-
         clawServo.setPosition(target);
     }
     
-    public double getClawPosition() {
+    public double getPosition() {
         return clawServo.getPosition();
     }
 }
