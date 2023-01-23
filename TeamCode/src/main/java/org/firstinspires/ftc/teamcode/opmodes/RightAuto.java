@@ -131,21 +131,8 @@ public class RightAuto extends LinearOpMode {
 
         telemetry.addData("READY", "");
 
-        String color = OpenCV.Pipeline.getColor();
-
-        telemetry.addData("color: ", color);
-        telemetry.addData("R: ", OpenCV.Pipeline.getRed());
-        telemetry.addData("G: ", OpenCV.Pipeline.getGreen());
-        telemetry.addData("B: ", OpenCV.Pipeline.getBlue());
         telemetry.update();
 
-        if (color.equals("Yellow")) {
-            parkPosition = new Vector2d(12, -11.6);
-        } else if (color.equals("Blue")) {
-            parkPosition = new Vector2d(36, -11.6);
-        } else if (color.equals("Black")) {
-            parkPosition = new Vector2d(58, -11.6);
-        }
 
         // define park trajectory here because the value will be diff based off opencv values
         Trajectory PARK =

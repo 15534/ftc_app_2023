@@ -52,7 +52,7 @@ public class OpenCVTest extends LinearOpMode {
                     @Override
                     public void onOpened() {
                         webcam.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
-                        webcam.startStreaming(320, 240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+                        webcam.startStreaming(1280, 720, OpenCvCameraRotation.SIDEWAYS_LEFT);
                     }
 
                     @Override
@@ -69,13 +69,8 @@ public class OpenCVTest extends LinearOpMode {
         while (opModeIsActive()) {
 
             telemetry.addData("anal", pipeline.getAnalysis());
-            telemetry.addData("red", OpenCV.Pipeline.getRed());
-            telemetry.addData("blue", OpenCV.Pipeline.getBlue());
-            telemetry.addData("green", OpenCV.Pipeline.getGreen());
-            telemetry.addData("color", OpenCV.Pipeline.getColor());
-            telemetry.addData("avg 1", OpenCV.Pipeline.getAvg1());
-            telemetry.addData("avg 2", OpenCV.Pipeline.getAvg2());
-            telemetry.addData("avg 3", OpenCV.Pipeline.getAvg3());
+            telemetry.addData("qr", OpenCV.Pipeline.getQR());
+            telemetry.addData("qr curved", OpenCV.Pipeline.getQRCurved());
 
             telemetry.update();
 
