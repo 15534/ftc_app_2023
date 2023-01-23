@@ -103,8 +103,8 @@ public class RightAuto extends LinearOpMode {
                         .addDisplacementMarker(
                                 10,
                                 () -> {
-                                    turntable.turn(90);
-                                    lift.moveLift(1850);
+                                    turntable.move(90);
+                                    lift.move(1850);
                                 })
                         .build();
 
