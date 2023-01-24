@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.deprecated;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -37,17 +36,16 @@ import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
  * Right joystick: Turntable rotation
  */
 
-@TeleOp(name = "TeleOpProMax")
-@Config()
+@TeleOp(name = "TeleOp")
+@Config
 @Disabled
-public class Deprecated_TeleOpProMax extends LinearOpMode {
-    public static double DPAD_SPEED = 0.35;
-    public static double BUMPER_ROTATION_SPEED = 0.35;
+
+public class Deprecate_TeleOpV1 extends LinearOpMode {
     public static double DEFAULT_MOVE_MULTIPLIER = .7;
     public static double SLOW_MOVEMENT_MULTIPLIER = .4;
     public static double FAST_MOVEMENT_MULTIPLIER = 1;
     public static double ROTATION_MULTIPLIER = 2.05;
-    public static double SLOW_ROTATION_MULTIPLIER = .4;
+    public static double SLOW_ROTATION_MULTIPLIER = .2;
     public static boolean TURN_X_JOYSTICK = true;
     public static double turntableSensitivity = 2.2;
     boolean gp2AReleased = true;
@@ -55,17 +53,9 @@ public class Deprecated_TeleOpProMax extends LinearOpMode {
     boolean gp2RBumperReleased = true;
     boolean gp2LBumperReleased = true;
     boolean currentAbtn;
-    boolean currentYbtn;
     boolean currentBbtn;
-    boolean gp1APressed = false;
-    boolean gp1BPressed = false;
     boolean currentRBumper;
     boolean currentLBumper;
-    Trajectory currentATrajectory;
-    Trajectory currentBTrajectory;
-    Pose2d poseEstimate;
-    Pose2d startingPos = new Pose2d(12, 62, Math.toRadians(-90));
-    boolean followingTrajectory = false;
 
     private Vector2d translation;
 
@@ -81,16 +71,12 @@ public class Deprecated_TeleOpProMax extends LinearOpMode {
         double rotation = 0;
         double tableRotation = 0;
 
-        double beltUpPos = Consts.BELT_UP_LIMIT;
-        double beltDownPos = Consts.BELT_DOWN_LIMIT;
-
         Claw claw = new Claw();
-//        OldBelt oldBelt = new OldBelt();
         Belt belt = new Belt();
         Lift lift = new Lift();
         TurnTable turntable = new TurnTable();
 
-        drive.setPoseEstimate(startingPos);
+        drive.setPoseEstimate(PoseStorage.currentPose);
 
         waitForStart();
 
@@ -101,77 +87,51 @@ public class Deprecated_TeleOpProMax extends LinearOpMode {
 
         while (!isStopRequested() && !lift.requestStop) {
             drive.update();
-            poseEstimate = drive.getPoseEstimate();
+            Pose2d poseEstimate = drive.getPoseEstimate();
             PoseStorage.currentPose = poseEstimate;
 
             // Translation
-            if (gamepad1.right_trigger > .3){
-                translation = new Vector2d(-1* FAST_MOVEMENT_MULTIPLIER *gamepad1.left_stick_y, -1* FAST_MOVEMENT_MULTIPLIER *gamepad1.left_stick_x);
+            if (gamepad1.right_trigger > .3) {
+                translation =
+                        new Vector2d(
+                                -1 * FAST_MOVEMENT_MULTIPLIER * gamepad1.left_stick_y,
+                                -1 * FAST_MOVEMENT_MULTIPLIER * gamepad1.left_stick_x);
+            } else if (gamepad1.left_trigger > .3) {
+                translation =
+                        new Vector2d(
+                                -1 * SLOW_MOVEMENT_MULTIPLIER * gamepad1.left_stick_y,
+                                -1 * SLOW_MOVEMENT_MULTIPLIER * gamepad1.left_stick_x);
+            } else {
+                translation =
+                        new Vector2d(
+                                -1 * DEFAULT_MOVE_MULTIPLIER * gamepad1.left_stick_y,
+                                -1 * DEFAULT_MOVE_MULTIPLIER * gamepad1.left_stick_x);
             }
-            else if (gamepad1.left_trigger > .3){
-                translation = new Vector2d(-1*SLOW_MOVEMENT_MULTIPLIER*gamepad1.left_stick_y, -1*SLOW_MOVEMENT_MULTIPLIER*gamepad1.left_stick_x);
-            }
-            else{
-                translation = new Vector2d(-1*DEFAULT_MOVE_MULTIPLIER*gamepad1.left_stick_y, -1*DEFAULT_MOVE_MULTIPLIER*gamepad1.left_stick_x);
-            }
-
 
             if (TURN_X_JOYSTICK) {
                 rotation = -ROTATION_MULTIPLIER * gamepad1.right_stick_x;
             }
 
-            if (gamepad1.right_bumper){
+            if (gamepad1.right_bumper) {
                 rotation = rotation * SLOW_ROTATION_MULTIPLIER;
             }
 
-            // Slow translation
-//            if (gamepad1.dpad_up) {
-//                translation = new Vector2d(DPAD_SPEED, 0);
-//            } else if (gamepad1.dpad_down) {
-//                translation = new Vector2d(-DPAD_SPEED, 0);
-//            } else if (gamepad1.dpad_left) {
-//                translation = new Vector2d(0, DPAD_SPEED);
-//            } else if (gamepad1.dpad_right) {
-//                translation = new Vector2d(0, -DPAD_SPEED);
-//            }
-
-            // Slow rotation
-//            if (gamepad1.left_bumper) {
-//                rotation = BUMPER_ROTATION_SPEED;
-//            }
-//            else if (gamepad1.right_bumper) {
-//                rotation = -BUMPER_ROTATION_SPEED;
-//            }
-
-
-
-
             // Toggle claw
             currentAbtn = gamepad2.a;
-            currentYbtn = gamepad2.y;
-
-            if (currentYbtn) {
-                claw.move(Consts.Claw.CLOSECLAW);
-            }
-            else if (currentAbtn) {
-                claw.move(Consts.Claw.OPENCLAW);
+            if (!currentAbtn) {
+                gp2AReleased = true;
             }
 
-
-//            if (!currentAbtn) {
-//                gp2AReleased = true;
-//            }
-//
-//            if (currentAbtn && gp2AReleased) {
-//                gp2AReleased = false;
-//                if (clawOpen) {
-//                    claw.moveClaw(Constants.ClawTargets.CLOSECLAW);
-//                    clawOpen = false;
-//                } else {
-//                    claw.moveClaw(Constants.ClawTargets.OPENCLAW);
-//                    clawOpen = true;
-//                }
-//            }
+            if (currentAbtn && gp2AReleased) {
+                gp2AReleased = false;
+                if (clawOpen) {
+                    claw.move(Consts.Claw.CLOSECLAW);
+                    clawOpen = false;
+                } else {
+                    claw.move(Consts.Claw.OPENCLAW);
+                    clawOpen = true;
+                }
+            }
 
             // Toggle belt
             currentBbtn = gamepad2.b;
@@ -184,16 +144,13 @@ public class Deprecated_TeleOpProMax extends LinearOpMode {
                 if (beltUp) {
                     belt.move(Consts.Belt.DOWN);
                     beltUp = false;
-                }
-                else {
+                } else {
                     belt.move(Consts.Belt.UP);
                     beltUp = true;
                 }
             }
 
             // Turntable rotation
-
-
             currentRBumper = gamepad2.right_bumper;
             if (!currentRBumper) {
                 gp2RBumperReleased = true;
@@ -201,18 +158,13 @@ public class Deprecated_TeleOpProMax extends LinearOpMode {
 
             if (currentRBumper && gp2RBumperReleased) {
                 gp2RBumperReleased = false;
-                if (tableRotation < 0){
+                if (tableRotation < 0) {
                     tableRotation = 0;
-                }
-                else if (tableRotation < 90){
+                } else if (tableRotation < 90) {
                     tableRotation = 90;
-                }
-                else if (tableRotation < 180){
+                } else if (tableRotation < 180) {
                     tableRotation = 180;
                 }
-//                else if (tableRotation < 270){
-//                    tableRotation = 270;
-//                }
             }
 
             currentLBumper = gamepad2.left_bumper;
@@ -222,21 +174,16 @@ public class Deprecated_TeleOpProMax extends LinearOpMode {
 
             if (currentLBumper && gp2LBumperReleased) {
                 gp2LBumperReleased = false;
-                if (tableRotation > 0){
+                if (tableRotation > 0) {
                     tableRotation = 0;
-                }
-                else if (tableRotation > -90){
+                } else if (tableRotation > -90) {
                     tableRotation = -90;
-                }
-                else if (tableRotation > -180){
+                } else if (tableRotation > -180) {
                     tableRotation = -180;
                 }
-//                else if (tableRotation > -270){
-//                    tableRotation = -270;
-//                }
             }
 
-            tableRotation += (turntableSensitivity * gamepad2.right_stick_x);
+            tableRotation += (turntableSensitivity * -gamepad2.right_stick_x);
 
             // Moving lift
             if (gamepad2.dpad_up) {
@@ -271,44 +218,7 @@ public class Deprecated_TeleOpProMax extends LinearOpMode {
             }
             turntable.move(tableRotation);
 
-
-
-            
-            if (gamepad1.a && !gp1APressed && !followingTrajectory){
-                gp1APressed = true;
-                followingTrajectory = true;
-//                currentATrajectory = drive.trajectoryBuilder(poseEstimate).lineTo(new Vector2d(12, 22.5)).build();
-                currentATrajectory = drive.trajectoryBuilder(poseEstimate).forward(33.5).build();
-                drive.followTrajectoryAsync(currentATrajectory);
-            }
-            if (!gamepad1.a){
-                gp1APressed = false;
-            }
-
-            if (gamepad1.b && !gp1BPressed && !followingTrajectory){
-                gp1BPressed = true;
-                followingTrajectory = true;
-//                currentBTrajectory = drive.trajectoryBuilder(poseEstimate).lineTo(new Vector2d(12, 56)).build();
-                currentBTrajectory = drive.trajectoryBuilder(poseEstimate).back(33.5).build();
-                drive.followTrajectoryAsync(currentATrajectory);
-            }
-            if (!gamepad1.b){
-                gp1BPressed = false;
-            }
-            if (followingTrajectory){
-                drive.update();
-            }
-            if (!drive.isBusy()){
-                followingTrajectory = false;
-            }
-
-            if (!followingTrajectory){
-                drive.setWeightedDrivePower(new Pose2d(translation, rotation));
-            }
-
-
-            
-
+            drive.setWeightedDrivePower(new Pose2d(translation, rotation));
 
             telemetry.addData("rTrigger ", gamepad1.right_trigger);
             telemetry.addData("lTrigger ", gamepad1.left_trigger);
