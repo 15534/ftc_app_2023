@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "LiftTest")
-@Config()
+@Config
 public class LiftTest extends LinearOpMode {
 
     private DcMotorEx right;

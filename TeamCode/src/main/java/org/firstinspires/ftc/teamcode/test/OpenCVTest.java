@@ -25,10 +25,8 @@ public class OpenCVTest extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        // Telemetry Initialization
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        // Camera Initialization
         int cameraMonitorViewId =
                 hardwareMap
                         .appContext

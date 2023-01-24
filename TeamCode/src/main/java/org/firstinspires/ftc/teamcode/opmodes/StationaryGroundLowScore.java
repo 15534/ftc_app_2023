@@ -17,18 +17,17 @@ import org.firstinspires.ftc.teamcode.subsystems.Consts;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 
-@Autonomous(name ="StationaryGroundLowScore")
+@Autonomous(name = "StationaryGroundLowScore")
 @Config
-
 public class StationaryGroundLowScore extends LinearOpMode {
 
     // facing field side
-//    Pose2d startingPos = new Pose2d(52, -12, Math.toRadians(0));
+    //    Pose2d startingPos = new Pose2d(52, -12, Math.toRadians(0));
     int[] liftPosition = {290, 200, 130, 70, 0};
 
     State currentState = State.IDLE;
     double clawPosition;
-//    SampleMecanumDrive drive;
+    //    SampleMecanumDrive drive;
     ElapsedTime runtime = new ElapsedTime();
 
     Lift lift = new Lift();
@@ -48,8 +47,8 @@ public class StationaryGroundLowScore extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-//        drive = new SampleMecanumDrive(hardwareMap);
-//        drive.setPoseEstimate(new Pose2d(52, -12, Math.toRadians(0))); // starting Pose2d
+        //        drive = new SampleMecanumDrive(hardwareMap);
+        //        drive.setPoseEstimate(new Pose2d(52, -12, Math.toRadians(0))); // starting Pose2d
 
         // define trajectories. need none
 
@@ -70,10 +69,13 @@ public class StationaryGroundLowScore extends LinearOpMode {
 
         while (opModeIsActive()) {
             // constantly recalculating claw position
-            clawPosition = Double.parseDouble(String.format("%.3f", claw.clawServo.getPosition())); // rounded to one decimal place
+            clawPosition =
+                    Double.parseDouble(
+                            String.format(
+                                    "%.3f",
+                                    claw.clawServo.getPosition())); // rounded to one decimal place
 
             switch (currentState) { // input to switch
-
                 case PICK_FROM_CONESTACK:
                     if (!belt.belt.isBusy() && clawPosition == Consts.CLAW_CLOSE_LIMIT) {
                         lift.move(liftPosition[conesCycled]);
@@ -127,7 +129,6 @@ public class StationaryGroundLowScore extends LinearOpMode {
             telemetry.addData("real claw position", claw.getPosition());
 
             telemetry.update();
-
         }
     }
 
@@ -140,5 +141,4 @@ public class StationaryGroundLowScore extends LinearOpMode {
         SCORE_LOW,
         IDLE
     }
-
 }

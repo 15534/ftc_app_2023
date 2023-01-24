@@ -21,16 +21,12 @@ import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 import org.firstinspires.ftc.teamcode.utility.OpenCV;
 
-// Implements TeddyPlan
-@Autonomous(name = "RightRedAuto")
+@Autonomous(name = "RightAuto")
 @Config
-
 public class RightAuto extends LinearOpMode {
 
     State currentState = State.IDLE;
     SampleMecanumDrive drive;
-
-    // P: 16, D: 0.14
 
     Pose2d startingPos = new Pose2d(36, -64, Math.toRadians(90));
     ElapsedTime runtime = new ElapsedTime();
@@ -116,14 +112,15 @@ public class RightAuto extends LinearOpMode {
 
         runtime.reset();
 
-        // OpenCV - we want to do this in init mode so this is why it's not with the other
-        // subsystems
-
         Vector2d parkPosition = new Vector2d();
+
+        // define park trajectory here because the value will be diff based off opencv values
+        Trajectory PARK =
+                drive.trajectoryBuilder(CYCLE_HIGH_POLE.end()).lineTo(parkPosition).build();
 
         waitForStart();
 
-                camera.init(hardwareMap);
+        camera.init(hardwareMap);
         claw.init(hardwareMap);
         belt.init(hardwareMap);
         turntable.init(hardwareMap);
@@ -132,13 +129,6 @@ public class RightAuto extends LinearOpMode {
         telemetry.addData("READY", "");
 
         telemetry.update();
-
-
-        // define park trajectory here because the value will be diff based off opencv values
-        Trajectory PARK =
-                drive.trajectoryBuilder(CYCLE_HIGH_POLE.end())
-                        .lineTo(parkPosition)
-                        .build();
 
         currentState = State.FIRST_HIGH_POLE;
 

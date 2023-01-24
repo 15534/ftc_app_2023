@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Belt {
     public DcMotorEx belt;
+
     public int drift = 0;
     ElapsedTime timer = new ElapsedTime();
 
@@ -18,23 +19,23 @@ public class Belt {
     }
 
     public void move(Consts.Belt target) {
-            switch (target) {
-                case UP:
-                    belt.setTargetPosition(drift);
-                    belt.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                    belt.setPower(.5);
-                    break;
-                case DOWN:
-                    drift = belt.getCurrentPosition();
-                    belt.setTargetPosition(-280 + drift);
-                    belt.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                    belt.setPower(0.5);
-                    break;
-                case CONE_DROP:
-                    belt.setTargetPosition(-274+drift);
-                    belt.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                    belt.setPower(0.5);
-                    break;
+        switch (target) {
+            case UP:
+                belt.setTargetPosition(drift);
+                belt.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                belt.setPower(.5);
+                break;
+            case DOWN:
+                drift = belt.getCurrentPosition();
+                belt.setTargetPosition(-280 + drift);
+                belt.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                belt.setPower(0.5);
+                break;
+            case CONE_DROP:
+                belt.setTargetPosition(-274 + drift);
+                belt.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+                belt.setPower(0.5);
+                break;
         }
     }
 
@@ -58,7 +59,6 @@ public class Belt {
         }
     }
 
-    // Raw integer input
     public void moveNoCorrection(int target) {
         belt.setTargetPosition(target);
         belt.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);

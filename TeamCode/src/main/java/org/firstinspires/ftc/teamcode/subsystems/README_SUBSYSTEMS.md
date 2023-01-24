@@ -17,5 +17,5 @@ Supported in all subsystems
 
 - `getPosition()`
 - `move()`
-  - Supports `int` and `enum` input with type inference
+  - Supports `int`/`double` and `enum` input with type inference
 - `reset()`

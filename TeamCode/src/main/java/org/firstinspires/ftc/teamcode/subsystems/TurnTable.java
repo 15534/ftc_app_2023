@@ -8,12 +8,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class TurnTable {
     DcMotorEx motor;
 
-    // 537.7 ticks per revolution, but one revolution of motor is NOT one revolution of turntable AT ALL
-
     // 90 degrees: -925
     // 180: -1863
     // 270: -2805
-
     double TICKS_PER_DEGREE = -10.3698;
 
     public static double MOTOR_POWER = 1;
@@ -35,10 +32,8 @@ public class TurnTable {
             target = -270;
         }
 
-        motor.setTargetPosition((int) (target * TICKS_PER_DEGREE)); // mx + b (setTarget Position accepts motor
-        // ticks)
+        motor.setTargetPosition((int) (target * TICKS_PER_DEGREE));
         motor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
         motor.setPower(MOTOR_POWER);
     }
 
