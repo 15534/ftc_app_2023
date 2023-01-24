@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.deprecated;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -13,15 +13,18 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.Belt;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.subsystems.Consts;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 
-@Autonomous(name = "BlueAutoV2")
+@Autonomous(name = "BlueAutoV1")
 @Config
 @Disabled
-public class Deprecated_BlueAutoV2 extends LinearOpMode {
+
+public class Deprecated_BlueAutoV1 extends LinearOpMode {
 
     State currentState = State.IDLE;
     SampleMecanumDrive drive;
@@ -36,6 +39,7 @@ public class Deprecated_BlueAutoV2 extends LinearOpMode {
     TurnTable turntable = new TurnTable();
 
     Trajectory firstHighPole, firstConeStack, coneStack, placeHighPole, park;
+    TrajectorySequence turnAfterHighPole;
 
     void next(State s) {
         time = runtime.seconds();
@@ -67,21 +71,40 @@ public class Deprecated_BlueAutoV2 extends LinearOpMode {
 
         firstHighPole =
                 drive.trajectoryBuilder(startingPos)
-                        .lineToSplineHeading(new Pose2d(12, 12, 0))
+                        .addSpatialMarker(new Vector2d(12, 46), () -> {
+                            lift.move(Consts.Lift.HIGH);
+                        })
+                        .addDisplacementMarker(
+                                () -> {
+                                    turntable.move(-90);
+                                })
+                        .lineTo(new Vector2d(12, 22.5))
                         .build();
 
         firstConeStack =
                 drive.trajectoryBuilder(firstHighPole.end())
-                        .lineTo(new Vector2d(52, 12))
+                        .lineTo(new Vector2d(12, 12))
+                        .addDisplacementMarker(
+                                2,
+                                () -> {
+                                    turntable.move(0);
+                                    lift.move(Consts.Lift.ZERO);
+                                })
+                        .build();
+
+        turnAfterHighPole =
+                drive.trajectorySequenceBuilder(firstConeStack.end())
+                        .turn(Math.toRadians(90))
+                        .build();
+
+        coneStack =
+                drive.trajectoryBuilder(turnAfterHighPole.end())
+                        .lineTo(new Vector2d(56, 12))
                         .build();
 
         placeHighPole =
                 drive.trajectoryBuilder(firstConeStack.end()).lineTo(new Vector2d(20, 12)).build();
 
-        coneStack =
-                drive.trajectoryBuilder(placeHighPole.end())
-                        .splineTo(new Vector2d(52, 12), Math.toRadians(0))
-                        .build();
 
         park =
                 drive.trajectoryBuilder(placeHighPole.end())
@@ -108,7 +131,6 @@ public class Deprecated_BlueAutoV2 extends LinearOpMode {
 
         currentState = State.GO_SUBSTATION_HIGHJUNC;
 
-        // TODO: lift while driving to first traj
         while (opModeIsActive()) {
             telemetry.addLine("running");
 
@@ -127,32 +149,43 @@ public class Deprecated_BlueAutoV2 extends LinearOpMode {
                     if (!drive.isBusy()) {
                         sleep(275);
 
-//                        belt.moveBelt(Constants.IntakeTargets.DROPOFF);
+                        belt.move(Consts.Belt.DOWN);
 
                         long t = System.currentTimeMillis();
                         long end = t + 1250;
-//
-//                        while (System.currentTimeMillis() < end) {
-//                            belt.updateBeltPosition();
-//                        }
 
-//                        claw.moveClaw(Constants.ClawTargets.OPENCLAW);
+
+                        claw.move(Consts.Claw.OPENCLAW);
                         sleep(2000);
-                        next(State.IDLE);
+                        next(State.FIRST_CONESTACK);
                     }
                     break;
                 case FIRST_CONESTACK:
                     if (!drive.isBusy()) {
+                        belt.move(Consts.Belt.UP); // moves it up
+
+                        long t = System.currentTimeMillis();
+                        long end = t + 1000;
+
+
                         drive.followTrajectoryAsync(firstConeStack);
-                        next(State.IDLE);
+                        next(State.TURN_AFTER_FIRST_SCORE); //change to turn after first score
+                    }
+                    break;
+                case TURN_AFTER_FIRST_SCORE:
+                    if (!drive.isBusy()) {
+                        drive.followTrajectorySequenceAsync(turnAfterHighPole);
+                        next(State.GO_HIGHJUNC_CONESTACKS);
                     }
                     break;
                 case GO_HIGHJUNC_CONESTACKS:
                     if (!drive.isBusy()) {
+                        turntable.move(10);
                         drive.followTrajectoryAsync(coneStack);
-                        next(State.PLACE_HIGHJUNC_CONE);
+                        next(State.IDLE);
                     }
                     break;
+//                case PICKUP
                 case PLACE_HIGHJUNC_CONE:
                     if (!drive.isBusy()) {
                         drive.followTrajectoryAsync(placeHighPole);
@@ -189,6 +222,7 @@ public class Deprecated_BlueAutoV2 extends LinearOpMode {
         GO_SUBSTATION_HIGHJUNC,
         DROP_FIRST_CONE,
         FIRST_CONESTACK,
+        TURN_AFTER_FIRST_SCORE,
         GO_HIGHJUNC_CONESTACKS,
         PLACE_HIGHJUNC_CONE,
         GO_CONESTACKS_HIGHJUNC,
