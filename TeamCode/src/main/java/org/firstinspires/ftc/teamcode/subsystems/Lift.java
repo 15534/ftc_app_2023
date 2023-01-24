@@ -63,8 +63,8 @@ public class Lift {
             rightPower = 1;
         }
 
-        left.setTargetPosition((int) target);
-        right.setTargetPosition((int) -target);
+        left.setTargetPosition(target);
+        right.setTargetPosition(-target);
 
         left.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         right.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);

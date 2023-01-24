@@ -38,7 +38,6 @@ import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 
 @TeleOp(name = "DeBruh")
 @Config
-
 public class DeBruh extends LinearOpMode {
     public static double DEFAULT_MOVE_MULTIPLIER = .7;
     public static double SLOW_MOVEMENT_MULTIPLIER = .4;
@@ -60,7 +59,6 @@ public class DeBruh extends LinearOpMode {
     boolean gp1LeftStickYJustPressed = false;
     boolean liftDown = true;
     int[] conePositions = {290, 200, 130, 70, 0};
-
 
     double movementHorizontal = 0;
     double movementVertical = 0;
@@ -124,7 +122,7 @@ public class DeBruh extends LinearOpMode {
                     movementHorizontal = -.8;
                 }
             } else { // joystick use instead, movement in vector directions. can explicitly define
-                     // if needed.
+                // if needed.
                 movementVertical = gamepad1.left_stick_y;
                 movementHorizontal = gamepad1.left_stick_x;
                 movementRotation = gamepad1.right_stick_x;
@@ -182,7 +180,8 @@ public class DeBruh extends LinearOpMode {
             if (currentBbtn && gp2BReleased) {
                 gp2BReleased = false;
                 if (beltUp) {
-                    if (liftDown) { // handles case where belt is going down preemptively as you prepare to pick up cone
+                    if (liftDown) { // handles case where belt is going down preemptively as you
+                                    // prepare to pick up cone
                         claw.move(Consts.Claw.OPENCLAW);
                     }
                     belt.move(Consts.Belt.DOWN);
@@ -290,25 +289,27 @@ public class DeBruh extends LinearOpMode {
 
             // slow Manual lift control with left joystick. Slightly dysfunctional.
 
-//            if (Math.abs(gamepad2.left_stick_y) > 0.3) {
-//                gp1LeftStickYJustPressed = true;
-//            }
-//
-//            if (Math.abs(gamepad2.left_stick_y) > 0.3 && gp1LeftStickYJustPressed) { // joystick going down
-//                 // go to top of conestakcs
-//                lift.setLiftPosition(conePositions[0]);
-//                gp1LeftStickYJustPressed = false;
-//
-//            if (Math.abs(gamepad2.left_stick_y) > 0.3 && !gp1LeftStickYJustPressed)
-//                lift.left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-//                lift.right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-//
-//                lift.left.setPower(-0.5 * gamepad2.left_stick_y);
-//                lift.right.setPower(0.5 * gamepad2.left_stick_y);
-//
-//                // so that this doesn't happen again when we press left stick y after releasing
-//                gp1LeftStickYJustPressed = true;
-//            }
+            //            if (Math.abs(gamepad2.left_stick_y) > 0.3) {
+            //                gp1LeftStickYJustPressed = true;
+            //            }
+            //
+            //            if (Math.abs(gamepad2.left_stick_y) > 0.3 && gp1LeftStickYJustPressed) {
+            // // joystick going down
+            //                 // go to top of conestakcs
+            //                lift.setLiftPosition(conePositions[0]);
+            //                gp1LeftStickYJustPressed = false;
+            //
+            //            if (Math.abs(gamepad2.left_stick_y) > 0.3 && !gp1LeftStickYJustPressed)
+            //                lift.left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+            //                lift.right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+            //
+            //                lift.left.setPower(-0.5 * gamepad2.left_stick_y);
+            //                lift.right.setPower(0.5 * gamepad2.left_stick_y);
+            //
+            //                // so that this doesn't happen again when we press left stick y after
+            // releasing
+            //                gp1LeftStickYJustPressed = true;
+            //            }
 
             // X: reset subsystems for intaking action
             // turn table turned
@@ -330,7 +331,6 @@ public class DeBruh extends LinearOpMode {
             if (tableRotation <= -180) {
                 tableRotation = -180;
             }
-
 
             turntable.move(tableRotation);
 

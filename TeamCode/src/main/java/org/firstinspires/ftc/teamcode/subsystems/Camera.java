@@ -20,7 +20,6 @@ public class Camera extends LinearOpMode {
             OpenCV.Pipeline.Orientation.PROCESSING; // default
 
     public void init(HardwareMap hardwareMap) {
-        // Camera Initialization
         int cameraMonitorViewId =
                 hardwareMap
                         .appContext
@@ -38,6 +37,7 @@ public class Camera extends LinearOpMode {
         webcam.setPipeline(pipeline);
 
         ((OpenCvWebcam) webcam).setMillisecondsPermissionTimeout(5000);
+
         webcam.openCameraDeviceAsync(
                 new OpenCvCamera.AsyncCameraOpenListener() {
                     @Override
@@ -48,7 +48,7 @@ public class Camera extends LinearOpMode {
 
                     @Override
                     public void onError(int errorCode) {
-                        telemetry.addData("Camera Initialization: ", "Failed");
+                        telemetry.addData("Camera Initialization: ", errorCode);
                         telemetry.update();
                     }
                 });

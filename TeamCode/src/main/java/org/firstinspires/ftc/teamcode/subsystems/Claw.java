@@ -25,7 +25,6 @@ public class Claw {
         }
     }
 
-    // Raw integer input
     public void moveClaw(double target) {
         clawServo.setPosition(target);
     }
@@ -33,7 +32,7 @@ public class Claw {
     public void reset() {
         move(Consts.Claw.CLOSECLAW);
     }
-    
+
     public double getPosition() {
         return clawServo.getPosition();
     }

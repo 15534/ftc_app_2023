@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.Deprecated;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -40,7 +40,7 @@ import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 @Config
 @Disabled
 
-public class TeleOpV1 extends LinearOpMode {
+public class Deprecate_TeleOpV1 extends LinearOpMode {
     public static double DEFAULT_MOVE_MULTIPLIER = .7;
     public static double SLOW_MOVEMENT_MULTIPLIER = .4;
     public static double FAST_MOVEMENT_MULTIPLIER = 1;
