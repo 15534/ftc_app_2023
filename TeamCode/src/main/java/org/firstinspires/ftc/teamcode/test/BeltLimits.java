@@ -2,21 +2,19 @@ package org.firstinspires.ftc.teamcode.test;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.Belt;
 
 @TeleOp(name = "BeltLimits")
-@Config
+@Config("BeltLimits")
 public class BeltLimits extends LinearOpMode {
+    public static double beltTarget = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-        Telemetry dashboardTelemetry = dashboard.getTelemetry();
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         Belt belt = new Belt();
 
         waitForStart();
@@ -24,8 +22,8 @@ public class BeltLimits extends LinearOpMode {
         belt.init(hardwareMap);
 
         while (opModeIsActive()) {
-            dashboardTelemetry.addData("Belt Position", belt.getPosition());
-            dashboardTelemetry.update();
+            belt.moveAbsolute(beltTarget);
+            telemetry.update();
         }
     }
 }

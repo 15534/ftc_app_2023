@@ -30,7 +30,7 @@ public class LiftLimits extends LinearOpMode {
 
         while (opModeIsActive() && !isStopRequested()) {
             lift.move(target);
-            belt.moveNoCorrection(Consts.Belt.DOWN);
+            belt.move(Consts.Belt.DOWN);
             telemetry.addData("Lift Position ", lift.getPosition());
             telemetry.addData("Lift Position ", belt.getPosition());
             telemetry.update();
