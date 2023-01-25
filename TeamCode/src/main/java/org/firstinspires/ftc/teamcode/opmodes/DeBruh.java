@@ -93,8 +93,6 @@ public class DeBruh extends LinearOpMode {
         turntable.init(hardwareMap);
         lift.init(hardwareMap);
 
-        belt.belt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
         while (!isStopRequested() && !lift.requestStop) {
             drive.update();
             Pose2d poseEstimate = drive.getPoseEstimate();
@@ -195,20 +193,20 @@ public class DeBruh extends LinearOpMode {
 
             // in the case of double b - restart belt.
 
-            currentYbtn = gamepad2.y;
-            if (!currentYbtn) {
-                gp2YReleased = true;
-            }
-            // hold y down until belt in right place
-            if (gamepad2.y && gp2YReleased) {
-                gp2YReleased = false;
-                belt.belt.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-                belt.belt.setPower(0.5); // moving up, in positive direction
-            }
-
-            if (!gamepad2.y && !gp2YReleased) {
-                belt.drift = belt.belt.getCurrentPosition();
-            }
+//            currentYbtn = gamepad2.y;
+//            if (!currentYbtn) {
+//                gp2YReleased = true;
+//            }
+//            // hold y down until belt in right place
+//            if (gamepad2.y && gp2YReleased) {
+//                gp2YReleased = false;
+//                belt.belt.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+//                belt.belt.setPower(0.5); // moving up, in positive direction
+//            }
+//
+//            if (!gamepad2.y && !gp2YReleased) {
+//                belt.drift = belt.belt.getCurrentPosition();
+//            }
 
             currentXbtn = gamepad2.x;
             if (!currentXbtn) {
@@ -218,7 +216,7 @@ public class DeBruh extends LinearOpMode {
             if (currentXbtn && gp2XReleased) {
                 gp2XReleased = false;
                 if (beltUp) {
-                    belt.moveNoCorrection(-300);
+                    belt.move(Consts.Belt.DOWN);
                     beltUp = false;
                 } else {
                     belt.move(Consts.Belt.UP);
@@ -346,7 +344,7 @@ public class DeBruh extends LinearOpMode {
             telemetry.addData("right stick x pos", gamepad1.right_stick_x);
             telemetry.addData("right stick y pos", gamepad1.right_stick_y);
             telemetry.addData("rotation", rotation);
-            telemetry.addData("Belt Position", belt.belt.getCurrentPosition());
+            telemetry.addData("Belt Position", belt.getPosition());
             telemetry.addData("Drift ", belt.drift);
             telemetry.addData("Lift Position", lift.getPosition());
             telemetry.addData("Dpad Up", gamepad2.dpad_up);
