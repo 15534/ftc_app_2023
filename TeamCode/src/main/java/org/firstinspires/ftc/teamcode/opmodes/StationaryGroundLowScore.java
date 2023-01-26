@@ -26,7 +26,7 @@ public class StationaryGroundLowScore extends LinearOpMode {
     int[] liftPosition = {290, 200, 130, 70, 0};
 
     State currentState = State.IDLE;
-    double clawPosition;
+    double clawPosition, beltPosition;
     //    SampleMecanumDrive drive;
     ElapsedTime runtime = new ElapsedTime();
 
@@ -69,15 +69,16 @@ public class StationaryGroundLowScore extends LinearOpMode {
 
         while (opModeIsActive()) {
             // constantly recalculating claw position
-            clawPosition =
-                    Double.parseDouble(
-                            String.format(
-                                    "%.3f",
-                                    claw.clawServo.getPosition())); // rounded to one decimal place
+            clawPosition = Double.parseDouble(String.format("%.2f", claw.clawServo.getPosition())); // rounded to two decimal places
+
+            beltPosition = Double.parseDouble(String.format("%.2f", belt.beltServo.getPosition())); // rounded to two decimal place
+
+            // only have to check current position/is not busy for subsystems moving in previous states. if issues, add turntable checks.
 
             switch (currentState) { // input to switch
                 case PICK_FROM_CONESTACK:
-                    if (!belt.belt.isBusy() && clawPosition == Consts.CLAW_CLOSE_LIMIT) {
+                    // shouldn't need to check lift here
+                    if (beltPosition == Consts.BELT_UP_LIMIT && clawPosition == Consts.CLAW_CLOSE_LIMIT) {
                         lift.move(liftPosition[conesCycled]);
                         claw.move(Consts.Claw.OPENCLAW);
                         sleep(500);
@@ -87,7 +88,8 @@ public class StationaryGroundLowScore extends LinearOpMode {
                     break;
 
                 case REMOVE_FROM_CONESTACK:
-                    if (!belt.belt.isBusy() && clawPosition == Consts.CLAW_OPEN_LIMIT) {
+                    if (!lift.left.isBusy() && !lift.right.isBusy() &&
+                            beltPosition == Consts.BELT_DOWN_LIMIT && clawPosition == Consts.CLAW_OPEN_LIMIT) {
                         claw.move(Consts.Claw.CLOSECLAW);
                         sleep(500); // to tighten around cone
                         belt.move(Consts.Belt.UP);
@@ -95,23 +97,27 @@ public class StationaryGroundLowScore extends LinearOpMode {
                     }
                     break;
 
-                case SCORE_LOW:
-                    if (!belt.belt.isBusy() && clawPosition == Consts.CLAW_CLOSE_LIMIT) {
+                case RAISE_LIFT_TO_SCORE:
+                    if (beltPosition == Consts.BELT_UP_LIMIT && clawPosition == Consts.CLAW_CLOSE_LIMIT) {
                         turntable.move(-120); // tuned lol
                         lift.move(Consts.Lift.LOW);
-
-                        sleep(1000); // could do lift not busy here too to make EVEN faster lol
                         belt.move(Consts.Belt.CONE_DROP);
-                        sleep(1000);
+                        next(State.SCORE_LOW);
+                    }
+                    break;
+
+                case SCORE_LOW:
+                    // lift is done moving. already confirmed claw in right place
+                    if (!lift.left.isBusy() && !lift.right.isBusy() && beltPosition == Consts.BELT_DROP_LIMIT) {
                         claw.move(Consts.Claw.OPENCLAW);
                         conesCycled++;
                         sleep(100); // sometimes claw doesn't open though it should
                         next(State.RESET);
                     }
-                    break;
 
-                case RESET: // checking that belt is where it needs to be
-                    if (!belt.belt.isBusy() && clawPosition == Consts.CLAW_OPEN_LIMIT) {
+                case RESET:
+                    // checking claw in right position, because only one that moved in previous state
+                    if (clawPosition == Consts.CLAW_OPEN_LIMIT) {
                         turntable.move(0);
                         claw.move(Consts.Claw.CLOSECLAW);
                         belt.move(Consts.Belt.UP);
@@ -121,12 +127,13 @@ public class StationaryGroundLowScore extends LinearOpMode {
             }
 
             telemetry.addData("current state", currentState);
-            telemetry.addData("belt busy", belt.belt.isBusy());
             telemetry.addData("lift position", lift.getPosition());
+
+            telemetry.addData("formatted belt position", beltPosition);
             telemetry.addData("belt position", belt.getPosition());
-            telemetry.addData("belt drift?", belt.drift); // should be none
+
             telemetry.addData("formatted claw position", clawPosition);
-            telemetry.addData("real claw position", claw.getPosition());
+            telemetry.addData("claw position", claw.getPosition());
 
             telemetry.update();
         }
@@ -138,6 +145,7 @@ public class StationaryGroundLowScore extends LinearOpMode {
         RESET,
         REMOVE_FROM_CONESTACK,
         PICK_FROM_CONESTACK,
+        RAISE_LIFT_TO_SCORE,
         SCORE_LOW,
         IDLE
     }

@@ -230,7 +230,7 @@ public class Deprecate_TeleOpV1 extends LinearOpMode {
             telemetry.addData("right stick x pos", gamepad1.right_stick_x);
             telemetry.addData("right stick y pos", gamepad1.right_stick_y);
             telemetry.addData("rotation", rotation);
-            telemetry.addData("Belt Position", belt.belt.getCurrentPosition());
+            telemetry.addData("Belt Position", belt.getPosition());
             telemetry.addData("Lift Position", lift.getPosition());
             telemetry.addData("Dpad Up", gamepad2.dpad_up);
             telemetry.addData("Dpad right", gamepad2.dpad_right);
