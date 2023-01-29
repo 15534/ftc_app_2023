@@ -16,8 +16,6 @@ public class Camera extends LinearOpMode {
 
     OpenCvWebcam webcam;
     static OpenCV.Pipeline pipeline;
-    OpenCV.Pipeline.Orientation snapshotAnalysis =
-            OpenCV.Pipeline.Orientation.PROCESSING; // default
 
     public void init(HardwareMap hardwareMap) {
         int cameraMonitorViewId =
@@ -33,7 +31,6 @@ public class Camera extends LinearOpMode {
                         .createWebcam(
                                 hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
 
-        pipeline = new OpenCV.Pipeline();
         webcam.setPipeline(pipeline);
 
         ((OpenCvWebcam) webcam).setMillisecondsPermissionTimeout(5000);
@@ -43,7 +40,7 @@ public class Camera extends LinearOpMode {
                     @Override
                     public void onOpened() {
                         webcam.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
-                        webcam.startStreaming(320, 240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+                        webcam.startStreaming(1280, 720, OpenCvCameraRotation.SIDEWAYS_LEFT);
                     }
 
                     @Override
