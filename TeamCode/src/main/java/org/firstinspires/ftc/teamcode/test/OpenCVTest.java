@@ -20,9 +20,8 @@ import java.util.ArrayList;
 @Autonomous(name = "OpenCVTest")
 public class OpenCVTest extends LinearOpMode {
 
-    OpenCvWebcam webcam;
+    OpenCvCamera webcam;
     OpenCV.Pipeline pipeline;
-    OpenCV.Pipeline aprilTagDetectionPipeline;
 
     static final double FEET_PER_METER = 3.28084;
 
@@ -34,13 +33,6 @@ public class OpenCVTest extends LinearOpMode {
     double fy = 578.272;
     double cx = 402.145;
     double cy = 221.506;
-
-    int numFramesWithoutDetection = 0;
-
-    final float DECIMATION_HIGH = 3;
-    final float DECIMATION_LOW = 2;
-    final float THRESHOLD_HIGH_DECIMATION_RANGE_METERS = 1.0f;
-    final int THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION = 4;
 
     // UNITS ARE METERS
     double tagsize = 0.166;
@@ -63,7 +55,7 @@ public class OpenCVTest extends LinearOpMode {
                         .createWebcam(
                                 hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
 
-        aprilTagDetectionPipeline = new OpenCV.Pipeline(tagsize, fx, fy, cx, cy);
+        pipeline = new OpenCV.Pipeline(tagsize, fx, fy, cx, cy);
 
         webcam.setPipeline(pipeline);
 
@@ -89,47 +81,21 @@ public class OpenCVTest extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
 
-            ArrayList<AprilTagDetection> detections = aprilTagDetectionPipeline.getDetectionsUpdate();
+            ArrayList<AprilTagDetection> currentDetections = pipeline.getLatestDetections();
 
-            telemetry.addData("FPS", webcam.getFps());
-            telemetry.addData("Overhead ms", webcam.getOverheadTimeMs());
-            telemetry.addData("Pipeline ms", webcam.getPipelineTimeMs());
-
-            // If we don't see any tags
-            if(detections.size() == 0)
+            if(currentDetections.size() != 0)
             {
-                numFramesWithoutDetection++;
-
-                // If we haven't seen a tag for a few frames, lower the decimation
-                // so we can hopefully pick one up if we're e.g. far back
-                if(numFramesWithoutDetection >= THRESHOLD_NUM_FRAMES_NO_DETECTION_BEFORE_LOW_DECIMATION)
+                for(AprilTagDetection tag : currentDetections)
                 {
-                    aprilTagDetectionPipeline.setDecimation(DECIMATION_LOW);
+                    telemetry.addData("Tag ID ", tag.id);
                 }
+
             }
-            // We do see tags!
             else
             {
-                numFramesWithoutDetection = 0;
-
-                // If the target is within 1 meter, turn on high decimation to
-                // increase the frame rate
-                if(detections.get(0).pose.z < THRESHOLD_HIGH_DECIMATION_RANGE_METERS)
-                {
-                    aprilTagDetectionPipeline.setDecimation(DECIMATION_HIGH);
-                }
-
-                for(AprilTagDetection detection : detections)
-                {
-                    telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-                    telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
-                    telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
-                    telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
-                    telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
-                    telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
-                    telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
-                }
+                telemetry.addData("Tag ID ", -1);
             }
+
             telemetry.update();
 
             if (gamepad1.a) {
