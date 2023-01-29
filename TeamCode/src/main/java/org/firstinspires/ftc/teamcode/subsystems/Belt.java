@@ -18,13 +18,13 @@ public class Belt {
     public void move(Consts.Belt target) {
         switch (target) {
             case UP:
-                moveAbsolute(0.75);
+                moveAbsolute(Consts.BELT_UP_LIMIT);
                 break;
             case DOWN:
-                moveAbsolute(0.20);
+                moveAbsolute(Consts.BELT_DOWN_LIMIT);
                 break;
             case CONE_DROP:
-                moveAbsolute(0.25);
+                moveAbsolute(Consts.BELT_DROP_LIMIT);
                 break;
         }
     }
