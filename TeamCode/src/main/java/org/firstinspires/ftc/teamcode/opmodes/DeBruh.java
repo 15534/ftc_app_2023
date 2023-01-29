@@ -42,8 +42,8 @@ public class DeBruh extends LinearOpMode {
     public static double DEFAULT_MOVE_MULTIPLIER = .7;
     public static double SLOW_MOVEMENT_MULTIPLIER = .4;
     public static double FAST_MOVEMENT_MULTIPLIER = 1;
-    public static double ROTATION_MULTIPLIER = 2.05;
-    public static double SLOW_ROTATION_MULTIPLIER = .4;
+    public static double ROTATION_MULTIPLIER = -1.9;
+    public static double SLOW_ROTATION_MULTIPLIER = 1;
     public static boolean TURN_X_JOYSTICK = true;
     public static double turntableSensitivity = 2.2;
     boolean gp2AReleased = true;
@@ -125,18 +125,17 @@ public class DeBruh extends LinearOpMode {
                 movementHorizontal = gamepad1.left_stick_x;
                 movementRotation = gamepad1.right_stick_x;
             }
+            if (TURN_X_JOYSTICK) {
+                rotation = ROTATION_MULTIPLIER * movementRotation;
+            }
 
             if (gamepad1.right_trigger > .3) {
                 translation =
                         new Vector2d(
-                                -1 * FAST_MOVEMENT_MULTIPLIER * movementVertical,
-                                -1 * FAST_MOVEMENT_MULTIPLIER * movementHorizontal);
-
-            } else if (gamepad1.left_trigger > .3) {
-                translation =
-                        new Vector2d(
                                 -1 * SLOW_MOVEMENT_MULTIPLIER * movementVertical,
                                 -1 * SLOW_MOVEMENT_MULTIPLIER * movementHorizontal);
+                rotation = rotation * SLOW_ROTATION_MULTIPLIER;
+
             } else {
                 translation =
                         new Vector2d(
@@ -144,13 +143,9 @@ public class DeBruh extends LinearOpMode {
                                 -1 * DEFAULT_MOVE_MULTIPLIER * movementHorizontal);
             }
 
-            if (TURN_X_JOYSTICK) {
-                rotation = -ROTATION_MULTIPLIER * movementRotation;
-            }
 
-            if (gamepad1.right_bumper) {
-                rotation = rotation * SLOW_ROTATION_MULTIPLIER;
-            }
+
+
 
             // Toggle claw
             rightTriggerRelased = gamepad2.right_trigger > 0;

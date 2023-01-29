@@ -93,7 +93,7 @@ public class StationaryGroundLowScore extends LinearOpMode {
                         claw.move(Consts.Claw.CLOSECLAW);
                         sleep(500); // to tighten around cone
                         belt.move(Consts.Belt.UP);
-                        next(State.SCORE_LOW);
+                        next(State.RAISE_LIFT_TO_SCORE);
                     }
                     break;
 
@@ -134,6 +134,10 @@ public class StationaryGroundLowScore extends LinearOpMode {
 
             telemetry.addData("formatted claw position", clawPosition);
             telemetry.addData("claw position", claw.getPosition());
+
+            telemetry.addData("belt condition", beltPosition == Consts.BELT_UP_LIMIT);
+            telemetry.addData("claw condition", clawPosition == Consts.CLAW_CLOSE_LIMIT);
+
 
             telemetry.update();
         }
