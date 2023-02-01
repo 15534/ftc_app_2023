@@ -37,7 +37,7 @@ import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
  * Right joystick: Turntable rotation
  */
 
-@TeleOp(name = "TeleOpProMax")
+@TeleOp(name = "DeprecatedTeleOpProMax")
 @Config()
 @Disabled
 public class Deprecated_TeleOpProMax extends LinearOpMode {

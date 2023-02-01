@@ -5,11 +5,17 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Belt;
@@ -39,11 +45,17 @@ import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 @TeleOp(name = "DeBruh")
 @Config
 public class DeBruh extends LinearOpMode {
-    public static double DEFAULT_MOVE_MULTIPLIER = .7;
+    public static double ROTATION_LOCK_GAIN = 0.02;
+    public static double ROTATION_LOCK_MULTIPLIER = 1.8;
+    private double robotHeading  = 0;
+    private double headingOffset = 0;
+    private double headingError  = 0;
+    private double  targetHeading = 0;
+    public static double DEFAULT_MOVE_MULTIPLIER = .64;
     public static double SLOW_MOVEMENT_MULTIPLIER = .4;
     public static double FAST_MOVEMENT_MULTIPLIER = 1;
     public static double ROTATION_MULTIPLIER = -1.9;
-    public static double SLOW_ROTATION_MULTIPLIER = 1;
+    public static double SLOW_ROTATION_MULTIPLIER = .3;
     public static boolean TURN_X_JOYSTICK = true;
     public static double turntableSensitivity = 2.2;
     boolean gp2AReleased = true;
@@ -62,6 +74,7 @@ public class DeBruh extends LinearOpMode {
 
     double movementHorizontal = 0;
     double movementVertical = 0;
+    private BNO055IMU imu;
 
     private Vector2d translation;
 
@@ -71,6 +84,12 @@ public class DeBruh extends LinearOpMode {
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+
+        imu.initialize(parameters);
 
         boolean clawOpen = false;
         boolean beltUp = true;
@@ -129,7 +148,7 @@ public class DeBruh extends LinearOpMode {
                 rotation = ROTATION_MULTIPLIER * movementRotation;
             }
 
-            if (gamepad1.right_trigger > .3) {
+            if (gamepad1.left_trigger > .3) {
                 translation =
                         new Vector2d(
                                 -1 * SLOW_MOVEMENT_MULTIPLIER * movementVertical,
@@ -317,6 +336,9 @@ public class DeBruh extends LinearOpMode {
                 lift.move(Consts.Lift.ZERO);
                 liftDown = true;
             }
+            if (gamepad1.a){
+                resetHeading();
+            }
 
             if (tableRotation >= 180) {
                 tableRotation = 180;
@@ -326,6 +348,10 @@ public class DeBruh extends LinearOpMode {
             }
 
             turntable.move(tableRotation);
+
+            if (gamepad1.dpad_down || gamepad1.dpad_up || gamepad1.dpad_right || gamepad1.dpad_left){
+                rotation = getSteeringCorrection(0, ROTATION_LOCK_GAIN) * ROTATION_LOCK_MULTIPLIER;
+            }
 
             drive.setWeightedDrivePower(new Pose2d(translation, rotation));
 
@@ -352,5 +378,26 @@ public class DeBruh extends LinearOpMode {
             telemetry.addData("translation ", translation);
             telemetry.update();
         }
+    }
+    public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
+        targetHeading = desiredHeading;
+
+        robotHeading = getRawHeading() - headingOffset;
+
+        headingError = targetHeading - robotHeading;
+
+        while (headingError > 180)  headingError -= 360;
+        while (headingError <= -180) headingError += 360;
+
+
+        return Range.clip(headingError * proportionalGain, -1, 1);
+    }
+    public double getRawHeading() {
+        Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return angles.firstAngle;
+    }
+    public void resetHeading() {
+        headingOffset = getRawHeading();
+        robotHeading = 0;
     }
 }

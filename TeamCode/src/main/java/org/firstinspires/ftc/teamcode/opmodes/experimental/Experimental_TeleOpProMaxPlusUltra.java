@@ -42,22 +42,23 @@ import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
  * Right joystick: Turntable rotation
  */
 
-@TeleOp(name = "TeleOpProExperimental")
+@TeleOp(name = "TeleOpProMax")
 @Config
+
 public class Experimental_TeleOpProMaxPlusUltra extends LinearOpMode {
-    public static double DEFAULT_MOVE_MULTIPLIER = .7;
-    public static double SLOW_MOVEMENT_MULTIPLIER = .4;
-    public static double FAST_MOVEMENT_MULTIPLIER = 1;
-    public static double ROTATION_MULTIPLIER = 2.05;
     public static double ROTATION_LOCK_GAIN = 0.02;
     public static double ROTATION_LOCK_MULTIPLIER = 1.8;
-    public static double SLOW_ROTATION_MULTIPLIER = .4;
-    public static boolean TURN_X_JOYSTICK = true;
-    public static double turntableSensitivity = 2.2;
     private double robotHeading  = 0;
     private double headingOffset = 0;
     private double headingError  = 0;
     private double  targetHeading = 0;
+    public static double DEFAULT_MOVE_MULTIPLIER = .7;
+    public static double SLOW_MOVEMENT_MULTIPLIER = .4;
+    public static double FAST_MOVEMENT_MULTIPLIER = 1;
+    public static double ROTATION_MULTIPLIER = -1.9;
+    public static double SLOW_ROTATION_MULTIPLIER = .4;
+    public static boolean TURN_X_JOYSTICK = true;
+    public static double turntableSensitivity = 2.2;
     boolean gp2AReleased = true;
     boolean gp2BReleased = true;
     boolean gp2YReleased = true;
@@ -74,7 +75,6 @@ public class Experimental_TeleOpProMaxPlusUltra extends LinearOpMode {
 
     double movementHorizontal = 0;
     double movementVertical = 0;
-
     private BNO055IMU imu;
 
     private Vector2d translation;
@@ -89,6 +89,7 @@ public class Experimental_TeleOpProMaxPlusUltra extends LinearOpMode {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         imu = hardwareMap.get(BNO055IMU.class, "imu");
+
         imu.initialize(parameters);
 
         boolean clawOpen = false;
@@ -105,8 +106,6 @@ public class Experimental_TeleOpProMaxPlusUltra extends LinearOpMode {
 
         drive.setPoseEstimate(PoseStorage.currentPose);
 
-        telemetry.addData("Status ", "Ready to run °rz");
-        telemetry.update();
         waitForStart();
 
         claw.init(hardwareMap);
@@ -146,18 +145,17 @@ public class Experimental_TeleOpProMaxPlusUltra extends LinearOpMode {
                 movementHorizontal = gamepad1.left_stick_x;
                 movementRotation = gamepad1.right_stick_x;
             }
+            if (TURN_X_JOYSTICK) {
+                rotation = ROTATION_MULTIPLIER * movementRotation;
+            }
 
-            if (gamepad1.right_trigger > .3) {
-                translation =
-                        new Vector2d(
-                                -1 * FAST_MOVEMENT_MULTIPLIER * movementVertical,
-                                -1 * FAST_MOVEMENT_MULTIPLIER * movementHorizontal);
-
-            } else if (gamepad1.left_trigger > .3) {
+            if (gamepad1.left_trigger > .3) {
                 translation =
                         new Vector2d(
                                 -1 * SLOW_MOVEMENT_MULTIPLIER * movementVertical,
                                 -1 * SLOW_MOVEMENT_MULTIPLIER * movementHorizontal);
+                rotation = rotation * SLOW_ROTATION_MULTIPLIER;
+
             } else {
                 translation =
                         new Vector2d(
@@ -165,13 +163,9 @@ public class Experimental_TeleOpProMaxPlusUltra extends LinearOpMode {
                                 -1 * DEFAULT_MOVE_MULTIPLIER * movementHorizontal);
             }
 
-            if (TURN_X_JOYSTICK) {
-                rotation = -ROTATION_MULTIPLIER * movementRotation;
-            }
 
-            if (gamepad1.right_bumper) {
-                rotation = rotation * SLOW_ROTATION_MULTIPLIER;
-            }
+
+
 
             // Toggle claw
             rightTriggerRelased = gamepad2.right_trigger > 0;
@@ -301,10 +295,34 @@ public class Experimental_TeleOpProMaxPlusUltra extends LinearOpMode {
                 lift.move(Consts.Lift.MEDIUM);
                 liftDown = false;
             } else if (gamepad2.dpad_down) {
+                //                belt.moveBelt(Constants.IntakeTargets.PICKUP);
                 lift.move(Consts.Lift.ZERO);
                 liftDown = true;
             }
 
+            // slow Manual lift control with left joystick. Slightly dysfunctional.
+
+            //            if (Math.abs(gamepad2.left_stick_y) > 0.3) {
+            //                gp1LeftStickYJustPressed = true;
+            //            }
+            //
+            //            if (Math.abs(gamepad2.left_stick_y) > 0.3 && gp1LeftStickYJustPressed) {
+            // // joystick going down
+            //                 // go to top of conestakcs
+            //                lift.setLiftPosition(conePositions[0]);
+            //                gp1LeftStickYJustPressed = false;
+            //
+            //            if (Math.abs(gamepad2.left_stick_y) > 0.3 && !gp1LeftStickYJustPressed)
+            //                lift.left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+            //                lift.right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+            //
+            //                lift.left.setPower(-0.5 * gamepad2.left_stick_y);
+            //                lift.right.setPower(0.5 * gamepad2.left_stick_y);
+            //
+            //                // so that this doesn't happen again when we press left stick y after
+            // releasing
+            //                gp1LeftStickYJustPressed = true;
+            //            }
 
             // X: reset subsystems for intaking action
             // turn table turned
@@ -313,12 +331,14 @@ public class Experimental_TeleOpProMaxPlusUltra extends LinearOpMode {
             // belt is down
             // belt up -> claw close -> turntable turn back -> lift down
 
-
             if (gamepad2.a) {
                 belt.move(Consts.Belt.UP);
                 tableRotation = 0;
                 lift.move(Consts.Lift.ZERO);
                 liftDown = true;
+            }
+            if (gamepad1.a){
+                resetHeading();
             }
 
             if (tableRotation >= 180) {
@@ -330,11 +350,9 @@ public class Experimental_TeleOpProMaxPlusUltra extends LinearOpMode {
 
             turntable.move(tableRotation);
 
-
             if (gamepad1.dpad_down || gamepad1.dpad_up || gamepad1.dpad_right || gamepad1.dpad_left){
                 rotation = getSteeringCorrection(0, ROTATION_LOCK_GAIN) * ROTATION_LOCK_MULTIPLIER;
             }
-
 
             drive.setWeightedDrivePower(new Pose2d(translation, rotation));
 
@@ -361,12 +379,7 @@ public class Experimental_TeleOpProMaxPlusUltra extends LinearOpMode {
             telemetry.addData("translation ", translation);
             telemetry.update();
         }
-
     }
-
-
-
-
     public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
         targetHeading = desiredHeading;
 
@@ -389,4 +402,3 @@ public class Experimental_TeleOpProMaxPlusUltra extends LinearOpMode {
         robotHeading = 0;
     }
 }
-
