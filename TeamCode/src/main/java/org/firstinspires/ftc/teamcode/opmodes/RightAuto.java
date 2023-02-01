@@ -114,9 +114,7 @@ public class RightAuto extends LinearOpMode {
 
         Vector2d parkPosition = new Vector2d();
 
-        // define park trajectory here because the value will be diff based off opencv values
-        Trajectory PARK =
-                drive.trajectoryBuilder(CYCLE_HIGH_POLE.end()).lineTo(parkPosition).build();
+
 
         waitForStart();
 
@@ -127,6 +125,22 @@ public class RightAuto extends LinearOpMode {
         lift.init(hardwareMap);
 
         telemetry.addData("READY", "");
+
+        int position = camera.getPosition();
+
+        if (position == 1 ) {
+            parkPosition = new Vector2d(12, -11.6);
+        } else if (position == 2) {
+            parkPosition = new Vector2d(36, -11.6);
+        } else if (position == 3) {
+            parkPosition = new Vector2d(58, -11.6);
+        }
+
+        // define park trajectory here because the value will be diff based off opencv values
+        Trajectory PARK =
+                drive.trajectoryBuilder(CYCLE_HIGH_POLE.end()).lineTo(parkPosition).build();
+
+        telemetry.addData("position", position);
 
         telemetry.update();
 

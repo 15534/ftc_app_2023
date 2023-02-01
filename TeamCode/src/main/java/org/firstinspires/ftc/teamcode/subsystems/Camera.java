@@ -10,14 +10,26 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.utility.OpenCV;
+import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.*;
+
+import java.util.ArrayList;
 
 public class Camera extends LinearOpMode {
 
     OpenCvWebcam webcam;
     static OpenCV.Pipeline pipeline;
 
+    double fx = 578.272;
+    double fy = 578.272;
+    double cx = 402.145;
+    double cy = 221.506;
+    double tagsize = 0.166;
+
     public void init(HardwareMap hardwareMap) {
+
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
         int cameraMonitorViewId =
                 hardwareMap
                         .appContext
@@ -30,6 +42,8 @@ public class Camera extends LinearOpMode {
                 OpenCvCameraFactory.getInstance()
                         .createWebcam(
                                 hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
+
+        pipeline = new OpenCV.Pipeline(tagsize, fx, fy, cx, cy);
 
         webcam.setPipeline(pipeline);
 
@@ -51,8 +65,15 @@ public class Camera extends LinearOpMode {
                 });
     }
 
-    public static OpenCV.Pipeline getPipeline() {
-        return pipeline;
+    public int getPosition() {
+        ArrayList<AprilTagDetection> currentDetections = pipeline.getLatestDetections();
+
+        if(currentDetections.size() != 0) {
+            for(AprilTagDetection tag : currentDetections) {
+                return tag.id;
+            }
+        }
+        return -1;
     }
 
     @Override
