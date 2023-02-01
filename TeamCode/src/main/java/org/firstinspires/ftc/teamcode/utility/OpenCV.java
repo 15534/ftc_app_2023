@@ -4,6 +4,8 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 import java.util.ArrayList;
 import org.openftc.apriltag.AprilTagDetection;
@@ -23,6 +25,9 @@ public class OpenCV {
 
         Mat cameraMatrix;
 
+        public static final Point REGION_A = new Point(0, 30);
+        public static final Point REGION_B = new Point(360, 690);
+
         double fx;
         double fy;
         double cx;
@@ -36,6 +41,13 @@ public class OpenCV {
         private float decimation;
         private boolean needToSetDecimation;
         private final Object decimationSync = new Object();
+
+        Mat region1;
+
+        @Override
+        public void init(Mat firstFrame) {
+            region1 = firstFrame.submat(new Rect(REGION_A, REGION_B));
+        }
 
         public Pipeline(double tagsize, double fx, double fy, double cx, double cy)
         {

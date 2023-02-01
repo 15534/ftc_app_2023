@@ -28,7 +28,7 @@ public class RightAuto extends LinearOpMode {
     State currentState = State.IDLE;
     SampleMecanumDrive drive;
 
-    Pose2d startingPos = new Pose2d(36, -64, Math.toRadians(90));
+    Pose2d startingPos = new Pose2d(36, -62, Math.toRadians(90));
     ElapsedTime runtime = new ElapsedTime();
     int cyclesCompleted = 0;
     int[] liftPosition = {290, 200, 130, 70, 0};
@@ -71,11 +71,11 @@ public class RightAuto extends LinearOpMode {
                                 })
                         .build();
 
-        Trajectory strafe = drive.trajectoryBuilder(FIRST_HIGH_POLE.end()).strafeLeft(0.2).build();
+        Trajectory STRAFE = drive.trajectoryBuilder(FIRST_HIGH_POLE.end()).strafeLeft(0.2).build();
 
         // @TODO: combine PREPARE_TO_TURN and the turning
         Trajectory PREPARE_TO_TURN =
-                drive.trajectoryBuilder(strafe.end()).lineTo(new Vector2d(36, -12)).build();
+                drive.trajectoryBuilder(STRAFE.end()).lineTo(new Vector2d(36, -12)).build();
 
         coneStackStartPos =
                 new Pose2d(PREPARE_TO_TURN.end().getX(), PREPARE_TO_TURN.end().getY(), 0);
@@ -114,34 +114,36 @@ public class RightAuto extends LinearOpMode {
 
         Vector2d parkPosition = new Vector2d();
 
-
-
-        waitForStart();
-
         camera.init(hardwareMap);
         claw.init(hardwareMap);
         belt.init(hardwareMap);
         turntable.init(hardwareMap);
         lift.init(hardwareMap);
 
-        telemetry.addData("READY", "");
+        int position = -1;
+        while (!opModeIsActive() && !isStopRequested()) {
+            position = camera.getPosition();
+            telemetry.addData("position", position);
 
-        int position = camera.getPosition();
+            telemetry.update();
+            sleep(50);
+        }
 
-        if (position == 1 ) {
+        if (position == 1) {
             parkPosition = new Vector2d(12, -11.6);
         } else if (position == 2) {
             parkPosition = new Vector2d(36, -11.6);
         } else if (position == 3) {
             parkPosition = new Vector2d(58, -11.6);
         }
-
+        
         // define park trajectory here because the value will be diff based off opencv values
         Trajectory PARK =
                 drive.trajectoryBuilder(CYCLE_HIGH_POLE.end()).lineTo(parkPosition).build();
 
-        telemetry.addData("position", position);
+        waitForStart();
 
+        telemetry.addData("READY", "");
         telemetry.update();
 
         currentState = State.FIRST_HIGH_POLE;
@@ -157,7 +159,7 @@ public class RightAuto extends LinearOpMode {
 
                 case STRAFE:
                     if (!drive.isBusy()) {
-                        drive.followTrajectoryAsync(strafe);
+                        drive.followTrajectoryAsync(STRAFE);
                         next(State.DROP_FIRST_CONE);
                     }
                     break;

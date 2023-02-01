@@ -54,7 +54,7 @@ public class Camera extends LinearOpMode {
                     @Override
                     public void onOpened() {
                         webcam.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
-                        webcam.startStreaming(1280, 720, OpenCvCameraRotation.SIDEWAYS_LEFT);
+                        webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
                     }
 
                     @Override
@@ -63,12 +63,15 @@ public class Camera extends LinearOpMode {
                         telemetry.update();
                     }
                 });
+
+        FtcDashboard.getInstance().startCameraStream(webcam, 0);
+
     }
 
     public int getPosition() {
         ArrayList<AprilTagDetection> currentDetections = pipeline.getLatestDetections();
 
-        if(currentDetections.size() != 0) {
+        if (currentDetections.size() != 0) {
             for(AprilTagDetection tag : currentDetections) {
                 return tag.id;
             }
