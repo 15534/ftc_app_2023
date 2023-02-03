@@ -91,16 +91,26 @@ public class StationaryGroundLowScore extends LinearOpMode {
                 case REMOVE_FROM_CONESTACK:
                     if (!lift.left.isBusy() && !lift.right.isBusy() && beltPosition == Consts.BELT_DOWN_LIMIT && clawPosition == Consts.CLAW_OPEN_LIMIT) {
                         claw.move(Consts.Claw.CLOSECLAW);
-                        sleep(500); // to tighten around cone
-                        belt.move(Consts.Belt.UP);
-                        next(State.RAISE_LIFT_TO_SCORE);
+                        sleep(500);
+                        // belt.move(Consts.Belt.UP);
+                        if (conesLow < numLow) { // where it decides where to score
+                            next(State.RAISE_LIFT_TO_SCORE);
+                        } else if (conesLow == numLow) { // now we score on ground once
+                            next(State.TURNTABLE_GROUND);
+                        } else if (conesGround == numGround) {
+                            next(State.IDLE); // this will become state park!
+                        }
                     }
                     break;
 
+                // pipeline for low scoring
+
                 case RAISE_LIFT_TO_SCORE:
-                    if (beltPosition == Consts.BELT_UP_LIMIT && clawPosition == Consts.CLAW_CLOSE_LIMIT) {
-                        turntable.move(-120); // tuned lol
+                    // beltPosition == Consts.BELT_UP_LIMIT
+                    if (clawPosition == Consts.CLAW_CLOSE_LIMIT) {
                         lift.move(Consts.Lift.LOW);
+                        sleep(500);
+                        turntable.move(-120); // tuned lol
                         belt.move(Consts.Belt.CONE_DROP);
                         next(State.SCORE_LOW);
                     }
@@ -108,9 +118,29 @@ public class StationaryGroundLowScore extends LinearOpMode {
 
                 case SCORE_LOW:
                     // lift is done moving. already confirmed claw in right place
-                    if (!lift.left.isBusy() && !lift.right.isBusy() && beltPosition == Consts.BELT_DROP_LIMIT) {
+                    if (!turntable.motor.isBusy() && !lift.left.isBusy() && !lift.right.isBusy() && beltPosition == Consts.BELT_DROP_LIMIT) {
                         claw.move(Consts.Claw.OPENCLAW);
-                        conesCycled++;
+                        conesLow++;
+                        sleep(100); // sometimes claw doesn't open though it should
+                        next(State.RESET);
+                    }
+
+                // pipeline for ground scoring
+
+                case TURNTABLE_GROUND:
+                    // beltPosition == Consts.BELT_UP_LIMIT
+                    if (clawPosition == Consts.CLAW_CLOSE_LIMIT) {
+                        turntable.move(120); // tuned lol
+                        belt.move(Consts.Belt.CONE_DROP);
+                        // next(State.SCORE_GROUND);
+                    }
+                    break;
+
+                case SCORE_GROUND:
+                    // lift is done moving. already confirmed claw in right place
+                    if (!turntable.motor.isBusy() && beltPosition == Consts.BELT_DROP_LIMIT) {
+                        claw.move(Consts.Claw.OPENCLAW);
+                        conesGround++;
                         sleep(100); // sometimes claw doesn't open though it should
                         next(State.RESET);
                     }
