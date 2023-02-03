@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -88,8 +89,7 @@ public class StationaryGroundLowScore extends LinearOpMode {
                     break;
 
                 case REMOVE_FROM_CONESTACK:
-                    if (!lift.left.isBusy() && !lift.right.isBusy() &&
-                            beltPosition == Consts.BELT_DOWN_LIMIT && clawPosition == Consts.CLAW_OPEN_LIMIT) {
+                    if (!lift.left.isBusy() && !lift.right.isBusy() && beltPosition == Consts.BELT_DOWN_LIMIT && clawPosition == Consts.CLAW_OPEN_LIMIT) {
                         claw.move(Consts.Claw.CLOSECLAW);
                         sleep(500);
                         // belt.move(Consts.Belt.UP);

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 // NOTE: Turntable must be initialized facing forward
 public class TurnTable {
-    DcMotorEx motor;
+    public DcMotorEx motor;
 
     // 90 degrees: -925
     // 180: -1863
