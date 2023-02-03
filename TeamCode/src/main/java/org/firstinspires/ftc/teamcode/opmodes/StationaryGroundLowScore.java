@@ -88,8 +88,7 @@ public class StationaryGroundLowScore extends LinearOpMode {
                     break;
 
                 case REMOVE_FROM_CONESTACK:
-                    if (!lift.left.isBusy() && !lift.right.isBusy() &&
-                            beltPosition == Consts.BELT_DOWN_LIMIT && clawPosition == Consts.CLAW_OPEN_LIMIT) {
+                    if (!lift.left.isBusy() && !lift.right.isBusy() && beltPosition == Consts.BELT_DOWN_LIMIT && clawPosition == Consts.CLAW_OPEN_LIMIT) {
                         claw.move(Consts.Claw.CLOSECLAW);
                         sleep(500); // to tighten around cone
                         belt.move(Consts.Belt.UP);

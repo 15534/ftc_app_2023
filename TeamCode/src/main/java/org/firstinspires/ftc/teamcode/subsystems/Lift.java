@@ -28,7 +28,13 @@ public class Lift {
                 break;
 
             case HIGH:
-                move(1900);
+                move(1875);
+                break;
+            case AUTO_LOW:
+                move(780);
+                break;
+            case AUTO_GROUND:
+                move(100);
                 break;
         }
     }
