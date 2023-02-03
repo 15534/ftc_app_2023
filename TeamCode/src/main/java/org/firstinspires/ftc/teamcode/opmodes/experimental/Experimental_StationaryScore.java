@@ -36,6 +36,7 @@ public class Experimental_StationaryScore extends LinearOpMode {
     TurnTable turntable = new TurnTable();
 
     int conesCycled = 0;
+    int coneThreshold = 5;
 
     void next(State s) {
         double time = runtime.seconds();
@@ -115,7 +116,7 @@ public class Experimental_StationaryScore extends LinearOpMode {
                         // for tele logging
                     }
                     sleep(1000);
-                    if (conesCycled != 4) {
+                    if (conesCycled != coneThreshold) {
                         sleep(300);
                         next(State.SCORE);
                     }
@@ -134,7 +135,7 @@ public class Experimental_StationaryScore extends LinearOpMode {
                         claw.move(Consts.Claw.OPENCLAW);
                         conesCycled++;
                         sleep(250); // sometimes claw doesn't open though it should
-                        if (conesCycled != 5) {
+                        if (conesCycled != coneThreshold) {
                             // conesCycled = 4 when we score the first 4 cones
                             // kinda scuffed sol tbh
                             next(State.RESET);
