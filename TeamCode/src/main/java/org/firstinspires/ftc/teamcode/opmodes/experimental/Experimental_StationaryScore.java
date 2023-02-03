@@ -54,8 +54,7 @@ public class Experimental_StationaryScore extends LinearOpMode {
         //        drive.setPoseEstimate(new Pose2d(52, -12, Math.toRadians(0))); // starting Pose2d
 
         // define trajectories
-        Trajectory STRAFE_TO_GROUND = drive.trajectoryBuilder(startingPos).strafeLeft(0.5).build();
-
+        Trajectory STRAFE_TO_GROUND = drive.trajectoryBuilder(startingPos).back(10).build();
         runtime.reset();
 
         waitForStart();
@@ -105,7 +104,7 @@ public class Experimental_StationaryScore extends LinearOpMode {
 
                 case TURNTABLE_TO_SCORE:
                     if (conesCycled == 4) {
-                        turntable.move(122);
+                        turntable.move(90);
                     } else {
                         turntable.move(-122);
                     }
@@ -114,9 +113,9 @@ public class Experimental_StationaryScore extends LinearOpMode {
                         turntable.getPosition(); // filler code just to wait out stuff, maybe swap
                         // for tele logging
                     }
-                    sleep(1000);
+                    sleep(700);
                     if (conesCycled != 4) {
-                        sleep(300);
+//                        sleep(300);
                         next(State.SCORE);
                     }
                     else {
@@ -134,11 +133,19 @@ public class Experimental_StationaryScore extends LinearOpMode {
                         claw.move(Consts.Claw.OPENCLAW);
                         conesCycled++;
                         sleep(250); // sometimes claw doesn't open though it should
+                        lift.move(Consts.Lift.AUTO_LOW);
+                        while(lift.right.isBusy() || lift.left.isBusy()){
+                            lift.getPosition();
+                        }
                         if (conesCycled != 5) {
                             // conesCycled = 4 when we score the first 4 cones
                             // kinda scuffed sol tbh
                             next(State.RESET);
                         } else {
+                            turntable.move(0);
+                            while(turntable.motor.isBusy()){
+                                turntable.getPosition();
+                            }
                             next(State.IDLE);
                         }
                     }
