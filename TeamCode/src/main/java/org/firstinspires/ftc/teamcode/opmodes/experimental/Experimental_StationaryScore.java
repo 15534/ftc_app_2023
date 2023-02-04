@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Belt;
+import org.firstinspires.ftc.teamcode.subsystems.Camera;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Consts;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
@@ -34,6 +36,7 @@ public class Experimental_StationaryScore extends LinearOpMode {
     Belt belt = new Belt();
     SampleMecanumDrive drive;
     TurnTable turntable = new TurnTable();
+    Camera camera = new Camera();
 
     int conesCycled = 0;
 
@@ -60,12 +63,38 @@ public class Experimental_StationaryScore extends LinearOpMode {
 
         runtime.reset();
 
-        waitForStart();
-
+        camera.init(hardwareMap);
         claw.init(hardwareMap);
         belt.init(hardwareMap);
         turntable.init(hardwareMap);
         lift.init(hardwareMap);
+
+        Vector2d parkPosition = new Vector2d();
+
+        int position = -1;
+        while (!opModeIsActive() && !isStopRequested()) {
+            position = camera.getPosition();
+            telemetry.addData("position", position);
+
+            telemetry.update();
+            sleep(50);
+        }
+
+        if (position == 1) {
+            parkPosition = new Vector2d(12, -11.6);
+        } else if (position == 2) {
+            parkPosition = new Vector2d(36, -11.6);
+        } else if (position == 3) {
+            parkPosition = new Vector2d(58, -11.6);
+        }
+
+        // define park trajectory here because the value will be diff based off opencv values
+//        Trajectory PARK =
+//                drive.trajectoryBuilder(CYCLE_HIGH_POLE.end()).lineTo(parkPosition).build();
+
+        waitForStart();
+
+
 
         telemetry.addData("READY", "");
         telemetry.update();

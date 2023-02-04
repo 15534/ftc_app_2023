@@ -36,6 +36,9 @@ public class Lift {
             case AUTO_GROUND:
                 move(100);
                 break;
+            case TRANSITION:
+                move(500);
+                break;
         }
     }
 

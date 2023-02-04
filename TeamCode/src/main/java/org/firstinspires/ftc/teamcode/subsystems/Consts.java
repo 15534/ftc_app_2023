@@ -13,7 +13,8 @@ public class Consts {
         MEDIUM,
         HIGH,
         AUTO_GROUND,
-        AUTO_LOW
+        AUTO_LOW,
+        TRANSITION
     }
     /*
     Belt constants
