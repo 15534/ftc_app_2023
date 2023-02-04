@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class Camera extends LinearOpMode {
 
-    OpenCvWebcam webcam;
+    public OpenCvWebcam webcam;
     static OpenCV.Pipeline pipeline;
 
     double fx = 578.272;
