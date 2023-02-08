@@ -52,10 +52,10 @@ public class DeBruh extends LinearOpMode {
     private double headingError  = 0;
     private double  targetHeading = 0;
     public static double DEFAULT_MOVE_MULTIPLIER = .64;
-    public static double SLOW_MOVEMENT_MULTIPLIER = .4;
+    public static double SLOW_MOVEMENT_MULTIPLIER = .36;
     public static double FAST_MOVEMENT_MULTIPLIER = 1;
     public static double ROTATION_MULTIPLIER = -1.9;
-    public static double SLOW_ROTATION_MULTIPLIER = .3;
+    public static double SLOW_ROTATION_MULTIPLIER = .27;
     public static boolean TURN_X_JOYSTICK = true;
     public static double turntableSensitivity = 2.2;
     boolean gp2AReleased = true;
@@ -68,7 +68,8 @@ public class DeBruh extends LinearOpMode {
     boolean currentBbtn, currentYbtn, currentXbtn;
     boolean currentRBumper;
     boolean currentLBumper;
-    boolean gp1LeftStickYJustPressed = false;
+    int currentIndex = 4;
+    boolean gp2LeftStickYJustPressed = false;
     boolean liftDown = true;
     int[] conePositions = {290, 200, 130, 70, 0};
 
@@ -154,8 +155,16 @@ public class DeBruh extends LinearOpMode {
                                 -1 * SLOW_MOVEMENT_MULTIPLIER * movementVertical,
                                 -1 * SLOW_MOVEMENT_MULTIPLIER * movementHorizontal);
                 rotation = rotation * SLOW_ROTATION_MULTIPLIER;
+            }
 
-            } else {
+            else if (gamepad1.right_trigger > .3){
+                translation =
+                        new Vector2d(
+                                -1  * movementVertical,
+                                -1  * movementHorizontal);
+                rotation = rotation;
+            }
+            else {
                 translation =
                         new Vector2d(
                                 -1 * DEFAULT_MOVE_MULTIPLIER * movementVertical,
@@ -163,8 +172,24 @@ public class DeBruh extends LinearOpMode {
             }
 
 
-
-
+            // xbutton for moving lift to conestack heights
+//            if (gamepad2.left_stick_y > 0.5) {
+//                lift.move(conePositions[4]); // top position of conestack\
+//                currentIndex = 4;
+//            }
+//
+//            currentXbtn = gamepad2.x;
+//            if (!currentXbtn) {
+//                gp2XReleased = true;
+//            }
+//            if (currentXbtn && gp2BReleased){
+//                gp2XReleased = false;
+//                currentIndex = currentIndex - 1;
+//                if(currentIndex < 0){
+//                    currentIndex = 4;
+//                }
+//                lift.move(conePositions[currentIndex]);
+//            }
 
             // Toggle claw
             rightTriggerRelased = gamepad2.right_trigger > 0;
@@ -193,7 +218,7 @@ public class DeBruh extends LinearOpMode {
                 gp2BReleased = false;
                 if (beltUp) {
                     if (liftDown) { // handles case where belt is going down preemptively as you
-                                    // prepare to pick up cone
+                        // prepare to pick up cone
                         claw.move(Consts.Claw.OPENCLAW);
                     }
                     belt.move(Consts.Belt.DOWN);
@@ -205,37 +230,10 @@ public class DeBruh extends LinearOpMode {
                 }
             }
 
-            // in the case of double b - restart belt.
-
-//            currentYbtn = gamepad2.y;
-//            if (!currentYbtn) {
-//                gp2YReleased = true;
-//            }
-//            // hold y down until belt in right place
-//            if (gamepad2.y && gp2YReleased) {
-//                gp2YReleased = false;
-//                belt.belt.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-//                belt.belt.setPower(0.5); // moving up, in positive direction
-//            }
-//
-//            if (!gamepad2.y && !gp2YReleased) {
-//                belt.drift = belt.belt.getCurrentPosition();
-//            }
-
-            currentXbtn = gamepad2.x;
-            if (!currentXbtn) {
-                gp2XReleased = true;
-            }
-
-            if (currentXbtn && gp2XReleased) {
-                gp2XReleased = false;
-                if (beltUp) {
-                    belt.move(Consts.Belt.DOWN);
-                    beltUp = false;
-                } else {
-                    belt.move(Consts.Belt.UP);
-                    beltUp = true;
-                }
+            // y for ground junction - moving belt down w/o claw down
+            if (gamepad2.y) {
+                belt.move(Consts.Belt.DOWN);
+                beltUp = false;
             }
 
             // Turntable rotation
@@ -251,7 +249,10 @@ public class DeBruh extends LinearOpMode {
                 }
 
                 gp2RBumperReleased = false;
-                if (tableRotation < 0) {
+                if (tableRotation < -90){
+                    tableRotation = -90;
+                }
+                else if (tableRotation < 0) {
                     tableRotation = 0;
                 } else if (tableRotation < 90) {
                     tableRotation = 90;
@@ -272,7 +273,10 @@ public class DeBruh extends LinearOpMode {
                 }
 
                 gp2LBumperReleased = false;
-                if (tableRotation > 0) {
+                if (tableRotation > 90){
+                    tableRotation = 90;
+                }
+                else if (tableRotation > 0) {
                     tableRotation = 0;
                 } else if (tableRotation > -90) {
                     tableRotation = -90;
@@ -299,29 +303,30 @@ public class DeBruh extends LinearOpMode {
                 liftDown = true;
             }
 
-            // slow Manual lift control with left joystick. Slightly dysfunctional.
+            //slow Manual lift control with left joystick. Slightly dysfunctional.
 
-            //            if (Math.abs(gamepad2.left_stick_y) > 0.3) {
-            //                gp1LeftStickYJustPressed = true;
-            //            }
-            //
-            //            if (Math.abs(gamepad2.left_stick_y) > 0.3 && gp1LeftStickYJustPressed) {
-            // // joystick going down
-            //                 // go to top of conestakcs
-            //                lift.setLiftPosition(conePositions[0]);
-            //                gp1LeftStickYJustPressed = false;
-            //
-            //            if (Math.abs(gamepad2.left_stick_y) > 0.3 && !gp1LeftStickYJustPressed)
-            //                lift.left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-            //                lift.right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-            //
-            //                lift.left.setPower(-0.5 * gamepad2.left_stick_y);
-            //                lift.right.setPower(0.5 * gamepad2.left_stick_y);
-            //
-            //                // so that this doesn't happen again when we press left stick y after
-            // releasing
-            //                gp1LeftStickYJustPressed = true;
-            //            }
+//            if (Math.abs(gamepad2.left_stick_y) > 0.3) {
+//                gp2LeftStickYJustPressed = true;
+//            }
+//
+//            if (Math.abs(gamepad2.left_stick_y) > 0.3) {
+//                // joystick going down
+//                // go to top of conestacks
+//                //                lift.setLiftPosition(conePositions[0]);
+//                gp2LeftStickYJustPressed = false;
+//            }
+//
+//            if (Math.abs(gamepad2.left_stick_y) > 0.3 && !gp2LeftStickYJustPressed) {
+//                lift.left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+//                lift.right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+//
+//                lift.left.setPower(-0.5 * gamepad2.left_stick_y);
+//                lift.right.setPower(0.5 * gamepad2.left_stick_y);
+//
+//                // so that this doesn't happen again when we press left stick y after
+// //releasing
+//                gp2LeftStickYJustPressed = true;
+//            }
 
             // X: reset subsystems for intaking action
             // turn table turned
