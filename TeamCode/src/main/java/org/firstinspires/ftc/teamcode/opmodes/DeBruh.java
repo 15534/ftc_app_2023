@@ -9,7 +9,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -40,6 +39,7 @@ import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
  * DPad right: Move lift to low
  * DPad down: Move lift to zero
  * Right joystick: Turntable rotation
+ * Left joystick: manual control of lift from 0-300
  */
 
 @TeleOp(name = "DeBruh")
@@ -47,10 +47,10 @@ import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 public class DeBruh extends LinearOpMode {
     public static double ROTATION_LOCK_GAIN = 0.02;
     public static double ROTATION_LOCK_MULTIPLIER = 1.8;
-    private double robotHeading  = 0;
+    private double robotHeading = 0;
     private double headingOffset = 0;
-    private double headingError  = 0;
-    private double  targetHeading = 0;
+    private double headingError = 0;
+    private double targetHeading = 0;
     public static double DEFAULT_MOVE_MULTIPLIER = .64;
     public static double SLOW_MOVEMENT_MULTIPLIER = .36;
     public static double FAST_MOVEMENT_MULTIPLIER = 1;
@@ -71,7 +71,7 @@ public class DeBruh extends LinearOpMode {
     int currentIndex = 4;
     boolean gp2LeftStickYJustPressed = false;
     boolean liftDown = true;
-    int[] conePositions = {290, 200, 130, 70, 0};
+    int[] conePositions = { 290, 200, 130, 70, 0 };
 
     double movementHorizontal = 0;
     double movementVertical = 0;
@@ -150,46 +150,51 @@ public class DeBruh extends LinearOpMode {
             }
 
             if (gamepad1.left_trigger > .3) {
-                translation =
-                        new Vector2d(
-                                -1 * SLOW_MOVEMENT_MULTIPLIER * movementVertical,
-                                -1 * SLOW_MOVEMENT_MULTIPLIER * movementHorizontal);
+                translation = new Vector2d(
+                        -1 * SLOW_MOVEMENT_MULTIPLIER * movementVertical,
+                        -1 * SLOW_MOVEMENT_MULTIPLIER * movementHorizontal);
                 rotation = rotation * SLOW_ROTATION_MULTIPLIER;
             }
 
-            else if (gamepad1.right_trigger > .3){
-                translation =
-                        new Vector2d(
-                                -1  * movementVertical,
-                                -1  * movementHorizontal);
+            else if (gamepad1.right_trigger > .3) {
+                translation = new Vector2d(
+                        -1 * movementVertical,
+                        -1 * movementHorizontal);
                 rotation = rotation;
+            } else {
+                translation = new Vector2d(
+                        -1 * DEFAULT_MOVE_MULTIPLIER * movementVertical,
+                        -1 * DEFAULT_MOVE_MULTIPLIER * movementHorizontal);
             }
-            else {
-                translation =
-                        new Vector2d(
-                                -1 * DEFAULT_MOVE_MULTIPLIER * movementVertical,
-                                -1 * DEFAULT_MOVE_MULTIPLIER * movementHorizontal);
-            }
-
 
             // xbutton for moving lift to conestack heights
-//            if (gamepad2.left_stick_y > 0.5) {
-//                lift.move(conePositions[4]); // top position of conestack\
-//                currentIndex = 4;
-//            }
-//
-//            currentXbtn = gamepad2.x;
-//            if (!currentXbtn) {
-//                gp2XReleased = true;
-//            }
-//            if (currentXbtn && gp2BReleased){
-//                gp2XReleased = false;
-//                currentIndex = currentIndex - 1;
-//                if(currentIndex < 0){
-//                    currentIndex = 4;
-//                }
-//                lift.move(conePositions[currentIndex]);
-//            }
+            if (Math.abs(gamepad2.left_stick_y) > 0 && lift.getPosition() <= 1900) {
+                int movePosition = (int) (lift.getPosition() +  -1 * gamepad2.left_stick_y * 75);
+                if (movePosition > 1900) {
+                    movePosition = 1900;
+                } else if (movePosition < 0) {
+                    movePosition = 0;
+                }
+                lift.move(movePosition);
+            }
+
+            currentXbtn = gamepad2.x;
+            if (!currentXbtn) {
+                gp2XReleased = true;
+            }
+            if (currentXbtn && gp2XReleased) {
+                gp2XReleased = false;
+                currentIndex = currentIndex - 1;
+                if (currentIndex < 0) {
+                    currentIndex = 4;
+                }
+                lift.move(conePositions[currentIndex]);
+            }
+
+            currentBbtn = gamepad2.b;
+            if (!currentBbtn) {
+                gp2BReleased = true;
+            }
 
             // Toggle claw
             rightTriggerRelased = gamepad2.right_trigger > 0;
@@ -249,10 +254,9 @@ public class DeBruh extends LinearOpMode {
                 }
 
                 gp2RBumperReleased = false;
-                if (tableRotation < -90){
+                if (tableRotation < -90) {
                     tableRotation = -90;
-                }
-                else if (tableRotation < 0) {
+                } else if (tableRotation < 0) {
                     tableRotation = 0;
                 } else if (tableRotation < 90) {
                     tableRotation = 90;
@@ -273,10 +277,9 @@ public class DeBruh extends LinearOpMode {
                 }
 
                 gp2LBumperReleased = false;
-                if (tableRotation > 90){
+                if (tableRotation > 90) {
                     tableRotation = 90;
-                }
-                else if (tableRotation > 0) {
+                } else if (tableRotation > 0) {
                     tableRotation = 0;
                 } else if (tableRotation > -90) {
                     tableRotation = -90;
@@ -298,35 +301,35 @@ public class DeBruh extends LinearOpMode {
                 lift.move(Consts.Lift.MEDIUM);
                 liftDown = false;
             } else if (gamepad2.dpad_down) {
-                //                belt.moveBelt(Constants.IntakeTargets.PICKUP);
+                // belt.moveBelt(Constants.IntakeTargets.PICKUP);
                 lift.move(Consts.Lift.ZERO);
                 liftDown = true;
             }
 
-            //slow Manual lift control with left joystick. Slightly dysfunctional.
+            // slow Manual lift control with left joystick. Slightly dysfunctional.
 
-//            if (Math.abs(gamepad2.left_stick_y) > 0.3) {
-//                gp2LeftStickYJustPressed = true;
-//            }
-//
-//            if (Math.abs(gamepad2.left_stick_y) > 0.3) {
-//                // joystick going down
-//                // go to top of conestacks
-//                //                lift.setLiftPosition(conePositions[0]);
-//                gp2LeftStickYJustPressed = false;
-//            }
-//
-//            if (Math.abs(gamepad2.left_stick_y) > 0.3 && !gp2LeftStickYJustPressed) {
-//                lift.left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-//                lift.right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-//
-//                lift.left.setPower(-0.5 * gamepad2.left_stick_y);
-//                lift.right.setPower(0.5 * gamepad2.left_stick_y);
-//
-//                // so that this doesn't happen again when we press left stick y after
-// //releasing
-//                gp2LeftStickYJustPressed = true;
-//            }
+            // if (Math.abs(gamepad2.left_stick_y) > 0.3) {
+            // gp2LeftStickYJustPressed = true;
+            // }
+            //
+            // if (Math.abs(gamepad2.left_stick_y) > 0.3) {
+            // // joystick going down
+            // // go to top of conestacks
+            // // lift.setLiftPosition(conePositions[0]);
+            // gp2LeftStickYJustPressed = false;
+            // }
+            //
+            // if (Math.abs(gamepad2.left_stick_y) > 0.3 && !gp2LeftStickYJustPressed) {
+            // lift.left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+            // lift.right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+            //
+            // lift.left.setPower(-0.5 * gamepad2.left_stick_y);
+            // lift.right.setPower(0.5 * gamepad2.left_stick_y);
+            //
+            // // so that this doesn't happen again when we press left stick y after
+            // //releasing
+            // gp2LeftStickYJustPressed = true;
+            // }
 
             // X: reset subsystems for intaking action
             // turn table turned
@@ -341,7 +344,7 @@ public class DeBruh extends LinearOpMode {
                 lift.move(Consts.Lift.ZERO);
                 liftDown = true;
             }
-            if (gamepad1.a){
+            if (gamepad1.a) {
                 resetHeading();
             }
 
@@ -354,7 +357,7 @@ public class DeBruh extends LinearOpMode {
 
             turntable.move(tableRotation);
 
-            if (gamepad1.dpad_down || gamepad1.dpad_up || gamepad1.dpad_right || gamepad1.dpad_left){
+            if (gamepad1.right_bumper) {
                 rotation = getSteeringCorrection(0, ROTATION_LOCK_GAIN) * ROTATION_LOCK_MULTIPLIER;
             }
 
@@ -378,12 +381,14 @@ public class DeBruh extends LinearOpMode {
             telemetry.addData("Dpad down", gamepad2.dpad_down);
             telemetry.addData("Dpad left", gamepad2.dpad_left);
             telemetry.addData("gamepad 2 x button", gamepad2.x);
+            telemetry.addData("conestack position", currentIndex);
             telemetry.addData("left joystick", gamepad2.left_stick_y);
             telemetry.addData("turn table position", turntable.getPosition());
             telemetry.addData("translation ", translation);
             telemetry.update();
         }
     }
+
     public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
         targetHeading = desiredHeading;
 
@@ -391,16 +396,19 @@ public class DeBruh extends LinearOpMode {
 
         headingError = targetHeading - robotHeading;
 
-        while (headingError > 180)  headingError -= 360;
-        while (headingError <= -180) headingError += 360;
-
+        while (headingError > 180)
+            headingError -= 360;
+        while (headingError <= -180)
+            headingError += 360;
 
         return Range.clip(headingError * proportionalGain, -1, 1);
     }
+
     public double getRawHeading() {
-        Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return angles.firstAngle;
     }
+
     public void resetHeading() {
         headingOffset = getRawHeading();
         robotHeading = 0;

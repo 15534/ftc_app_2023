@@ -20,7 +20,7 @@ public class Lift {
                 break;
 
             case LOW:
-                move(770);
+                move(780);
                 break;
 
             case MEDIUM:

@@ -19,9 +19,9 @@ import org.firstinspires.ftc.teamcode.subsystems.Consts;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 
-@Autonomous(name = "Integrated_Auto")
+@Autonomous(name = "SplineAutoEx")
 @Config
-public class Experimental_Auto_Integration extends LinearOpMode {
+public class Experimental_SplineAuto extends LinearOpMode {
 
     // facing field side
     //    Pose2d startingPos = new Pose2d(52, -12, Math.toRadians(0));
@@ -84,21 +84,15 @@ public class Experimental_Auto_Integration extends LinearOpMode {
 
         Trajectory STRAFE = drive.trajectoryBuilder(FIRST_HIGH_POLE.end()).strafeLeft(0.2).build();
 
-        // @TODO: combine PREPARE_TO_TURN and the turning
-        Trajectory PREPARE_TO_TURN =
-                drive.trajectoryBuilder(STRAFE.end()).lineTo(new Vector2d(36, -12)).build();
+        Trajectory SPLINE_TO_CONESTACK = drive.trajectoryBuilder(new Pose2d(STRAFE.end().getX(), STRAFE.end().getY(), Math.toRadians(90)), true) // is heading math.toRadians(90)?
+                .splineTo(new Vector2d(36, -5), Math.toRadians(-90))
+                .addDisplacementMarker(7, () -> {
+                    turntable.move(-180);
+                })
+                .splineTo(new Vector2d(56,-12.1), Math.toRadians(0))
+                .build();
 
-        coneStackStartPos =
-                new Pose2d(PREPARE_TO_TURN.end().getX(), PREPARE_TO_TURN.end().getY(), 0);
-
-        Trajectory GO_TOWARDS_CONESTACK =
-                drive.trajectoryBuilder(coneStackStartPos)
-                        // move to conestacks, can be tuned for more accuracy for pickup
-                        // 56, -13.75
-                        .lineTo(new Vector2d(56, -12.1))
-                        .build();
-
-        Trajectory BACK_TO_GROUND = drive.trajectoryBuilder(GO_TOWARDS_CONESTACK.end()).back(9).build();
+        Trajectory BACK_TO_GROUND = drive.trajectoryBuilder(SPLINE_TO_CONESTACK.end()).back(9).build();
         Trajectory STRAFE_TO_GROUND = drive.trajectoryBuilder(BACK_TO_GROUND.end()).strafeLeft(2).build();
 
         runtime.reset();
@@ -178,44 +172,21 @@ public class Experimental_Auto_Integration extends LinearOpMode {
                         sleep(600);
                         claw.move(Consts.Claw.OPENCLAW);
                         sleep(150);
-                        next(State.PREPARE_TO_TURN);
+                        next(State.SPLINE_TO_CONESTACK);
                     }
                     break;
 
-                case PREPARE_TO_TURN:
+                case SPLINE_TO_CONESTACK:
                     drive.update();
                     drive.updatePoseEstimate();
                     if (!drive.isBusy()) {
                         sleep(500);
                         belt.move(Consts.Belt.UP);
                         lift.move(Consts.Lift.ZERO);
-                        turntable.move(0);
-
-                        drive.followTrajectoryAsync(PREPARE_TO_TURN);
-
-                        next(State.TURN_TO_CONESTACK);
-                    }
-                    break;
-
-                case TURN_TO_CONESTACK:
-                    drive.update();
-                    drive.updatePoseEstimate();
-                    if (!drive.isBusy()) {
-                        drive.turn(Math.toRadians(-90));
-                        next(State.GO_TOWARDS_CONESTACK);
-                    }
-                    break;
-
-                case GO_TOWARDS_CONESTACK:
-                    drive.update();
-                    drive.updatePoseEstimate();
-                    if (!drive.isBusy()) {
-                        sleep(750);
-                        // to pick up first. will move lift as well here later.
                         turntable.move(5);
-                        // lift.move(liftPosition[cyclesCompleted]);
-                        // belt.move(Consts.Belt.DOWN);
-                        drive.followTrajectoryAsync(GO_TOWARDS_CONESTACK);
+
+                        drive.followTrajectoryAsync(SPLINE_TO_CONESTACK);
+
                         next(State.PICK_FROM_CONESTACK);
                     }
                     break;
@@ -381,6 +352,7 @@ public class Experimental_Auto_Integration extends LinearOpMode {
         SCORE,
         STRAFE_TO_GROUND,
         MOVE_TO_GROUND,
-        IDLE
+        IDLE,
+        SPLINE_TO_CONESTACK
     }
 }
