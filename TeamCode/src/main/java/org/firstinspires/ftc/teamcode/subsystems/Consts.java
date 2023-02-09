@@ -42,6 +42,6 @@ public class Consts {
     /*
     Claw Init Variables
      */
-    public static double CLAW_CLOSE_LIMIT = 0.05; // for slightly more precision
-    public static double CLAW_OPEN_LIMIT = 0.5;
+    public static double CLAW_CLOSE_LIMIT = 0.28; // for slightly more precision
+    public static double CLAW_OPEN_LIMIT = 0.7;
 }
