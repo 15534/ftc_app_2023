@@ -48,7 +48,7 @@ public class DeBruh extends LinearOpMode {
     public static double ROTATION_LOCK_GAIN = 0.02;
     public static double ROTATION_LOCK_MULTIPLIER = 1.8;
     private double robotHeading = 0;
-    private double headingOffset = 0;
+    private double headingOffset = 90;
     private double headingError = 0;
     private double targetHeading = 0;
     public static double DEFAULT_MOVE_MULTIPLIER = .64;
@@ -291,20 +291,24 @@ public class DeBruh extends LinearOpMode {
             tableRotation += (turntableSensitivity * -gamepad2.right_stick_x);
 
             // Moving lift
-            if (gamepad2.dpad_up) {
-                lift.move(Consts.Lift.HIGH);
-                liftDown = false;
-            } else if (gamepad2.dpad_left) {
-                lift.move(Consts.Lift.LOW);
-                liftDown = false;
-            } else if (gamepad2.dpad_right) {
-                lift.move(Consts.Lift.MEDIUM);
-                liftDown = false;
-            } else if (gamepad2.dpad_down) {
-                // belt.moveBelt(Constants.IntakeTargets.PICKUP);
-                lift.move(Consts.Lift.ZERO);
-                liftDown = true;
-            }
+            //commented stuff is movement cancel logic, bad and other stuff
+//            if (!lift.left.isBusy() && !lift.right.isBusy()){
+                if (gamepad2.dpad_up) {
+                    lift.move(Consts.Lift.HIGH);
+                    liftDown = false;
+                } else if (gamepad2.dpad_left) {
+                    lift.move(Consts.Lift.LOW);
+                    liftDown = false;
+                } else if (gamepad2.dpad_right) {
+                    lift.move(Consts.Lift.MEDIUM);
+                    liftDown = false;
+                } else if (gamepad2.dpad_down) {
+                    // belt.moveBelt(Constants.IntakeTargets.PICKUP);
+                    lift.move(Consts.Lift.ZERO);
+                    liftDown = true;
+                }
+//            }
+
 
             // slow Manual lift control with left joystick. Slightly dysfunctional.
 
