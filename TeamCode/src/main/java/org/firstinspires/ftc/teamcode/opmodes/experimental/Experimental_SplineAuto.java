@@ -92,8 +92,8 @@ public class Experimental_SplineAuto extends LinearOpMode {
                 .splineTo(new Vector2d(56,-12.1), Math.toRadians(0))
                 .build();
 
-        Trajectory BACK_TO_GROUND = drive.trajectoryBuilder(SPLINE_TO_CONESTACK.end()).back(9).build();
-        Trajectory STRAFE_TO_GROUND = drive.trajectoryBuilder(BACK_TO_GROUND.end()).strafeLeft(2).build();
+        Trajectory BACK_TO_GROUND = drive.trajectoryBuilder(SPLINE_TO_CONESTACK.end()).forward(9).build();
+        Trajectory STRAFE_TO_GROUND = drive.trajectoryBuilder(BACK_TO_GROUND.end()).strafeRight(2).build();
 
         runtime.reset();
 
@@ -183,8 +183,6 @@ public class Experimental_SplineAuto extends LinearOpMode {
                         sleep(500);
                         belt.move(Consts.Belt.UP);
                         lift.move(Consts.Lift.ZERO);
-                        turntable.move(5);
-
                         drive.followTrajectoryAsync(SPLINE_TO_CONESTACK);
 
                         next(State.PICK_FROM_CONESTACK);
@@ -223,9 +221,9 @@ public class Experimental_SplineAuto extends LinearOpMode {
 
                 case TURNTABLE_TO_SCORE:
                     if (conesCycled == numLow) {
-                        turntable.move(90);
+                        turntable.move(-90);
                     } else {
-                        turntable.move(-126);
+                        turntable.move(59);
                     }
                     // bc auto ground could hit conestack
                     // tuned lol
@@ -291,7 +289,7 @@ public class Experimental_SplineAuto extends LinearOpMode {
                     // checking claw in right position, because only one that moved in previous
                     // state
                     //                    if (clawPosition == Consts.CLAW_OPEN_LIMIT) {
-                    turntable.move(5);
+                    turntable.move(-180);
                     while (turntable.motor.isBusy()) {
                         turntable.getPosition();
                     }
@@ -303,12 +301,13 @@ public class Experimental_SplineAuto extends LinearOpMode {
                     break;
 
                 case PARK:
+                    claw.move(Consts.Claw.CLOSECLAW);
+                    belt.move(Consts.Belt.UP);
+                    lift.move(Consts.Lift.ZERO);
+
                     drive.update();
                     drive.updatePoseEstimate();
                     if (!drive.isBusy()) {
-                        claw.move(Consts.Claw.CLOSECLAW);
-                        belt.move(Consts.Belt.UP);
-                        lift.move(Consts.Lift.ZERO);
                         next(State.IDLE);
                     }
                     break;
