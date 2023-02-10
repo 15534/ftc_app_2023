@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.teamcode.opmodes.RightAuto;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Belt;
@@ -123,37 +124,39 @@ public class Experimental_SplineAuto extends LinearOpMode {
         Vector2d parkPosition = new Vector2d();
 
         int position = -1;
-
+//        while (!opModeIsActive() && !isStopRequested()) {
         position = camera.getPosition();
         telemetry.addData("position", position);
         telemetry.update();
-        sleep(50);
+//            sleep(50);
+//        }
+
+        // define park trajectory here because the value will be diff based off opencv values
+//        Trajectory PARK =
+//                drive.trajectoryBuilder(STRAFE_TO_GROUND.end()).lineTo(parkPosition).build();
 
         waitForStart();
 
         position = camera.getPosition();
         telemetry.addData("position", position);
-        sleep(50);
+        telemetry.update();
 
         if (position == 1) {
-            parkPosition = new Vector2d(12, -12.3);
+            parkPosition = new Vector2d(12, -11.6);
         } else if (position == 2) {
-            parkPosition = new Vector2d(36, -12.3);
+            parkPosition = new Vector2d(36, -11.6);
         } else if (position == 3) {
-            parkPosition = new Vector2d(58, -12.3);
-        } else if (position == -1) {
-            parkPosition = new Vector2d(12, -12);
+            parkPosition = new Vector2d(58, -11.6);
         }
 
-        // define park trajectory here because the value will be diff based off opencv values
-        Trajectory PARK =
-                drive.trajectoryBuilder(STRAFE_TO_GROUND.end()).lineTo(parkPosition).build();
-
-        telemetry.addData("READY", "");
-        telemetry.update();
+//        telemetry.addData("streamStatus", "before");
+//        telemetry.update();
 
         camera.webcam.stopStreaming();
         camera.webcam.stopRecordingPipeline();
+
+//        telemetry.addData("streamStatus", "after");
+//        telemetry.update();
 
         // state machine time!
         currentState = State.FIRST_HIGH_POLE;
@@ -166,19 +169,19 @@ public class Experimental_SplineAuto extends LinearOpMode {
             switch (currentState) { // input to switch
                 case FIRST_HIGH_POLE:
                     if (!drive.isBusy()) {
-                        drive.followTrajectory(FIRST_HIGH_POLE);
-                        next(State.STRAFE);
-                    }
-                    break;
-
-                case STRAFE:
-                    drive.update();
-                    drive.updatePoseEstimate();
-                    if (!drive.isBusy()) {
-                        drive.followTrajectoryAsync(STRAFE);
+                        drive.followTrajectory(SPLINE_TO_HIGH);
                         next(State.DROP_FIRST_CONE);
                     }
                     break;
+
+//                case STRAFE:
+//                    drive.update();
+//                    drive.updatePoseEstimate();
+//                    if (!drive.isBusy()) {
+//                        drive.followTrajectoryAsync(STRAFE);
+//                        next(State.DROP_FIRST_CONE);
+//                    }
+//                    break;
 
                 case DROP_FIRST_CONE:
                     drive.update();
@@ -192,18 +195,18 @@ public class Experimental_SplineAuto extends LinearOpMode {
                     }
                     break;
 
-                case SPLINE_TO_CONESTACK:
-                    drive.update();
-                    drive.updatePoseEstimate();
-                    if (!drive.isBusy()) {
-                        sleep(500);
-                        belt.move(Consts.Belt.UP);
-                        lift.move(Consts.Lift.ZERO);
-                        drive.followTrajectoryAsync(SPLINE_TO_CONESTACK);
-
-                        next(State.PICK_FROM_CONESTACK);
-                    }
-                    break;
+//                case SPLINE_TO_CONESTACK:
+//                    drive.update();
+//                    drive.updatePoseEstimate();
+//                    if (!drive.isBusy()) {
+//                        sleep(500);
+//                        belt.move(Consts.Belt.UP);
+//                        lift.move(Consts.Lift.ZERO);
+//                        drive.followTrajectoryAsync(SPLINE_TO_CONESTACK);
+//
+//                        next(State.PICK_FROM_CONESTACK);
+//                    }
+//                    break;
 
                 case PICK_FROM_CONESTACK:
                     // shouldn't need to check lift here
