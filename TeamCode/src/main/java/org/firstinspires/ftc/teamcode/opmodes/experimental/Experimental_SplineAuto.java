@@ -55,7 +55,8 @@ public class Experimental_SplineAuto extends LinearOpMode {
 
         // new Pose2d(56, -13.75, Math.toRadians(90));
 
-        Pose2d startingPos = new Pose2d(36, -62, Math.toRadians(90));
+        Pose2d startingPos = new Pose2d(40, -62, Math.toRadians(90));
+
         drive = new SampleMecanumDrive(hardwareMap);
         drive.setPoseEstimate(startingPos);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -64,36 +65,46 @@ public class Experimental_SplineAuto extends LinearOpMode {
         //        drive.setPoseEstimate(new Pose2d(52, -12, Math.toRadians(0))); // starting Pose2d
 
         // define trajectories
-        Trajectory FIRST_HIGH_POLE =
-                drive.trajectoryBuilder(startingPos)
-                        // moves to the first high junction (35.6, 0)
-                        // turns turntable 90 deg (counter-clockwise)
-                        // lifts to high
-                        .lineTo(new Vector2d(36, 0))
-                        .addDisplacementMarker(
-                                1,
-                                () -> {
-                                    turntable.move(90);
-                                })
-                        .addDisplacementMarker(
-                                10,
-                                () -> {
-                                    lift.move(Consts.Lift.HIGH);
-                                })
-                        .build();
+//        Trajectory FIRST_HIGH_POLE =
+//                drive.trajectoryBuilder(startingPos)
+//                        // moves to the first high junction (35.6, 0)
+//                        // turns turntable 90 deg (counter-clockwise)
+//                        // lifts to high
+//                        .splineToSplineHeading(new Pose2d(36, -48, Math.toRadians(90)), Math.toRadians(90))
+//                        .addDisplacementMarker(
+//                                1,
+//                                () -> {
+//                                    turntable.move(90);
+//                                })
+//                        .addDisplacementMarker(
+//                                10,
+//                                () -> {
+//                                    lift.move(Consts.Lift.HIGH);
+//                                })
+//                        .build();
 
         Trajectory STRAFE = drive.trajectoryBuilder(FIRST_HIGH_POLE.end()).strafeLeft(0.2).build();
 
-        Trajectory SPLINE_TO_CONESTACK = drive.trajectoryBuilder(new Pose2d(STRAFE.end().getX(), STRAFE.end().getY(), Math.toRadians(90)), true) // is heading math.toRadians(90)?
-                .splineTo(new Vector2d(36, -5), Math.toRadians(-90))
-                .addDisplacementMarker(7, () -> {
-                    turntable.move(-180);
-                })
-                .splineTo(new Vector2d(56,-12.1), Math.toRadians(0))
-                .build();
+//        Trajectory BACK_TO_GROUND = drive.trajectoryBuilder(SPLINE_TO_CONESTACK.end()).forward(9).build();
+//        Trajectory STRAFE_TO_GROUND = drive.trajectoryBuilder(BACK_TO_GROUND.end()).strafeRight(2).build();
 
-        Trajectory BACK_TO_GROUND = drive.trajectoryBuilder(SPLINE_TO_CONESTACK.end()).forward(9).build();
-        Trajectory STRAFE_TO_GROUND = drive.trajectoryBuilder(BACK_TO_GROUND.end()).strafeRight(2).build();
+        Trajectory SPLINE_TO_HIGH = drive.trajectoryBuilder(startingPos)
+                .addDisplacementMarker(
+                        () -> {
+                            lift.move(Consts.Lift.MEDIUM);
+                        })
+                .splineToSplineHeading(new Pose2d(36, -48, Math.toRadians(90)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(36,-24, Math.toRadians(90)), Math.toRadians(90))
+                .addSpatialMarker(new Vector2d(36, -20),
+                        () -> {
+                            belt.move(Consts.Belt.DOWN);
+                        })
+                .addSpatialMarker(new Vector2d(36, -16),
+                        () -> {
+                            lift.move(Consts.Lift.HIGH);
+                        })
+                .splineToSplineHeading(new Pose2d(32,-8, Math.toRadians(135)), Math.toRadians(90))
+                .build();
 
         runtime.reset();
 
@@ -109,7 +120,6 @@ public class Experimental_SplineAuto extends LinearOpMode {
 
         position = camera.getPosition();
         telemetry.addData("position", position);
-
         telemetry.update();
         sleep(50);
 
@@ -168,8 +178,8 @@ public class Experimental_SplineAuto extends LinearOpMode {
                     drive.update();
                     drive.updatePoseEstimate();
                     if (!drive.isBusy()) {
-                        belt.move(Consts.Belt.CONE_DROP);
-                        sleep(600);
+//                        belt.move(Consts.Belt.CONE_DROP);
+//                        sleep(600);
                         claw.move(Consts.Claw.OPENCLAW);
                         sleep(150);
                         next(State.SPLINE_TO_CONESTACK);
@@ -245,72 +255,72 @@ public class Experimental_SplineAuto extends LinearOpMode {
                     }
                     break;
 
-                case SCORE:
-                    // lift is done moving. already confirmed claw in right place
-                    if (!lift.left.isBusy() && !lift.right.isBusy()) {
-                        sleep(500);
-                        claw.move(Consts.Claw.OPENCLAW);
-                        conesCycled++;
-                        sleep(250); // sometimes claw doesn't open though it should
-                        lift.move(Consts.Lift.AUTO_LOW);
-                        while(lift.right.isBusy() || lift.left.isBusy()){
-                            lift.getPosition();
-                        }
-                        if (conesCycled != numLow + numGround) {
-                            // conesCycled = 4 when we score the first 4 cones
-                            // kinda scuffed sol tbh
-                            next(State.RESET);
-                        } else {
-                            turntable.move(0);
-                            drive.followTrajectoryAsync(PARK);
-                            next(State.PARK);
-                        }
-                    }
-                    break;
-
-                case MOVE_TO_GROUND:
-                    drive.update();
-                    drive.updatePoseEstimate();
-                    if (!drive.isBusy()) {
-                        drive.followTrajectoryAsync(STRAFE_TO_GROUND);
-                        next(State.STRAFE_TO_GROUND);
-                    }
-                    break;
-
-                case STRAFE_TO_GROUND:
-                    drive.update();
-                    drive.updatePoseEstimate();
-                    if (!drive.isBusy()) {
-                        next(State.SCORE);
-                    }
-                    break;
-
-                case RESET:
-                    // checking claw in right position, because only one that moved in previous
-                    // state
-                    //                    if (clawPosition == Consts.CLAW_OPEN_LIMIT) {
-                    turntable.move(-180);
-                    while (turntable.motor.isBusy()) {
-                        turntable.getPosition();
-                    }
-                    sleep(200);
+////                case SCORE:
+////                    // lift is done moving. already confirmed claw in right place
+////                    if (!lift.left.isBusy() && !lift.right.isBusy()) {
+////                        sleep(500);
+////                        claw.move(Consts.Claw.OPENCLAW);
+////                        conesCycled++;
+////                        sleep(250); // sometimes claw doesn't open though it should
+////                        lift.move(Consts.Lift.AUTO_LOW);
+////                        while(lift.right.isBusy() || lift.left.isBusy()){
+////                            lift.getPosition();
+////                        }
+////                        if (conesCycled != numLow + numGround) {
+////                            // conesCycled = 4 when we score the first 4 cones
+////                            // kinda scuffed sol tbh
+////                            next(State.RESET);
+////                        } else {
+////                            turntable.move(0);
+////                            drive.followTrajectoryAsync(PARK);
+////                            next(State.PARK);
+////                        }
+////                    }
+////                    break;
+//
+////                case MOVE_TO_GROUND:
+////                    drive.update();
+////                    drive.updatePoseEstimate();
+////                    if (!drive.isBusy()) {
+////                        drive.followTrajectoryAsync(STRAFE_TO_GROUND);
+////                        next(State.STRAFE_TO_GROUND);
+////                    }
+////                    break;
+//
+//                case STRAFE_TO_GROUND:
+//                    drive.update();
+//                    drive.updatePoseEstimate();
+//                    if (!drive.isBusy()) {
+//                        next(State.SCORE);
+//                    }
+//                    break;
+//
+//                case RESET:
+//                    // checking claw in right position, because only one that moved in previous
+//                    // state
+//                    //                    if (clawPosition == Consts.CLAW_OPEN_LIMIT) {
+//                    turntable.move(-180);
+//                    while (turntable.motor.isBusy()) {
+//                        turntable.getPosition();
+//                    }
+//                    sleep(200);
+////                    claw.move(Consts.Claw.CLOSECLAW);
+//                    //                        belt.move(Consts.Belt.UP);
+//                    next(State.PICK_FROM_CONESTACK);
+//                    //                    }
+//                    break;
+//
+//                case PARK:
 //                    claw.move(Consts.Claw.CLOSECLAW);
-                    //                        belt.move(Consts.Belt.UP);
-                    next(State.PICK_FROM_CONESTACK);
-                    //                    }
-                    break;
-
-                case PARK:
-                    claw.move(Consts.Claw.CLOSECLAW);
-                    belt.move(Consts.Belt.UP);
-                    lift.move(Consts.Lift.ZERO);
-
-                    drive.update();
-                    drive.updatePoseEstimate();
-                    if (!drive.isBusy()) {
-                        next(State.IDLE);
-                    }
-                    break;
+//                    belt.move(Consts.Belt.UP);
+//                    lift.move(Consts.Lift.ZERO);
+//
+//                    drive.update();
+//                    drive.updatePoseEstimate();
+//                    if (!drive.isBusy()) {
+//                        next(State.IDLE);
+//                    }
+//                    break;
             }
 
             //drive.update();
