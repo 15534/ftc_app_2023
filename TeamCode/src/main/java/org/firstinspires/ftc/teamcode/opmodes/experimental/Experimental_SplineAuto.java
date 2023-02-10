@@ -83,7 +83,13 @@ public class Experimental_SplineAuto extends LinearOpMode {
 //                                })
 //                        .build();
 
-        Trajectory STRAFE = drive.trajectoryBuilder(FIRST_HIGH_POLE.end()).strafeLeft(0.2).build();
+//        Trajectory SPLINE_TO_CONESTACK = drive.trajectoryBuilder(new Pose2d(STRAFE.end().getX(), STRAFE.end().getY(), Math.toRadians(90)), true) // is heading math.toRadians(90)?
+//                .splineTo(new Vector2d(36, -5), Math.toRadians(-90))
+//                .addDisplacementMarker(7, () -> {
+//                    turntable.move(-180);
+//                })
+//                .splineTo(new Vector2d(56,-12.1), Math.toRadians(0))
+//                .build();
 
 //        Trajectory BACK_TO_GROUND = drive.trajectoryBuilder(SPLINE_TO_CONESTACK.end()).forward(9).build();
 //        Trajectory STRAFE_TO_GROUND = drive.trajectoryBuilder(BACK_TO_GROUND.end()).strafeRight(2).build();
@@ -229,31 +235,31 @@ public class Experimental_SplineAuto extends LinearOpMode {
                     next(State.TURNTABLE_TO_SCORE);
                     break;
 
-                case TURNTABLE_TO_SCORE:
-                    if (conesCycled == numLow) {
-                        turntable.move(-90);
-                    } else {
-                        turntable.move(59);
-                    }
-                    // bc auto ground could hit conestack
-                    // tuned lol
-                    while (turntable.motor.isBusy()) {
-                        turntable.getPosition(); // filler code just to wait out stuff, maybe swap
-                        // for tele logging
-                    }
-                    sleep(500);
-                    if (conesCycled == numLow) {
-                        // ground junction case
-                        lift.move(Consts.Lift.AUTO_GROUND);
-                        if (!drive.isBusy()) {
-                            drive.followTrajectoryAsync(BACK_TO_GROUND);
-                            next(State.MOVE_TO_GROUND);
-                        }
-                    }
-                    else {
-                        next(State.SCORE);
-                    }
-                    break;
+//                case TURNTABLE_TO_SCORE:
+//                    if (conesCycled == numLow) {
+//                        turntable.move(-90);
+//                    } else {
+//                        turntable.move(59);
+//                    }
+//                    // bc auto ground could hit conestack
+//                    // tuned lol
+//                    while (turntable.motor.isBusy()) {
+//                        turntable.getPosition(); // filler code just to wait out stuff, maybe swap
+//                        // for tele logging
+//                    }
+//                    sleep(500);
+//                    if (conesCycled == numLow) {
+//                        // ground junction case
+//                        lift.move(Consts.Lift.AUTO_GROUND);
+//                        if (!drive.isBusy()) {
+//                            drive.followTrajectoryAsync(BACK_TO_GROUND);
+//                            next(State.MOVE_TO_GROUND);
+//                        }
+//                    }
+//                    else {
+//                        next(State.SCORE);
+//                    }
+//                    break;
 
 ////                case SCORE:
 ////                    // lift is done moving. already confirmed claw in right place
