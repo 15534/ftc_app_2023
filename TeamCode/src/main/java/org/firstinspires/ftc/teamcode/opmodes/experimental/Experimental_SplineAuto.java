@@ -90,16 +90,13 @@ public class Experimental_SplineAuto extends LinearOpMode {
 //                .splineTo(new Vector2d(56,-12.1), Math.toRadians(0))
 //                .build();
 
-//        Trajectory BACK_TO_GROUND = drive.trajectoryBuilder(SPLINE_TO_CONESTACK.end()).forward(9).build();
-//        Trajectory STRAFE_TO_GROUND = drive.trajectoryBuilder(BACK_TO_GROUND.end()).strafeRight(2).build();
-
         Trajectory SPLINE_TO_HIGH = drive.trajectoryBuilder(startingPos)
                 .addDisplacementMarker(
                         () -> {
                             lift.move(Consts.Lift.MEDIUM);
                         })
                 .splineToSplineHeading(new Pose2d(36, -48, Math.toRadians(90)), Math.toRadians(90))
-                .splineToSplineHeading(new Pose2d(36,-24, Math.toRadians(90)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(36, -24, Math.toRadians(90)), Math.toRadians(90))
                 .addSpatialMarker(new Vector2d(36, -20),
                         () -> {
                             belt.move(Consts.Belt.DOWN);
@@ -108,30 +105,33 @@ public class Experimental_SplineAuto extends LinearOpMode {
                         () -> {
                             lift.move(Consts.Lift.HIGH);
                         })
-                .splineToSplineHeading(new Pose2d(32,-8, Math.toRadians(135)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(32, -8, Math.toRadians(135)), Math.toRadians(90))
                 .build();
 
         Trajectory SPLINE_TO_CONESTACK =
                 drive.trajectoryBuilder(SPLINE_TO_HIGH.end())
+                        .lineToSplineHeading(
+                                new Pose2d(40, -13, Math.toRadians(180)))
                         .addDisplacementMarker(() -> {
                             belt.move(Consts.Belt.UP);
                             sleep(100);
-                            turntable.move(-180);
+                            turntable.move(185);
                             lift.move(Consts.Lift.ZERO);
                         })
-                        .lineToSplineHeading(
-                                new Pose2d(40, -13, Math.toRadians(180)))
                         .build();
 
         Trajectory LINE_TO_CONESTACK =
                 drive.trajectoryBuilder(SPLINE_TO_CONESTACK.end())
+                        .lineTo(new Vector2d(57, -12.5))
                         .addDisplacementMarker(() -> {
                             belt.move(Consts.Belt.DOWN);
                             sleep(100);
                             lift.move(liftPosition[0]);
                         })
-                        .lineTo(new Vector2d(50, -12))
                         .build();
+
+        Trajectory BACK_TO_GROUND = drive.trajectoryBuilder(SPLINE_TO_CONESTACK.end()).forward(9).build();
+        Trajectory STRAFE_TO_GROUND = drive.trajectoryBuilder(BACK_TO_GROUND.end()).strafeRight(2).build();
 
         runtime.reset();
 
@@ -151,10 +151,6 @@ public class Experimental_SplineAuto extends LinearOpMode {
 //            sleep(50);
 //        }
 
-        // define park trajectory here because the value will be diff based off opencv values
-//        Trajectory PARK =
-//                drive.trajectoryBuilder(STRAFE_TO_GROUND.end()).lineTo(parkPosition).build();
-
         waitForStart();
 
         position = camera.getPosition();
@@ -168,6 +164,10 @@ public class Experimental_SplineAuto extends LinearOpMode {
         } else if (position == 3) {
             parkPosition = new Vector2d(58, -11.6);
         }
+
+        // define park trajectory here because the value will be diff based off opencv values
+        Trajectory PARK =
+                drive.trajectoryBuilder(STRAFE_TO_GROUND.end()).lineTo(parkPosition).build();
 
 //        telemetry.addData("streamStatus", "before");
 //        telemetry.update();
@@ -219,7 +219,7 @@ public class Experimental_SplineAuto extends LinearOpMode {
                     drive.update();
                     drive.updatePoseEstimate();
                     if (!drive.isBusy()) {
-                        drive.followTrajectoryAsync(SPLINE_TO_CONESTACK);
+                        drive.followTrajectory(SPLINE_TO_CONESTACK);
                         next(State.LINE_TO_CONESTACK);
                     }
                     break;
@@ -228,7 +228,7 @@ public class Experimental_SplineAuto extends LinearOpMode {
                     drive.update();
                     drive.updatePoseEstimate();
                     if (!drive.isBusy()) {
-                        drive.followTrajectoryAsync(LINE_TO_CONESTACK);
+                        drive.followTrajectory(LINE_TO_CONESTACK);
                         next(State.REMOVE_FROM_CONESTACK);
                     }
                     break;
@@ -263,54 +263,54 @@ public class Experimental_SplineAuto extends LinearOpMode {
                     next(State.TURNTABLE_TO_SCORE);
                     break;
 
-//                case TURNTABLE_TO_SCORE:
-//                    if (conesCycled == numLow) {
-//                        turntable.move(-90);
-//                    } else {
-//                        turntable.move(59);
-//                    }
-//                    // bc auto ground could hit conestack
-//                    // tuned lol
-//                    while (turntable.motor.isBusy()) {
-//                        turntable.getPosition(); // filler code just to wait out stuff, maybe swap
-//                        // for tele logging
-//                    }
-//                    sleep(500);
-//                    if (conesCycled == numLow) {
-//                        // ground junction case
-//                        lift.move(Consts.Lift.AUTO_GROUND);
-//                        if (!drive.isBusy()) {
-//                            drive.followTrajectoryAsync(BACK_TO_GROUND);
-//                            next(State.MOVE_TO_GROUND);
-//                        }
-//                    }
-//                    else {
-//                        next(State.SCORE);
-//                    }
-//                    break;
+                case TURNTABLE_TO_SCORE:
+                    if (conesCycled == numLow) {
+                        turntable.move(-90);
+                    } else {
+                        turntable.move(48);
+                    }
+                    // bc auto ground could hit conestack
+                    // tuned lol
+                    while (turntable.motor.isBusy()) {
+                        turntable.getPosition(); // filler code just to wait out stuff, maybe swap
+                        // for tele logging
+                    }
+                    sleep(500);
+                    if (conesCycled == numLow) {
+                        // ground junction case
+                        lift.move(Consts.Lift.AUTO_GROUND);
+                        if (!drive.isBusy()) {
+                            drive.followTrajectoryAsync(BACK_TO_GROUND);
+                            next(State.MOVE_TO_GROUND);
+                        }
+                    }
+                    else {
+                        next(State.SCORE);
+                    }
+                    break;
 
-////                case SCORE:
-////                    // lift is done moving. already confirmed claw in right place
-////                    if (!lift.left.isBusy() && !lift.right.isBusy()) {
-////                        sleep(500);
-////                        claw.move(Consts.Claw.OPENCLAW);
-////                        conesCycled++;
-////                        sleep(250); // sometimes claw doesn't open though it should
-////                        lift.move(Consts.Lift.AUTO_LOW);
-////                        while(lift.right.isBusy() || lift.left.isBusy()){
-////                            lift.getPosition();
-////                        }
-////                        if (conesCycled != numLow + numGround) {
-////                            // conesCycled = 4 when we score the first 4 cones
-////                            // kinda scuffed sol tbh
-////                            next(State.RESET);
-////                        } else {
-////                            turntable.move(0);
-////                            drive.followTrajectoryAsync(PARK);
-////                            next(State.PARK);
-////                        }
-////                    }
-////                    break;
+                case SCORE:
+                    // lift is done moving. already confirmed claw in right place
+                    if (!lift.left.isBusy() && !lift.right.isBusy()) {
+                        sleep(500);
+                        claw.move(Consts.Claw.OPENCLAW);
+                        conesCycled++;
+                        sleep(250); // sometimes claw doesn't open though it should
+                        lift.move(Consts.Lift.AUTO_LOW);
+                        while(lift.right.isBusy() || lift.left.isBusy()){
+                            lift.getPosition();
+                        }
+                        if (conesCycled != numLow + numGround) {
+                            // conesCycled = 4 when we score the first 4 cones
+                            // kinda scuffed sol tbh
+                            next(State.RESET);
+                        } else {
+                            turntable.move(0);
+                            drive.followTrajectoryAsync(PARK);
+                            next(State.PARK);
+                        }
+                    }
+                    break;
 //
 ////                case MOVE_TO_GROUND:
 ////                    drive.update();
