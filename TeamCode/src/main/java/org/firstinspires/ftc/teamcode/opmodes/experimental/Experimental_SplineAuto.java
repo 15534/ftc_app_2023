@@ -95,7 +95,7 @@ public class Experimental_SplineAuto extends LinearOpMode {
                         () -> {
                             lift.move(Consts.Lift.MEDIUM);
                         })
-                .splineToSplineHeading(new Pose2d(36, -48, Math.toRadians(90)), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(36, -56), Math.toRadians(90))
                 .splineToSplineHeading(new Pose2d(36, -24, Math.toRadians(90)), Math.toRadians(90))
                 .addSpatialMarker(new Vector2d(36, -20),
                         () -> {
