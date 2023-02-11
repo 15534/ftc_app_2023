@@ -10,8 +10,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Const;
-import org.firstinspires.ftc.teamcode.opmodes.RightAuto;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Belt;
 import org.firstinspires.ftc.teamcode.subsystems.Camera;
@@ -113,6 +111,28 @@ public class Experimental_SplineAuto extends LinearOpMode {
                 .splineToSplineHeading(new Pose2d(32,-8, Math.toRadians(135)), Math.toRadians(90))
                 .build();
 
+        Trajectory SPLINE_TO_CONESTACK =
+                drive.trajectoryBuilder(SPLINE_TO_HIGH.end())
+                        .addDisplacementMarker(() -> {
+                            belt.move(Consts.Belt.UP);
+                            sleep(100);
+                            turntable.move(-180);
+                            lift.move(Consts.Lift.ZERO);
+                        })
+                        .lineToSplineHeading(
+                                new Pose2d(40, -13, Math.toRadians(180)))
+                        .build();
+
+        Trajectory LINE_TO_CONESTACK =
+                drive.trajectoryBuilder(SPLINE_TO_CONESTACK.end())
+                        .addDisplacementMarker(() -> {
+                            belt.move(Consts.Belt.DOWN);
+                            sleep(100);
+                            lift.move(liftPosition[0]);
+                        })
+                        .lineTo(new Vector2d(50, -12))
+                        .build();
+
         runtime.reset();
 
         camera.init(hardwareMap);
@@ -195,20 +215,25 @@ public class Experimental_SplineAuto extends LinearOpMode {
                     }
                     break;
 
-//                case SPLINE_TO_CONESTACK:
-//                    drive.update();
-//                    drive.updatePoseEstimate();
-//                    if (!drive.isBusy()) {
-//                        sleep(500);
-//                        belt.move(Consts.Belt.UP);
-//                        lift.move(Consts.Lift.ZERO);
-//                        drive.followTrajectoryAsync(SPLINE_TO_CONESTACK);
-//
-//                        next(State.PICK_FROM_CONESTACK);
-//                    }
-//                    break;
+                case SPLINE_TO_CONESTACK:
+                    drive.update();
+                    drive.updatePoseEstimate();
+                    if (!drive.isBusy()) {
+                        drive.followTrajectoryAsync(SPLINE_TO_CONESTACK);
+                        next(State.LINE_TO_CONESTACK);
+                    }
+                    break;
 
-                case PICK_FROM_CONESTACK:
+                case LINE_TO_CONESTACK:
+                    drive.update();
+                    drive.updatePoseEstimate();
+                    if (!drive.isBusy()) {
+                        drive.followTrajectoryAsync(LINE_TO_CONESTACK);
+                        next(State.REMOVE_FROM_CONESTACK);
+                    }
+                    break;
+
+                case CYCLE_PICK_FROM_CONESTACK:
                     // shouldn't need to check lift here
                     // make a proper condition or smth
                     // claw.move(Consts.Claw.OPENCLAW);
@@ -364,13 +389,14 @@ public class Experimental_SplineAuto extends LinearOpMode {
         PREPARE_TO_TURN,
         TURN_TO_CONESTACK,
         GO_TOWARDS_CONESTACK,
-        PICK_FROM_CONESTACK,
+        CYCLE_PICK_FROM_CONESTACK,
         REMOVE_FROM_CONESTACK,
         TURNTABLE_TO_SCORE,
         SCORE,
         STRAFE_TO_GROUND,
         MOVE_TO_GROUND,
         IDLE,
-        SPLINE_TO_CONESTACK
+        SPLINE_TO_CONESTACK,
+        LINE_TO_CONESTACK
     }
 }
