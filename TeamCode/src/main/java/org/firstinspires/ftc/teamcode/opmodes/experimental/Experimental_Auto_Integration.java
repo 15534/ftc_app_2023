@@ -55,7 +55,7 @@ public class Experimental_Auto_Integration extends LinearOpMode {
 
         // new Pose2d(56, -13.75, Math.toRadians(90));
 
-        Pose2d startingPos = new Pose2d(36, -62, Math.toRadians(90));
+        Pose2d startingPos = new Pose2d(39.5, -62, Math.toRadians(90));
         drive = new SampleMecanumDrive(hardwareMap);
         drive.setPoseEstimate(startingPos);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -64,8 +64,13 @@ public class Experimental_Auto_Integration extends LinearOpMode {
         //        drive.setPoseEstimate(new Pose2d(52, -12, Math.toRadians(0))); // starting Pose2d
 
         // define trajectories
+        Trajectory STRAFE_FIRST_HIGH_POLE = drive.trajectoryBuilder(startingPos)
+                .strafeLeft(3.5)
+//                .lineTo(new Vector2d(36, -62))
+                .build();
+
         Trajectory FIRST_HIGH_POLE =
-                drive.trajectoryBuilder(startingPos)
+                drive.trajectoryBuilder(STRAFE_FIRST_HIGH_POLE.end())
                         // moves to the first high junction (35.6, 0)
                         // turns turntable 90 deg (counter-clockwise)
                         // lifts to high
@@ -78,7 +83,7 @@ public class Experimental_Auto_Integration extends LinearOpMode {
                         .addDisplacementMarker(
                                 10,
                                 () -> {
-                                    lift.move(Consts.Lift.HIGH);
+                                    lift.move(Consts.Lift.AUTO_HIGH);
                                 })
                         .build();
 
@@ -95,11 +100,11 @@ public class Experimental_Auto_Integration extends LinearOpMode {
                 drive.trajectoryBuilder(coneStackStartPos)
                         // move to conestacks, can be tuned for more accuracy for pickup
                         // 56, -13.75
-                        .lineTo(new Vector2d(56, -12.1))
+                        .lineTo(new Vector2d(55.5, -12.1))
                         .build();
 
         Trajectory BACK_TO_GROUND = drive.trajectoryBuilder(GO_TOWARDS_CONESTACK.end()).back(9).build();
-        Trajectory STRAFE_TO_GROUND = drive.trajectoryBuilder(BACK_TO_GROUND.end()).strafeLeft(2).build();
+        Trajectory STRAFE_TO_GROUND = drive.trajectoryBuilder(BACK_TO_GROUND.end()).strafeLeft(1).build();
 
         runtime.reset();
 
@@ -154,6 +159,11 @@ public class Experimental_Auto_Integration extends LinearOpMode {
             // states. if issues, add turntable checks.
 
             switch (currentState) { // input to switch
+                case STRAFE_FIRST_HIGH_POLE:
+                    if (!drive.isBusy()) {
+                        drive.followTrajectoryAsync(STRAFE_FIRST_HIGH_POLE);
+                        next(State.FIRST_HIGH_POLE);
+                    }
                 case FIRST_HIGH_POLE:
                     if (!drive.isBusy()) {
                         drive.followTrajectory(FIRST_HIGH_POLE);
@@ -229,10 +239,14 @@ public class Experimental_Auto_Integration extends LinearOpMode {
                     if (!drive.isBusy()) {
                         sleep(300);
                         lift.move(liftPosition[conesCycled]);
-                        belt.move(Consts.Belt.DOWN);
-                        while (lift.right.isBusy() || lift.left.isBusy()) {
-                            lift.getPosition();
+                        belt.move(Consts.Belt.CONE_DROP);
+                        while(Math.abs(lift.getPosition() - lift.getTarget()) > 20){
+                            telemetry.addData("current", lift.getPosition());
+                            telemetry.addData("target", lift.getTarget());
+                            telemetry.update();
                         }
+                        telemetry.addData("done lift", "yes");
+                        telemetry.update();
                         next(State.REMOVE_FROM_CONESTACK);
                     }
                     break;
@@ -242,10 +256,13 @@ public class Experimental_Auto_Integration extends LinearOpMode {
                     claw.move(Consts.Claw.CLOSECLAW);
                     sleep(300); // to tighten around cone
                     lift.move(Consts.Lift.AUTO_LOW);
-                    while (lift.right.isBusy() || lift.left.isBusy()) {
-                        lift.getPosition(); // filler code just to wait out stuff, maybe
-                        // swap for tele logging
+                    while(Math.abs(lift.getPosition() - lift.getTarget()) > 20){
+                        telemetry.addData("current", lift.getPosition());
+                        telemetry.addData("target", lift.getTarget());
+                        telemetry.update();
                     }
+                    telemetry.addData("done lift", "yes");
+                    telemetry.update();
                     sleep(300);
                     next(State.TURNTABLE_TO_SCORE);
                     break;
@@ -254,7 +271,7 @@ public class Experimental_Auto_Integration extends LinearOpMode {
                     if (conesCycled == numLow) {
                         turntable.move(90);
                     } else {
-                        turntable.move(-126);
+                        turntable.move(-124);
                     }
                     // bc auto ground could hit conestack
                     // tuned lol
@@ -278,25 +295,35 @@ public class Experimental_Auto_Integration extends LinearOpMode {
 
                 case SCORE:
                     // lift is done moving. already confirmed claw in right place
-                    if (!lift.left.isBusy() && !lift.right.isBusy()) {
+//                    if (!lift.left.isBusy() && !lift.right.isBusy()) {
                         sleep(500);
                         claw.move(Consts.Claw.OPENCLAW);
                         conesCycled++;
                         sleep(250); // sometimes claw doesn't open though it should
                         lift.move(Consts.Lift.AUTO_LOW);
-                        while(lift.right.isBusy() || lift.left.isBusy()){
-                            lift.getPosition();
+                        telemetry.addData("done lift", "no");
+                        telemetry.update();
+                        while(Math.abs(lift.getPosition() - lift.getTarget()) > 20){
+                            telemetry.addData("current", lift.getPosition());
+                            telemetry.addData("target", lift.getTarget());
+                            telemetry.update();
                         }
+                        telemetry.addData("done lift", "yes");
+                        telemetry.update();
                         if (conesCycled != numLow + numGround) {
                             // conesCycled = 4 when we score the first 4 cones
                             // kinda scuffed sol tbh
+
                             next(State.RESET);
                         } else {
+                            belt.move(Consts.Belt.UP);
                             turntable.move(0);
+                            lift.move(0);
+                            claw.move(Consts.Claw.CLOSECLAW);
                             drive.followTrajectoryAsync(PARK);
                             next(State.PARK);
                         }
-                    }
+//                    }
                     break;
 
                 case MOVE_TO_GROUND:
@@ -369,6 +396,7 @@ public class Experimental_Auto_Integration extends LinearOpMode {
     enum State {
         PARK,
         RESET,
+        STRAFE_FIRST_HIGH_POLE,
         FIRST_HIGH_POLE,
         STRAFE,
         DROP_FIRST_CONE,

@@ -14,6 +14,7 @@ public class Consts {
         HIGH,
         AUTO_GROUND,
         AUTO_LOW,
+        AUTO_HIGH,
         TRANSITION
     }
     /*
