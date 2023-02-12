@@ -42,7 +42,7 @@ public class Experimental_Auto_Integration extends LinearOpMode {
     Pose2d coneStackStartPos;
 
     int conesCycled = 0;
-    int numLow = 3;
+    int numLow = 2;
     int numGround = 1;
 
     void next(State s) {
@@ -364,9 +364,9 @@ public class Experimental_Auto_Integration extends LinearOpMode {
                     drive.update();
                     drive.updatePoseEstimate();
                     if (!drive.isBusy()) {
-                        claw.move(Consts.Claw.CLOSECLAW);
-                        belt.move(Consts.Belt.UP);
-                        lift.move(Consts.Lift.ZERO);
+                        claw.reset();
+                        belt.reset();
+                        lift.reset();
                         next(State.IDLE);
                     }
                     break;
