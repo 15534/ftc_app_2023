@@ -300,15 +300,17 @@ public class Experimental_Auto_Integration extends LinearOpMode {
                         claw.move(Consts.Claw.OPENCLAW);
                         conesCycled++;
                         sleep(250); // sometimes claw doesn't open though it should
-                        lift.move(Consts.Lift.AUTO_LOW);
-                        telemetry.addData("done lift", "no");
+//                        lift.move(Consts.Lift.AUTO_LOW);
+                        telemetry.addData("done belt", "no");
                         telemetry.update();
-                        while(Math.abs(lift.getPosition() - lift.getTarget()) > 20){
-                            telemetry.addData("current", lift.getPosition());
-                            telemetry.addData("target", lift.getTarget());
-                            telemetry.update();
-                        }
-                        telemetry.addData("done lift", "yes");
+//                        while(Math.abs(lift.getPosition() - lift.getTarget()) > 20){
+//                            telemetry.addData("current", lift.getPosition());
+//                            telemetry.addData("target", lift.getTarget());
+//                            telemetry.update();
+//                        }
+                        belt.move(Consts.Belt.UP);
+                        sleep(250);
+                        telemetry.addData("done belt", "yes");
                         telemetry.update();
                         if (conesCycled != numLow + numGround) {
                             // conesCycled = 4 when we score the first 4 cones
@@ -316,7 +318,7 @@ public class Experimental_Auto_Integration extends LinearOpMode {
 
                             next(State.RESET);
                         } else {
-                            belt.move(Consts.Belt.UP);
+//                            belt.move(Consts.Belt.UP);
                             turntable.move(0);
                             lift.move(0);
                             claw.move(Consts.Claw.CLOSECLAW);
