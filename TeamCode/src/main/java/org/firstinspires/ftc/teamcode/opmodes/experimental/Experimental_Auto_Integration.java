@@ -132,12 +132,16 @@ public class Experimental_Auto_Integration extends LinearOpMode {
 
         if (position == 1) {
             parkPosition = new Vector2d(12, -12.3);
+            telemetry.update();
         } else if (position == 2) {
             parkPosition = new Vector2d(36, -12.3);
+            telemetry.update();
         } else if (position == 3) {
             parkPosition = new Vector2d(58, -12.3);
+            telemetry.update();
         } else if (position == -1) {
             parkPosition = new Vector2d(12, -12);
+            telemetry.update();
         }
 
         // define park trajectory here because the value will be diff based off opencv values
@@ -309,7 +313,6 @@ public class Experimental_Auto_Integration extends LinearOpMode {
 //                            telemetry.update();
 //                        }
                         belt.move(Consts.Belt.UP);
-                        sleep(250);
                         telemetry.addData("done belt", "yes");
                         telemetry.update();
                         if (conesCycled != numLow + numGround) {

@@ -36,7 +36,7 @@ public class Consts {
     /*
     Lift Init Variables
     */
-    public static double BELT_DOWN_LIMIT = 0.23;
+    public static double BELT_DOWN_LIMIT = 0.3;
     public static double BELT_UP_LIMIT = 0.73;// this is the difference! we go down 280, then we have to go back up 280 to get back to 0
     public static double BELT_DROP_LIMIT = 0.28;
 
