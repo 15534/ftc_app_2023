@@ -46,8 +46,8 @@ public class DriveConstants {
     public static double WHEEL_RADIUS = 1.8898; // in
 
     // robot has direct drive, so gear ratio is 1:1
-    public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 15; // in
+    public static double GEAR_RATIO = 1 * (0.98188); // output (wheel) speed / input (motor) speed
+    public static double TRACK_WIDTH = 26.14; // 15 for perfect 90 degree turning w/o heading pid tuned; in - cld be bs (actual is around 13.5/)
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -55,9 +55,12 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 0.0165;
-    public static double kA = 0.0032;
-    public static double kStatic = 0.0657;
+//    public static double kV = 0.0165;
+//    public static double kA = 0.0032;
+//    public static double kStatic = 0.0657;
+    public static double kV = 0.01749;
+    public static double kA = .003;
+    public static double kStatic = 0;
 
     /*
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
@@ -89,8 +92,10 @@ public class DriveConstants {
      */
     public static double MAX_VEL = 47; // original 52.48291908330528
     public static double MAX_ACCEL = 40; // original 52.48291908330528
-    public static double MAX_ANG_VEL = 4.45;
-    public static double MAX_ANG_ACCEL = 2.9157177268502936;
+//    public static double MAX_ANG_VEL = 4.45;
+//    public static double MAX_ANG_ACCEL = 2.9157177268502936;
+    public static double MAX_ANG_VEL = Math.toRadians(255.34069544531962);
+    public static double MAX_ANG_ACCEL = Math.toRadians(214.78926857142858);
 
 
     public static double encoderTicksToInches(double ticks) {
