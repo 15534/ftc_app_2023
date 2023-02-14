@@ -56,7 +56,6 @@ public class DeBruh extends LinearOpMode {
     public static double FAST_MOVEMENT_MULTIPLIER = 1;
     public static double ROTATION_MULTIPLIER = -1.9;
     public static double SLOW_ROTATION_MULTIPLIER = .27;
-    public static boolean TURN_X_JOYSTICK = true;
     public static double turntableSensitivity = 2.2;
     boolean gp2AReleased = true;
     boolean gp2BReleased = true;
@@ -66,8 +65,8 @@ public class DeBruh extends LinearOpMode {
     boolean gp2LBumperReleased = true;
     boolean rightTriggerRelased;
     boolean currentBbtn, currentYbtn, currentXbtn;
-    boolean currentRBumper;
-    boolean currentLBumper;
+    boolean currentLeftBumper;
+    boolean currentRightBumper;
     int currentIndex = 4;
     boolean gp2LeftStickYJustPressed = false;
     boolean liftDown = true;
@@ -75,34 +74,48 @@ public class DeBruh extends LinearOpMode {
 
     double movementHorizontal = 0;
     double movementVertical = 0;
-    private BNO055IMU imu;
 
-    private Vector2d translation;
+    boolean clawOpen = false;
+    boolean beltUp = true;
+    double rotation = 0;
+    double tableRotation = 0;
+    double movementRotation = 0;
+    double lastRight = 0;
+    double lastLeft = 0;
+
+    Vector2d translation;
+    Pose2d poseEstimate;
+    Claw claw;
+    Belt belt;
+    Lift lift;
+    TurnTable turntable;
+    SampleMecanumDrive drive;
+    BNO055IMU.Parameters parameters;
+    BNO055IMU imu;
+
+    Consts.Belt beltTarget;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        drive = new SampleMecanumDrive(hardwareMap);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         imu.initialize(parameters);
 
-        boolean clawOpen = false;
-        boolean beltUp = true;
-        double rotation = 0;
-        double tableRotation = 0;
-        double movementRotation = 0;
 
-        Claw claw = new Claw();
-        Belt belt = new Belt();
-        Lift lift = new Lift();
-        TurnTable turntable = new TurnTable();
-        Consts.Belt beltTarget = Consts.Belt.UP;
+
+        claw = new Claw();
+        belt = new Belt();
+        lift = new Lift();
+        turntable = new TurnTable();
+        beltTarget = Consts.Belt.UP;
 
         drive.setPoseEstimate(PoseStorage.currentPose);
 
@@ -115,69 +128,29 @@ public class DeBruh extends LinearOpMode {
 
         while (!isStopRequested() && !lift.requestStop) {
             drive.update();
-            Pose2d poseEstimate = drive.getPoseEstimate();
+            poseEstimate = drive.getPoseEstimate();
             PoseStorage.currentPose = poseEstimate;
 
-            // Dpad motion in one of four directions
 
-            if (gamepad1.dpad_down
-                    || gamepad1.dpad_up
-                    || gamepad1.dpad_left
-                    || gamepad1.dpad_right) {
-                movementRotation = 0;
-                if (gamepad1.dpad_down) {
-                    movementVertical = .8;
-                    movementHorizontal = 0;
-                } else if (gamepad1.dpad_up) {
-                    movementVertical = -.8;
-                    movementHorizontal = 0;
-                } else if (gamepad1.dpad_right) {
-                    movementVertical = 0;
-                    movementHorizontal = .8;
-
-                } else if (gamepad1.dpad_left) {
-                    movementVertical = 0;
-                    movementHorizontal = -.8;
-                }
-            } else { // joystick use instead, movement in vector directions. can explicitly define
-                // if needed.
+            if (gamepad2.left_stick_y<-.2 && gamepad2.a){//lift reset if last resort
+                LiftHardReset();
+            }
+            if (gamepad1.dpad_down || gamepad1.dpad_up || gamepad1.dpad_left || gamepad1.dpad_right) { //dpad movement
+                Dpad_Movement();
+            }
+            else { // joystick use instead
                 movementVertical = gamepad1.left_stick_y;
                 movementHorizontal = gamepad1.left_stick_x;
                 movementRotation = gamepad1.right_stick_x;
             }
-            if (TURN_X_JOYSTICK) {
-                rotation = ROTATION_MULTIPLIER * movementRotation;
-            }
 
-            if (gamepad1.left_trigger > .3) {
-                translation = new Vector2d(
-                        -1 * SLOW_MOVEMENT_MULTIPLIER * movementVertical,
-                        -1 * SLOW_MOVEMENT_MULTIPLIER * movementHorizontal);
-                rotation = rotation * SLOW_ROTATION_MULTIPLIER;
-            }
+            rotation = ROTATION_MULTIPLIER * movementRotation;
 
-            else if (gamepad1.right_trigger > .3) {
-                translation = new Vector2d(
-                        -1 * movementVertical,
-                        -1 * movementHorizontal);
-                rotation = rotation;
-            } else {
-                translation = new Vector2d(
-                        -1 * DEFAULT_MOVE_MULTIPLIER * movementVertical,
-                        -1 * DEFAULT_MOVE_MULTIPLIER * movementHorizontal);
-            }
 
-            // xbutton for moving lift to conestack heights
-            if (Math.abs(gamepad2.left_stick_y) > 0 && lift.getPosition() <= 1900) {
-                int movePosition = (int) (lift.getPosition() +  -1 * gamepad2.left_stick_y * 75);
-                if (movePosition > 1900) {
-                    movePosition = 1900;
-                } else if (movePosition < 0) {
-                    movePosition = 0;
-                }
-                lift.move(movePosition);
+            if (Math.abs(gamepad2.left_stick_y) > 0 && lift.getPosition() <= 1900 && !gamepad1.a) { //joystick lift movement
+                joystickLiftMovement();
             }
-
+            // start of conestack toggle code
             currentXbtn = gamepad2.x;
             if (!currentXbtn) {
                 gp2XReleased = true;
@@ -191,12 +164,10 @@ public class DeBruh extends LinearOpMode {
                 lift.move(conePositions[currentIndex]);
             }
 
-            currentBbtn = gamepad2.b;
-            if (!currentBbtn) {
-                gp2BReleased = true;
-            }
+            //end of conestack toggle code
 
-            // Toggle claw
+
+            // start of toggle claw
             rightTriggerRelased = gamepad2.right_trigger > 0;
             if (!rightTriggerRelased) {
                 gp2AReleased = true;
@@ -212,8 +183,10 @@ public class DeBruh extends LinearOpMode {
                     clawOpen = true;
                 }
             }
+            // end of toggle claw
 
-            // Toggle belt
+
+            // start of toggle belt
             currentBbtn = gamepad2.b;
             if (!currentBbtn) {
                 gp2BReleased = true;
@@ -235,19 +208,21 @@ public class DeBruh extends LinearOpMode {
                 }
             }
 
+            // end of toggle belt
+
             // y for ground junction - moving belt down w/o claw down
             if (gamepad2.y) {
                 belt.move(Consts.Belt.DOWN);
                 beltUp = false;
             }
 
-            // Turntable rotation
-            currentRBumper = gamepad2.left_bumper; // flipped on purpouse
-            if (!currentRBumper) {
+            // start of turntable snap to the left
+            currentLeftBumper = gamepad2.left_bumper;
+            if (!currentLeftBumper) {
                 gp2RBumperReleased = true;
             }
 
-            if (currentRBumper && gp2RBumperReleased) {
+            if (currentLeftBumper && gp2RBumperReleased) {
                 if (!beltUp && lift.getTarget() == 0) {
                     belt.move(Consts.Belt.UP);
                     beltUp = true;
@@ -265,12 +240,18 @@ public class DeBruh extends LinearOpMode {
                 }
             }
 
-            currentLBumper = gamepad2.right_bumper; // flipped on purpouse
-            if (!currentLBumper) {
+            // end of turntable snap to the left
+
+
+
+            // start of turntable snap to the right
+
+            currentRightBumper = gamepad2.right_bumper;
+            if (!currentRightBumper) {
                 gp2LBumperReleased = true;
             }
 
-            if (currentLBumper && gp2LBumperReleased) {
+            if (currentRightBumper && gp2LBumperReleased) {
                 if (!beltUp && lift.getTarget() == 0) {
                     belt.move(Consts.Belt.UP);
                     beltUp = true;
@@ -287,71 +268,30 @@ public class DeBruh extends LinearOpMode {
                     tableRotation = -180;
                 }
             }
+            // end of turntable snap to the right
 
             tableRotation += (turntableSensitivity * -gamepad2.right_stick_x);
 
-            // Moving lift
-            //commented stuff is movement cancel logic, bad and other stuff
-//            if (!lift.left.isBusy() && !lift.right.isBusy()){
-                if (gamepad2.dpad_up) {
-                    lift.move(Consts.Lift.HIGH);
-                    liftDown = false;
-                } else if (gamepad2.dpad_left) {
-                    lift.move(Consts.Lift.LOW);
-                    liftDown = false;
-                } else if (gamepad2.dpad_right) {
-                    lift.move(Consts.Lift.MEDIUM);
-                    liftDown = false;
-                } else if (gamepad2.dpad_down) {
-                    // belt.moveBelt(Constants.IntakeTargets.PICKUP);
-                    lift.move(Consts.Lift.ZERO);
-                    liftDown = true;
-                }
-//            }
+            liftControl();
 
 
-            // slow Manual lift control with left joystick. Slightly dysfunctional.
 
-            // if (Math.abs(gamepad2.left_stick_y) > 0.3) {
-            // gp2LeftStickYJustPressed = true;
-            // }
-            //
-            // if (Math.abs(gamepad2.left_stick_y) > 0.3) {
-            // // joystick going down
-            // // go to top of conestacks
-            // // lift.setLiftPosition(conePositions[0]);
-            // gp2LeftStickYJustPressed = false;
-            // }
-            //
-            // if (Math.abs(gamepad2.left_stick_y) > 0.3 && !gp2LeftStickYJustPressed) {
-            // lift.left.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-            // lift.right.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-            //
-            // lift.left.setPower(-0.5 * gamepad2.left_stick_y);
-            // lift.right.setPower(0.5 * gamepad2.left_stick_y);
-            //
-            // // so that this doesn't happen again when we press left stick y after
-            // //releasing
-            // gp2LeftStickYJustPressed = true;
-            // }
 
-            // X: reset subsystems for intaking action
-            // turn table turned
-            // lift up
-            // claw open
-            // belt is down
-            // belt up -> claw close -> turntable turn back -> lift down
-
-            if (gamepad2.a) {
+            //reset subsystems
+            if (gamepad2.a && Math.abs(gamepad2.left_stick_y) < .1) {
                 belt.move(Consts.Belt.UP);
                 tableRotation = 0;
                 lift.move(Consts.Lift.ZERO);
                 liftDown = true;
             }
+
+            //reset heading
             if (gamepad1.a) {
                 resetHeading();
             }
 
+
+            //turntable limits
             if (tableRotation >= 180) {
                 tableRotation = 180;
             }
@@ -361,35 +301,132 @@ public class DeBruh extends LinearOpMode {
 
             turntable.move(tableRotation);
 
+            //rotation lock
             if (gamepad1.right_bumper) {
                 rotation = getSteeringCorrection(0, ROTATION_LOCK_GAIN) * ROTATION_LOCK_MULTIPLIER;
             }
 
+
+
             drive.setWeightedDrivePower(new Pose2d(translation, rotation));
 
-            telemetry.addData("rTrigger ", gamepad1.right_trigger);
-            telemetry.addData("lTrigger ", gamepad1.left_trigger);
-            telemetry.addData("clawOpen", clawOpen);
-            telemetry.addData("claw position ", claw.getPosition());
-            telemetry.addData("x", poseEstimate.getX());
-            telemetry.addData("y", poseEstimate.getY());
-            telemetry.addData("heading", poseEstimate.getHeading());
-            telemetry.addData("right stick x pos", gamepad1.right_stick_x);
-            telemetry.addData("right stick y pos", gamepad1.right_stick_y);
-            telemetry.addData("rotation", rotation);
-            telemetry.addData("Belt Position", belt.getPosition());
-            telemetry.addData("Drift ", belt.drift);
-            telemetry.addData("Lift Position", lift.getPosition());
-            telemetry.addData("Dpad Up", gamepad2.dpad_up);
-            telemetry.addData("Dpad right", gamepad2.dpad_right);
-            telemetry.addData("Dpad down", gamepad2.dpad_down);
-            telemetry.addData("Dpad left", gamepad2.dpad_left);
-            telemetry.addData("gamepad 2 x button", gamepad2.x);
-            telemetry.addData("conestack position", currentIndex);
-            telemetry.addData("left joystick", gamepad2.left_stick_y);
-            telemetry.addData("turn table position", turntable.getPosition());
-            telemetry.addData("translation ", translation);
-            telemetry.update();
+
+        }
+    }
+
+    private void TeleOpTelemetry(){
+        telemetry.addData("rTrigger ", gamepad1.right_trigger);
+        telemetry.addData("lTrigger ", gamepad1.left_trigger);
+        telemetry.addData("clawOpen", clawOpen);
+        telemetry.addData("claw position ", claw.getPosition());
+        telemetry.addData("x", poseEstimate.getX());
+        telemetry.addData("y", poseEstimate.getY());
+        telemetry.addData("heading", poseEstimate.getHeading());
+        telemetry.addData("right stick x pos", gamepad1.right_stick_x);
+        telemetry.addData("right stick y pos", gamepad1.right_stick_y);
+        telemetry.addData("rotation", rotation);
+        telemetry.addData("Belt Position", belt.getPosition());
+        telemetry.addData("Drift ", belt.drift);
+        telemetry.addData("Lift Position", lift.getPosition());
+        telemetry.addData("Dpad Up", gamepad2.dpad_up);
+        telemetry.addData("Dpad right", gamepad2.dpad_right);
+        telemetry.addData("Dpad down", gamepad2.dpad_down);
+        telemetry.addData("Dpad left", gamepad2.dpad_left);
+        telemetry.addData("gamepad 2 x button", gamepad2.x);
+        telemetry.addData("conestack position", currentIndex);
+        telemetry.addData("left joystick", gamepad2.left_stick_y);
+        telemetry.addData("turn table position", turntable.getPosition());
+        telemetry.addData("translation ", translation);
+        telemetry.update();
+    }
+
+    private void LiftHardReset(){
+        lift.left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lift.right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lift.left.setPower(-.1);
+        lift.right.setPower(.1);
+        lastLeft = lift.left.getCurrentPosition();
+        lastRight = lift.right.getCurrentPosition();
+
+        sleep(100);
+
+        while(gamepad1.a){
+            lastRight = lift.right.getCurrentPosition();
+            lastLeft = lift.left.getCurrentPosition();
+            if (lift.right.getCurrentPosition() == lastRight || lift.left.getCurrentPosition()==lastLeft){
+                break;
+            }
+        }
+
+        lift.left.setPower(0);
+        lift.right.setPower(0);
+        lift.left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    private void Dpad_Movement(){
+        movementRotation = 0;
+        if (gamepad1.dpad_down) {
+            movementVertical = .8;
+            movementHorizontal = 0;
+        } else if (gamepad1.dpad_up) {
+            movementVertical = -.8;
+            movementHorizontal = 0;
+        } else if (gamepad1.dpad_right) {
+            movementVertical = 0;
+            movementHorizontal = .8;
+
+        } else if (gamepad1.dpad_left) {
+            movementVertical = 0;
+            movementHorizontal = -.8;
+        }
+    }
+
+    private void speedChangers(){
+        if (gamepad1.left_trigger > .3) {
+            translation = new Vector2d(
+                    -1 * SLOW_MOVEMENT_MULTIPLIER * movementVertical,
+                    -1 * SLOW_MOVEMENT_MULTIPLIER * movementHorizontal);
+            rotation = rotation * SLOW_ROTATION_MULTIPLIER;
+        }
+
+        else if (gamepad1.right_trigger > .3) {
+            translation = new Vector2d(
+                    -1 * movementVertical,
+                    -1 * movementHorizontal);
+            rotation = rotation * 1;
+        }
+        else {
+            translation = new Vector2d(
+                    -1 * DEFAULT_MOVE_MULTIPLIER * movementVertical,
+                    -1 * DEFAULT_MOVE_MULTIPLIER * movementHorizontal);
+        }
+    }
+
+    private void joystickLiftMovement(){
+        int movePosition = (int) (lift.getPosition() +  -1 * gamepad2.left_stick_y * 75);
+        if (movePosition > 1900) {
+            movePosition = 1900;
+        } else if (movePosition < 0) {
+            movePosition = 0;
+        }
+        lift.move(movePosition);
+    }
+
+    private void liftControl(){
+        if (gamepad2.dpad_up) {
+            lift.move(Consts.Lift.HIGH);
+            liftDown = false;
+        } else if (gamepad2.dpad_left) {
+            lift.move(Consts.Lift.LOW);
+            liftDown = false;
+        } else if (gamepad2.dpad_right) {
+            lift.move(Consts.Lift.MEDIUM);
+            liftDown = false;
+        } else if (gamepad2.dpad_down) {
+            // belt.moveBelt(Constants.IntakeTargets.PICKUP);
+            lift.move(Consts.Lift.ZERO);
+            liftDown = true;
         }
     }
 
