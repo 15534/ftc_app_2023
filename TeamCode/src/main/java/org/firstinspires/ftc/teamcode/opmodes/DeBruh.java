@@ -198,8 +198,12 @@ public class DeBruh extends LinearOpMode {
                     if (liftDown) { // handles case where belt is going down preemptively as you
                         // prepare to pick up cone
                         claw.move(Consts.Claw.OPENCLAW);
+
+                        belt.move(Consts.Belt.DOWN);
+                    } else {
+                        // dropping offf cone onto junction
+                        belt.move(Consts.Belt.CONE_DROP);
                     }
-                    belt.move(Consts.Belt.DOWN);
 
                     beltUp = false;
                 } else {
