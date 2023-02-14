@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Belt;
 import org.firstinspires.ftc.teamcode.subsystems.Camera;
@@ -18,10 +19,10 @@ import org.firstinspires.ftc.teamcode.subsystems.Consts;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 
-@Autonomous(name = "ChaneyGOAT_Right", group = "experimental")
+@Autonomous(name = "no_subsystems_ChaneyGOAT_Right", group = "experimental")
 @Config
 
-public class ChaneyGOAT_Right extends LinearOpMode {
+public class ChaneyGOAT_Right_NoSubsystems extends LinearOpMode {
 
     enum State {
         HIGH_POLE,
@@ -76,54 +77,54 @@ public class ChaneyGOAT_Right extends LinearOpMode {
         Trajectory highPole =
                 drive.trajectoryBuilder(startingPos)
                         .lineTo(highJunctionPos)
-                        .addDisplacementMarker(
-                                () -> {
-                                    turnTable.move(90);
-                                })
-                        .addSpatialMarker(new Vector2d(36, -30),
-                                () -> {
-                                    lift.move(Consts.Lift.AUTO_HIGH);
-                                })
-                        .addSpatialMarker(new Vector2d(36, -5),
-                                () -> {
-                                    belt.move(Consts.Belt.CONE_DROP);
-                                })
+//                        .addDisplacementMarker(
+//                                () -> {
+//                                    turnTable.move(90);
+//                                })
+//                        .addSpatialMarker(new Vector2d(36, -30),
+//                                () -> {
+//                                    lift.move(Consts.Lift.AUTO_HIGH);
+//                                })
+//                        .addSpatialMarker(new Vector2d(36, -5),
+//                                () -> {
+//                                    belt.move(Consts.Belt.CONE_DROP);
+//                                })
                         .build();
         Trajectory backABit =
                 drive.trajectoryBuilder(highPole.end())
                         .lineTo(coneStackAlignment)
-                        .addDisplacementMarker(
-                                () -> {
-                                    lift.move(Consts.Lift.MEDIUM);
-                                })
+//                        .addDisplacementMarker(
+//                                () -> {
+//                                    lift.move(Consts.Lift.MEDIUM);
+//                                })
                         .build();
         Trajectory toConeStack =
                 drive.trajectoryBuilder(backABit.end())
                         .lineToLinearHeading(coneStack)
-                        .addDisplacementMarker(
-                                () -> {
-                                    lift.move(liftPosition[0]);
-                                })
-                        .addDisplacementMarker(
-                                () -> {
-                                    turnTable.move(0);
-                                })
-                        .addDisplacementMarker(
-                                () -> {
-                                    belt.move(Consts.Belt.DOWN);
-                                })
+//                        .addDisplacementMarker(
+//                                () -> {
+//                                    lift.move(liftPosition[0]);
+//                                })
+//                        .addDisplacementMarker(
+//                                () -> {
+//                                    turnTable.move(0);
+//                                })
+//                        .addDisplacementMarker(
+//                                () -> {
+//                                    belt.move(Consts.Belt.DOWN);
+//                                })
                         .build();
         Trajectory toGroundJunction =
                 drive.trajectoryBuilder(toConeStack.end())
                         .lineTo(groundJunction)
-                        .addDisplacementMarker(
-                                () -> {
-                                    lift.move(Consts.Lift.AUTO_GROUND);
-                                })
-                        .addDisplacementMarker(
-                                () -> {
-                                    turnTable.move(90);
-                                })
+//                        .addDisplacementMarker(
+//                                () -> {
+//                                    lift.move(Consts.Lift.AUTO_GROUND);
+//                                })
+//                        .addDisplacementMarker(
+//                                () -> {
+//                                    turnTable.move(90);
+//                                })
                         .build();
 
         // Camera + Park
@@ -157,92 +158,86 @@ public class ChaneyGOAT_Right extends LinearOpMode {
                         .lineTo(parkPosition)
                         .build();
 
-        currentState = State.HIGH_POLE;
-
         waitForStart();
+
+        currentState = State.HIGH_POLE;
 
         while (opModeIsActive()) {
             switch (currentState) {
                 case HIGH_POLE:
                     if (!drive.isBusy()) {
-                        drive.update();
-                        drive.followTrajectory(highPole);
+                        drive.followTrajectoryAsync(highPole);
                         sleep(250);
-                        claw.move(Consts.Claw.OPENCLAW);
+//                        claw.move(Consts.Claw.OPENCLAW);
                         sleep(100);
-                        belt.move(Consts.Belt.UP);
+//                        belt.move(Consts.Belt.UP);
                         next(State.BACK_A_BIT);
                     }
                     break;
                 case BACK_A_BIT:
                     if (!drive.isBusy()) {
-                        drive.update();
                         drive.followTrajectory(backABit);
                         next(State.TO_CONE_STACK);
                     }
                     break;
                 case TO_CONE_STACK:
                     if (!drive.isBusy()) {
-                        drive.update();
                         drive.followTrajectory(toConeStack);
                         next(State.LOW_JUNCTION_SCORE);
                     }
                     break;
                 case LOW_JUNCTION_SCORE:
                     if (!drive.isBusy()) {
-                        drive.update();
 
                         int conesCycled = 0;
                         int targetLiftPosition = 1;
 
                         sleep(150);
-                        claw.move(Consts.Claw.CLOSECLAW);
+//                        claw.move(Consts.Claw.CLOSECLAW);
 
                         while (conesCycled != lowJunctionCycles){
 
                             // @TODO: combine lift and turntable movements
                             // a trajectory with only temporal markers might work
                             sleep(150);
-                            lift.move(Consts.Lift.AUTO_LOW);
-                            turnTable.move(90);
+//                            lift.move(Consts.Lift.AUTO_LOW);
+//                            turnTable.move(90);
 
                             sleep(150);
-                            claw.move(Consts.Claw.OPENCLAW);
+//                            claw.move(Consts.Claw.OPENCLAW);
 
                             sleep(150);
-                            turnTable.move(0);
-                            lift.move(liftPosition[targetLiftPosition]);
+//                            turnTable.move(0);
+//                            lift.move(liftPosition[targetLiftPosition]);
 
                             sleep(150);
-                            claw.move(Consts.Claw.CLOSECLAW);
+//                            claw.move(Consts.Claw.CLOSECLAW);
 
                             conesCycled+=1;
                             targetLiftPosition+=1;
                         }
 
                         sleep(150);
-                        belt.move((Consts.Belt.UP));
+//                        belt.move((Consts.Belt.UP));
 
                         next(State.TO_GROUND_JUNCTION);
                     }
                     break;
                 case TO_GROUND_JUNCTION:
                     if (!drive.isBusy()) {
-                        drive.update();
-                        drive.followTrajectory(toGroundJunction);
+                        drive.followTrajectoryAsync(toGroundJunction);
 
                         sleep(150);
-                        claw.move(Consts.Claw.OPENCLAW);
+//                        claw.move(Consts.Claw.OPENCLAW);
 
                         sleep(150);
-                        belt.move((Consts.Belt.UP));
+//                        belt.move((Consts.Belt.UP));
 
                         next(State.PARK);
                     }
                     break;
                 case PARK:
                     if (!drive.isBusy()) {
-                        drive.update();
                         drive.followTrajectoryAsync(park);
 
                         claw.reset();
@@ -253,12 +248,17 @@ public class ChaneyGOAT_Right extends LinearOpMode {
                     }
                     break;
             }
+            drive.update();
+            Pose2d poseEstimate = drive.getPoseEstimate();
+            PoseStorage.currentPose = poseEstimate;
+
+            telemetry.addData("current state", currentState);
+            telemetry.addData("busy", drive.isBusy());
+            telemetry.addData("cycles ", lowJunctionCycles);
+            telemetry.addData("belt ", belt.getPosition());
+            telemetry.addData("lift ", lift.getPosition());
+            telemetry.update();
         }
-        telemetry.addData("current state", currentState);
-        telemetry.addData("busy", drive.isBusy());
-        telemetry.addData("cycles ", lowJunctionCycles);
-        telemetry.addData("belt ", belt.getPosition());
-        telemetry.addData("lift ", lift.getPosition());
-        telemetry.update();
+
     }
 }
