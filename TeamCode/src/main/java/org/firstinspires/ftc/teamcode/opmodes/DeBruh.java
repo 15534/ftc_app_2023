@@ -97,6 +97,8 @@ public class DeBruh extends LinearOpMode {
         double rotation = 0;
         double tableRotation = 0;
         double movementRotation = 0;
+        double lastRight = 0;
+        double lastLeft = 0;
 
         Claw claw = new Claw();
         Belt belt = new Belt();
@@ -119,7 +121,27 @@ public class DeBruh extends LinearOpMode {
             PoseStorage.currentPose = poseEstimate;
 
             // Dpad motion in one of four directions
+            if (gamepad2.left_stick_y<-.2 && gamepad2.a){
+                lift.left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                lift.right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                lift.left.setPower(-.1);
+                lift.right.setPower(.1);
+                lastLeft = lift.left.getCurrentPosition();
+                lastRight = lift.right.getCurrentPosition();
+                sleep(100);
+                while(gamepad1.a){
+                    lastRight = lift.right.getCurrentPosition();
+                    lastLeft = lift.left.getCurrentPosition();
+                    if (lift.right.getCurrentPosition() == lastRight || lift.left.getCurrentPosition()==lastLeft){
+                        break;
+                    }
+                }
 
+                lift.left.setPower(0);
+                lift.right.setPower(0);
+                lift.left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                lift.right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            }
             if (gamepad1.dpad_down
                     || gamepad1.dpad_up
                     || gamepad1.dpad_left
@@ -168,7 +190,7 @@ public class DeBruh extends LinearOpMode {
             }
 
             // xbutton for moving lift to conestack heights
-            if (Math.abs(gamepad2.left_stick_y) > 0 && lift.getPosition() <= 1900) {
+            if (Math.abs(gamepad2.left_stick_y) > 0 && lift.getPosition() <= 1900 && !gamepad1.a) {
                 int movePosition = (int) (lift.getPosition() +  -1 * gamepad2.left_stick_y * 75);
                 if (movePosition > 1900) {
                     movePosition = 1900;
@@ -342,7 +364,7 @@ public class DeBruh extends LinearOpMode {
             // belt is down
             // belt up -> claw close -> turntable turn back -> lift down
 
-            if (gamepad2.a) {
+            if (gamepad2.a && Math.abs(gamepad2.left_stick_y) < .1) {
                 belt.move(Consts.Belt.UP);
                 tableRotation = 0;
                 lift.move(Consts.Lift.ZERO);
