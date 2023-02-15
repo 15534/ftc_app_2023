@@ -100,6 +100,8 @@ public class Park extends LinearOpMode {
                 case PARK:
                     if (!drive.isBusy()) {
                         drive.followTrajectory(PARK);
+                        claw.reset();
+                        belt.reset();
                     }
                     next(State.IDLE);
                     break;

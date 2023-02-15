@@ -81,15 +81,15 @@ public class OnePlusFive_Right extends LinearOpMode {
         // Trajectories
         TrajectorySequence highPole =
                 drive.trajectorySequenceBuilder(startingPos)
-                        .splineTo(new Vector2d(40.32, -62.02), Math.toRadians(116.57))
-                        .splineTo(new Vector2d(34.75, -49.15), Math.toRadians(90))
-                        .splineTo(new Vector2d(36, 2), Math.toRadians(90))
+                        .splineToConstantHeading(new Vector2d(34.56, -53.17), Math.toRadians(90.00))
+                        .splineToConstantHeading(new Vector2d(35.94, -29.97), Math.toRadians(90.00))
+                        .splineTo(new Vector2d(36.2, 2), Math.toRadians(90))
 
                         .addSpatialMarker(new Vector2d(36, -60),
                                 () -> {
                                     turnTable.move(90);
                                 })
-                        .addSpatialMarker(new Vector2d(36, -45),
+                        .addSpatialMarker(new Vector2d(36, -50),
                                 () -> {
                                     lift.move(Consts.Lift.AUTO_HIGH);
                                 })
@@ -238,7 +238,7 @@ public class OnePlusFive_Right extends LinearOpMode {
 
                             sleep(250);
                             drive.followTrajectory(faceLowJunction);
-                            sleep(600);
+                            sleep(700);
 
                             claw.move(Consts.Claw.OPENCLAW);
                             sleep(150);
