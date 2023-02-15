@@ -20,6 +20,10 @@ public class SplineAutoNoHitWall {
                                                 .splineToConstantHeading(new Vector2d(34.56, -53.17), Math.toRadians(90.00))
                                                 .splineToConstantHeading(new Vector2d(35.94, -29.97), Math.toRadians(90.00))
                                                 .splineTo(new Vector2d(28.13, -5.63), Math.toRadians(129.47))
+                                                .splineToLinearHeading(new Pose2d(34.47, -13.02, Math.toRadians(180)), Math.toRadians(-9.46))
+                                                .lineTo(new Vector2d(48.06, -12.26))
+                                                .lineTo(new Vector2d(60, -12.26))
+                                                .lineTo(new Vector2d(-60, -12.26))
                                         .build());
 
 
