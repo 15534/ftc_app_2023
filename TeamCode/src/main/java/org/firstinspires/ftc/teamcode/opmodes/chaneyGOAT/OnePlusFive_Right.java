@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.chaneyGOAT;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -21,10 +21,10 @@ import org.firstinspires.ftc.teamcode.subsystems.Consts;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 
-@Autonomous(name = "ChaneyGOAT_Right", group = "experimental")
+@Autonomous(name = "OnePlusFive_Right", group = "ChaneyTheGOAT")
 @Config
 
-public class ChaneyGOAT_Right extends LinearOpMode {
+public class OnePlusFive_Right extends LinearOpMode {
 
     enum State {
         HIGH_POLE,
@@ -120,7 +120,7 @@ public class ChaneyGOAT_Right extends LinearOpMode {
                         .build();
         Trajectory faceLowJunction =
                 drive.trajectoryBuilder(toConeStack.end())
-                        .back(1)
+                        .back(0.1)
                         .addSpatialMarker(new Vector2d(56, -12),
                                 () -> {
                                     turnTable.move(-123);
@@ -133,7 +133,7 @@ public class ChaneyGOAT_Right extends LinearOpMode {
 
         Trajectory faceConeStack =
                 drive.trajectoryBuilder(toConeStack.end())
-                        .back(1)
+                        .back(0.1)
                         .addSpatialMarker(new Vector2d(56, -12),
                                 () -> {
                                     turnTable.move(10);
@@ -206,7 +206,7 @@ public class ChaneyGOAT_Right extends LinearOpMode {
                         drive.followTrajectorySequence(highPole);
                         sleep(50);
                         claw.move(Consts.Claw.OPENCLAW);
-                        sleep(150);
+                        sleep(50);
                         belt.move(Consts.Belt.UP);
                         sleep(100);
                         lift.move(Consts.Lift.AUTO_LOW);

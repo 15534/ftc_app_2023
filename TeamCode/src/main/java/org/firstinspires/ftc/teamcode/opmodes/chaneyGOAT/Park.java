@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes;
+package org.firstinspires.ftc.teamcode.opmodes.chaneyGOAT;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -17,10 +17,10 @@ import org.firstinspires.ftc.teamcode.subsystems.Camera;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Consts;
 
-@Autonomous(name = "Final_ParkOnly")
+@Autonomous(name = "Park", group = "ChaneyTheGOAT")
 @Config
 
-public class Final_ParkOnly extends LinearOpMode {
+public class Park extends LinearOpMode {
 
     State currentState = State.IDLE;
     SampleMecanumDrive drive;
@@ -71,15 +71,15 @@ public class Final_ParkOnly extends LinearOpMode {
         Trajectory FORWARDS =
                 drive.trajectoryBuilder(startingPos)
                         .lineTo(
-                            new Vector2d(36, -35),
-                            SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
+                                new Vector2d(36, -35),
+                                SampleMecanumDrive.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                         ).build();
 
         Trajectory PARK =
                 drive.trajectoryBuilder(FORWARDS.end())
                         .lineTo(
-                            parkPosition
+                                parkPosition
                         ).build();
 
         waitForStart();
