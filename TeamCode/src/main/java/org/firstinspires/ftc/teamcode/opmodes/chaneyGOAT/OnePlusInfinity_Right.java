@@ -62,7 +62,7 @@ public class OnePlusInfinity_Right extends LinearOpMode {
                                 SampleMecanumDrive.getVelocityConstraint(
                                         60, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(
-                                        DriveConstants.MAX_ACCEL))
+                                        60)) // Maximum acceleration must be tweaked
                         .build();
 
         waitForStart();
