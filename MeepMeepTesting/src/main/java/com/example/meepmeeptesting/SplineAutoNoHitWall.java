@@ -16,9 +16,10 @@ public class SplineAutoNoHitWall {
                         .setDimensions(16, 16)
                         .followTrajectorySequence(
                                 drive ->
-                                        drive.trajectorySequenceBuilder(new Pose2d(42, -62, Math.toRadians(90.00)))
-                                                .lineTo(new Vector2d(33.70, -52.09))
-                                                .lineTo(new Vector2d(34.66, -0.77))
+                                        drive.trajectorySequenceBuilder(new Pose2d(40, -62, Math.toRadians(90.00)))
+                                                .splineToConstantHeading(new Vector2d(34.56, -53.17), Math.toRadians(90.00))
+                                                .splineToConstantHeading(new Vector2d(35.94, -29.97), Math.toRadians(90.00))
+                                                .splineTo(new Vector2d(28.13, -5.63), Math.toRadians(129.47))
                                         .build());
 
 
