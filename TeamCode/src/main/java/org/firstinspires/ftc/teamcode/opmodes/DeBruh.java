@@ -83,7 +83,7 @@ public class DeBruh extends LinearOpMode {
     double lastRight = 0;
     double lastLeft = 0;
 
-    Vector2d translation;
+    Vector2d translation = new Vector2d(0,0);
     Pose2d poseEstimate;
     Claw claw;
     Belt belt;
@@ -126,13 +126,13 @@ public class DeBruh extends LinearOpMode {
         turntable.init(hardwareMap);
         lift.init(hardwareMap);
 
-        while (!isStopRequested() && !lift.requestStop) {
+        while (!isStopRequested()) {
             drive.update();
             poseEstimate = drive.getPoseEstimate();
             PoseStorage.currentPose = poseEstimate;
 
 
-            if (gamepad2.left_stick_y<-.2 && gamepad2.a){//lift reset if last resort
+            if (gamepad2.left_stick_y>.2 && gamepad2.a){//lift reset if last resort
                 LiftHardReset();
             }
             if (gamepad1.dpad_down || gamepad1.dpad_up || gamepad1.dpad_left || gamepad1.dpad_right) { //dpad movement
@@ -147,7 +147,7 @@ public class DeBruh extends LinearOpMode {
             rotation = ROTATION_MULTIPLIER * movementRotation;
 
 
-            if (Math.abs(gamepad2.left_stick_y) > 0 && lift.getPosition() <= 1900 && !gamepad1.a) { //joystick lift movement
+            if (Math.abs(gamepad2.left_stick_y) > 0 && lift.getPosition() <= 1900 && !gamepad2.a) { //joystick lift movement
                 joystickLiftMovement();
             }
             // start of conestack toggle code
@@ -157,9 +157,9 @@ public class DeBruh extends LinearOpMode {
             }
             if (currentXbtn && gp2XReleased) {
                 gp2XReleased = false;
-                currentIndex = currentIndex - 1;
-                if (currentIndex < 0) {
-                    currentIndex = 4;
+                currentIndex = currentIndex + 1;
+                if (currentIndex > 4) {
+                    currentIndex = 0;
                 }
                 lift.move(conePositions[currentIndex]);
             }
@@ -311,10 +311,9 @@ public class DeBruh extends LinearOpMode {
             }
 
 
-
+            speedChangers();
             drive.setWeightedDrivePower(new Pose2d(translation, rotation));
-
-
+            TeleOpTelemetry();
         }
     }
 
@@ -341,20 +340,21 @@ public class DeBruh extends LinearOpMode {
         telemetry.addData("left joystick", gamepad2.left_stick_y);
         telemetry.addData("turn table position", turntable.getPosition());
         telemetry.addData("translation ", translation);
+        telemetry.addData("gp2 left stick y", gamepad2.left_stick_y);
         telemetry.update();
     }
 
     private void LiftHardReset(){
         lift.left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift.right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lift.left.setPower(-.1);
-        lift.right.setPower(.1);
+        lift.left.setPower(-.4);
+        lift.right.setPower(.4);
         lastLeft = lift.left.getCurrentPosition();
         lastRight = lift.right.getCurrentPosition();
 
         sleep(100);
 
-        while(gamepad1.a){
+        while(gamepad2.a){
             lastRight = lift.right.getCurrentPosition();
             lastLeft = lift.left.getCurrentPosition();
             if (lift.right.getCurrentPosition() == lastRight || lift.left.getCurrentPosition()==lastLeft){
@@ -408,7 +408,7 @@ public class DeBruh extends LinearOpMode {
     }
 
     private void joystickLiftMovement(){
-        int movePosition = (int) (lift.getPosition() +  -1 * gamepad2.left_stick_y * 75);
+        int movePosition = (int) (lift.getPosition() +  -1 * gamepad2.left_stick_y * 80);
         if (movePosition > 1900) {
             movePosition = 1900;
         } else if (movePosition < 0) {
