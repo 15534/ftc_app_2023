@@ -6,14 +6,13 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.subsystems.Belt;
 import org.firstinspires.ftc.teamcode.subsystems.Camera;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
@@ -21,10 +20,10 @@ import org.firstinspires.ftc.teamcode.subsystems.Consts;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 
-@Autonomous(name = "ChaneyGOAT_Right", group = "experimental")
+@Autonomous(name = "ChaneyGOAT_X", group = "experimental")
 @Config
 
-public class ChaneyGOAT_Right extends LinearOpMode {
+public class ChaneyGOAT_X extends LinearOpMode {
 
     enum State {
         HIGH_POLE,
@@ -32,8 +31,6 @@ public class ChaneyGOAT_Right extends LinearOpMode {
         TO_CONE_STACK,
         LOW_JUNCTION_SCORE,
         TO_GROUND_JUNCTION,
-        BACK_TO_CONE,
-        TO_MEDIUM_JUNCTION,
         PARK,
         IDLE
     }
@@ -49,16 +46,15 @@ public class ChaneyGOAT_Right extends LinearOpMode {
     State currentState = State.IDLE;
     ElapsedTime runTime = new ElapsedTime();
 
-    Pose2d startingPos = new Pose2d(40, -62, Math.toRadians(90));
+    Pose2d startingPos = new Pose2d(36, -62, Math.toRadians(90));
+    Vector2d highJunctionPos = new Vector2d(36, 0);
     Vector2d coneStackAlignment = new Vector2d(36, -12);
-    Pose2d coneStack = new Pose2d(56, -12, Math.toRadians(0));
-    Vector2d groundJunction = new Vector2d(47, -11);
-    Vector2d mediumJunction = new Vector2d(24, -10);
+    Pose2d coneStack = new Pose2d(56, -12.5, Math.toRadians(0));
+    Vector2d groundJunction = new Vector2d(46, -12);
     Vector2d parkPosition = new Vector2d();
 
-    int[] liftPosition = {245, 170, 100, 35, 0};
+    int[] liftPosition = {275, 200, 130, 70, 0};
     int lowJunctionCycles = 3;
-    int targetLiftPosition = 0;
 
     void next(State s) {
         time = runTime.seconds();
@@ -79,24 +75,24 @@ public class ChaneyGOAT_Right extends LinearOpMode {
         lift.init(hardwareMap);
 
         // Trajectories
-        TrajectorySequence highPole =
-                drive.trajectorySequenceBuilder(startingPos)
-                        .splineTo(new Vector2d(40.32, -62.02), Math.toRadians(116.57))
-                        .splineTo(new Vector2d(34.75, -49.15), Math.toRadians(90))
-                        .splineTo(new Vector2d(36, 2), Math.toRadians(90))
-
+        Trajectory highPole =
+                drive.trajectoryBuilder(startingPos)
+                        .lineTo(
+                                highJunctionPos,
+                                SampleMecanumDrive.getVelocityConstraint(60, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                         .addSpatialMarker(new Vector2d(36, -60),
                                 () -> {
                                     turnTable.move(90);
                                 })
-                        .addSpatialMarker(new Vector2d(36, -45),
+                        .addSpatialMarker(new Vector2d(36, -30),
                                 () -> {
                                     lift.move(Consts.Lift.AUTO_HIGH);
                                 })
-                        .addSpatialMarker(new Vector2d(36, -9),
-                                () -> {
-                                    belt.move(Consts.Belt.CONE_DROP);
-                                })
+//                        .addSpatialMarker(new Vector2d(36, -5),
+//                                () -> {
+//                                    belt.move(Consts.Belt.CONE_DROP);
+//                                })
                         .build();
         Trajectory backABit =
                 drive.trajectoryBuilder(highPole.end())
@@ -111,35 +107,9 @@ public class ChaneyGOAT_Right extends LinearOpMode {
                                 })
                         .addSpatialMarker(new Vector2d(40, -12),
                                 () -> {
-                                    turnTable.move(10);
-                                })
-                        .addSpatialMarker(new Vector2d(40, -12),
-                                () -> {
-                                    belt.move(Consts.Belt.DOWN);
+                                    turnTable.move(0);
                                 })
                         .build();
-        Trajectory faceLowJunction =
-                drive.trajectoryBuilder(toConeStack.end())
-                        .back(1)
-                        .addSpatialMarker(new Vector2d(56, -12),
-                                () -> {
-                                    turnTable.move(-123);
-                                })
-                        .addSpatialMarker(new Vector2d(56, -12),
-                                () -> {
-                                    lift.move(Consts.Lift.AUTO_LOW);
-                                })
-                        .build();
-
-        Trajectory faceConeStack =
-                drive.trajectoryBuilder(toConeStack.end())
-                        .back(1)
-                        .addSpatialMarker(new Vector2d(56, -12),
-                                () -> {
-                                    turnTable.move(10);
-                                })
-                        .build();
-
         Trajectory toGroundJunction =
                 drive.trajectoryBuilder(toConeStack.end())
                         .lineTo(groundJunction)
@@ -150,18 +120,6 @@ public class ChaneyGOAT_Right extends LinearOpMode {
                         .addSpatialMarker(new Vector2d(55, -12),
                                 () -> {
                                     turnTable.move(90);
-                                })
-                        .build();
-        Trajectory toMediumJunction =
-                drive.trajectoryBuilder(toConeStack.end())
-                        .lineTo(mediumJunction)
-                        .addSpatialMarker(new Vector2d(56, -12),
-                                () -> {
-                                    lift.move(Consts.Lift.MEDIUM);
-                                })
-                        .addSpatialMarker(new Vector2d(56, -12),
-                                () -> {
-                                    turnTable.move(-90);
                                 })
                         .build();
 
@@ -200,16 +158,15 @@ public class ChaneyGOAT_Right extends LinearOpMode {
 
         while (opModeIsActive()) {
             switch (currentState) {
-
                 case HIGH_POLE:
                     if (!drive.isBusy()) {
-                        drive.followTrajectorySequence(highPole);
-                        sleep(50);
+                        drive.followTrajectory(highPole);
+                        sleep(250);
                         claw.move(Consts.Claw.OPENCLAW);
-                        sleep(150);
-                        belt.move(Consts.Belt.UP);
                         sleep(100);
-                        lift.move(Consts.Lift.AUTO_LOW);
+//                        belt.move(Consts.Belt.UP);
+                        sleep(100);
+                        lift.move(Consts.Lift.MEDIUM);
                         next(State.BACK_A_BIT);
                     }
                     break;
@@ -221,7 +178,8 @@ public class ChaneyGOAT_Right extends LinearOpMode {
                     break;
                 case TO_CONE_STACK:
                     if (!drive.isBusy()) {
-                        drive.followTrajectory(toConeStack);
+                        drive.followTrajectoryAsync(toConeStack);
+//                        belt.move(Consts.Belt.DOWN);
                         next(State.LOW_JUNCTION_SCORE);
                     }
                     break;
@@ -229,91 +187,61 @@ public class ChaneyGOAT_Right extends LinearOpMode {
                     if (!drive.isBusy()) {
 
                         int conesCycled = 0;
+                        int targetLiftPosition = 1;
 
                         claw.move(Consts.Claw.CLOSECLAW);
-                        sleep(250);
-                        lift.move(liftPosition[targetLiftPosition]+225);
+                        sleep(150);
 
-                        while (conesCycled < lowJunctionCycles){
+                        while (conesCycled != lowJunctionCycles) {
 
-                            sleep(250);
-                            drive.followTrajectory(faceLowJunction);
-                            sleep(600);
+                            // @TODO: combine lift and turntable movements
+                            lift.move(Consts.Lift.AUTO_LOW);
+                            sleep(300);
+
+                            turnTable.move(-120);
+                            sleep(400);
 
                             claw.move(Consts.Claw.OPENCLAW);
-                            sleep(150);
-
-                            conesCycled+=1;
-                            targetLiftPosition+=1;
-
-                            drive.followTrajectory(faceConeStack);
                             sleep(300);
+
+                            turnTable.move(0);
+                            sleep(400);
+
                             lift.move(liftPosition[targetLiftPosition]);
                             sleep(300);
 
                             claw.move(Consts.Claw.CLOSECLAW);
                             sleep(300);
 
-                            lift.move(liftPosition[targetLiftPosition]+345);
-                            sleep(300);
+                            conesCycled += 1;
+                            targetLiftPosition += 1;
                         }
+
+                        sleep(150);
+//                        belt.move((Consts.Belt.UP));
 
                         next(State.TO_GROUND_JUNCTION);
                     }
                     break;
-
                 case TO_GROUND_JUNCTION:
                     if (!drive.isBusy()) {
-                        drive.followTrajectory(toGroundJunction);
+                        drive.followTrajectoryAsync(toGroundJunction);
 
                         sleep(150);
                         claw.move(Consts.Claw.OPENCLAW);
 
                         sleep(150);
-                        belt.move((Consts.Belt.UP));
-
-                        next(State.BACK_TO_CONE);
-                    }
-                    break;
-                case BACK_TO_CONE:
-                    if (!drive.isBusy()) {
-                        drive.followTrajectory(toConeStack);
-
-                        lift.move(liftPosition[4]);
-                        sleep(400);
-
-                        belt.move(Consts.Belt.CONE_DROP);
-                        sleep(400);
-
-                        claw.move(Consts.Claw.CLOSECLAW);
-                        sleep(400);
-
-                        lift.move(Consts.Lift.AUTO_LOW);
-
-                        next(State.TO_MEDIUM_JUNCTION);
-                    }
-                    break;
-                case TO_MEDIUM_JUNCTION:
-                    if (!drive.isBusy()) {
-                        drive.followTrajectory(toMediumJunction);
-                        sleep(200);
-
-                        claw.move(Consts.Claw.OPENCLAW);
-                        sleep(50);
-
-                        belt.move(Consts.Belt.UP);
-                        sleep(50);
+//                        belt.move((Consts.Belt.UP));
 
                         next(State.PARK);
                     }
                     break;
-
                 case PARK:
                     if (!drive.isBusy()) {
                         drive.followTrajectoryAsync(park);
 
                         claw.reset();
-                        belt.reset();
+//                        belt.reset();
                         lift.reset();
                         turnTable.reset();
                         next(State.IDLE);
@@ -331,6 +259,5 @@ public class ChaneyGOAT_Right extends LinearOpMode {
             telemetry.addData("lift ", lift.getPosition());
             telemetry.update();
         }
-
     }
 }

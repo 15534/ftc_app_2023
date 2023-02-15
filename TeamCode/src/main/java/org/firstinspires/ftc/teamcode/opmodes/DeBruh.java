@@ -248,7 +248,11 @@ public class DeBruh extends LinearOpMode {
                         // prepare to pick up cone
                         claw.move(Consts.Claw.OPENCLAW);
                     }
-                    belt.move(Consts.Belt.DOWN);
+                    if (liftDown) {
+                        belt.move(Consts.Belt.CONE_DROP);
+                    } else {
+                        belt.move(Consts.Belt.DOWN);
+                    }
 
                     beltUp = false;
                 } else {
