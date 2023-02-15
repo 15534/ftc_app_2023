@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -23,14 +24,20 @@ import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 
 @Autonomous(name = "OnePlusInfinity_Right", group = "ChaneyTheGOAT")
 @Config
-
 public class OnePlusInfinity_Right extends LinearOpMode {
 
     enum State {
-        IDLE
+        IDLE,
+        FIRST
     }
 
-    State currentState = State.IDLE;
+    State currentState = State.FIRST;
+    SampleMecanumDrive drive;
+    Camera camera = new Camera();
+    Claw claw = new Claw();
+    Belt belt = new Belt();
+
+    Pose2d startingPos = new Pose2d(36, -62, Math.toRadians(90));
     ElapsedTime runTime = new ElapsedTime();
 
     void next(State s) {
@@ -41,11 +48,34 @@ public class OnePlusInfinity_Right extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        drive = new SampleMecanumDrive(hardwareMap);
+        drive.setPoseEstimate(startingPos);
+
+        camera.init(hardwareMap);
+        claw.init(hardwareMap);
+        belt.init(hardwareMap);
+
+        Trajectory FORWARDS =
+                drive.trajectoryBuilder(startingPos)
+                        .lineTo(
+                                new Vector2d(36, 20),
+                                SampleMecanumDrive.getVelocityConstraint(
+                                        60, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(
+                                        DriveConstants.MAX_ACCEL))
+                        .build();
+
         waitForStart();
 
         while (opModeIsActive()) {
-
+            switch (currentState) {
+                case FIRST:
+                    if (!drive.isBusy()) {
+                        drive.followTrajectory(FORWARDS);
+                    }
+                    next(State.IDLE);
+                    break;
             }
         }
-
     }
+}
