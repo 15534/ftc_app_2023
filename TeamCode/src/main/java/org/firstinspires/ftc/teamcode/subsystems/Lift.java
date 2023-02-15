@@ -9,7 +9,7 @@ public class Lift {
     double leftPower;
     double rightPower;
     public static int target = 0;
-    public boolean requestStop = false;
+    public boolean requestStop = false; //dead code, but used in deprecated teleoppromax so will not delete
     public DcMotorEx left, right;
     public int mainTarget = 0;
 
