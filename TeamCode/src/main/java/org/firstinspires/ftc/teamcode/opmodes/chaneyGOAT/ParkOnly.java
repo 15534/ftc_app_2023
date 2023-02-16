@@ -15,12 +15,11 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Belt;
 import org.firstinspires.ftc.teamcode.subsystems.Camera;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.subsystems.Consts;
 
-@Autonomous(name = "Final_ParkOnly")
+@Autonomous(name = "ParkOnly")
 @Config
 
-public class Final_ParkOnly extends LinearOpMode {
+public class ParkOnly extends LinearOpMode {
 
     State currentState = State.IDLE;
     SampleMecanumDrive drive;
