@@ -14,6 +14,7 @@ public class Consts {
         HIGH,
         AUTO_GROUND,
         AUTO_LOW,
+        AUTO_MEDIUM,
         AUTO_HIGH,
         TRANSITION
     }
@@ -38,7 +39,7 @@ public class Consts {
     */
     public static double BELT_DOWN_LIMIT = .09;
     public static double BELT_UP_LIMIT = 0.55;// this is the difference! we go down 280, then we have to go back up 280 to get back to 0
-    public static double BELT_DROP_LIMIT = 0.16;
+    public static double BELT_DROP_LIMIT = 0.14;
 
     /*
     Claw Init Variables
