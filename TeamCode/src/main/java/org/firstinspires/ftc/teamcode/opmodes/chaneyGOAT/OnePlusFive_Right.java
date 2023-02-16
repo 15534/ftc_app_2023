@@ -95,9 +95,8 @@ public class OnePlusFive_Right extends LinearOpMode {
                         .build();
         TrajectorySequence toConeStack =
             drive.trajectorySequenceBuilder(highPole.end())
-
                     .splineToLinearHeading(new Pose2d(34.47, -13.02, Math.toRadians(180)), Math.toRadians(-9.46))
-                    .lineTo(new Vector2d(54, -12.5))
+                    .lineTo(new Vector2d(55.30, -12.5))
 
                             .addSpatialMarker(new Vector2d(48, -12),
                                     () -> {
@@ -157,18 +156,10 @@ public class OnePlusFive_Right extends LinearOpMode {
 
         Trajectory toConeStackAfterGroundJunction =
                 drive.trajectoryBuilder(toGroundJunction.end())
-                        .lineToLinearHeading(coneStack)
-                        .addSpatialMarker(new Vector2d(36, -12),
-                                () -> {
-                                    lift.move(liftPosition[0]);
-                                })
+                        .back(0.1)
                         .addSpatialMarker(new Vector2d(40, -12),
                                 () -> {
-                                    turnTable.move(170);
-                                })
-                        .addSpatialMarker(new Vector2d(40, -12),
-                                () -> {
-                                    belt.move(Consts.Belt.DOWN);
+                                    turnTable.move(175);
                                 })
                         .build();
 
@@ -223,9 +214,8 @@ public class OnePlusFive_Right extends LinearOpMode {
                 case TO_CONE_STACK:
                     if (!drive.isBusy()) {
                         drive.followTrajectorySequence(toConeStack);
-                        sleep(150);
                         belt.move(Consts.Belt.DOWN);
-                        sleep(300);
+                        sleep(150);
                         next(State.LOW_JUNCTION_SCORE);
                     }
                     break;
@@ -245,7 +235,7 @@ public class OnePlusFive_Right extends LinearOpMode {
                             sleep(700);
 
                             claw.move(Consts.Claw.OPENCLAW);
-                            sleep(150);
+                            sleep(250);
 
                             conesCycled+=1;
                             targetLiftPosition+=1;
@@ -269,14 +259,15 @@ public class OnePlusFive_Right extends LinearOpMode {
                 case TO_GROUND_JUNCTION:
                     if (!drive.isBusy()) {
                         drive.followTrajectory(toGroundJunction);
-                        sleep(150);
+                        sleep(700);
                         lift.move(Consts.Lift.AUTO_GROUND);
 
-                        sleep(300);
+                        sleep(700);
                         claw.move(Consts.Claw.OPENCLAW);
 
-                        sleep(200);
+                        sleep(700);
                         lift.move(Consts.Lift.AUTO_MEDIUM);
+                        sleep(700);
 
                         next(State.BACK_TO_CONE);
                     }
@@ -285,15 +276,13 @@ public class OnePlusFive_Right extends LinearOpMode {
                     if (!drive.isBusy()) {
                         drive.followTrajectory(toConeStackAfterGroundJunction);
 
+                        sleep(700);
                         lift.move(liftPosition[4]);
-                        sleep(400);
-
+                        sleep(700);
                         belt.move(Consts.Belt.CONE_DROP);
-                        sleep(400);
-
+                        sleep(700);
                         claw.move(Consts.Claw.CLOSECLAW);
-                        sleep(400);
-
+                        sleep(700);
                         lift.move(Consts.Lift.AUTO_LOW);
 
                         next(State.TO_MEDIUM_JUNCTION);
@@ -302,7 +291,7 @@ public class OnePlusFive_Right extends LinearOpMode {
                 case TO_MEDIUM_JUNCTION:
                     if (!drive.isBusy()) {
                         drive.followTrajectory(toMediumJunction);
-                        sleep(200);
+                        sleep(600);
 
                         claw.move(Consts.Claw.OPENCLAW);
                         sleep(50);
