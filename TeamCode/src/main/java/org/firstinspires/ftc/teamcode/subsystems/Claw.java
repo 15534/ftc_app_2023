@@ -30,7 +30,7 @@ public class Claw {
     }
 
     public void reset() {
-        move(Consts.Claw.CLOSECLAW);
+        move(Consts.Claw.OPENCLAW);
     }
 
     public double getPosition() {
