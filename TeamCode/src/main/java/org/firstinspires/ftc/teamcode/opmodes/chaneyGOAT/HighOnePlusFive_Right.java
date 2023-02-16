@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -45,14 +46,13 @@ public class HighOnePlusFive_Right extends LinearOpMode {
     ElapsedTime runTime = new ElapsedTime();
 
     Pose2d startingPos = new Pose2d(40, -62, Math.toRadians(90));
-    Vector2d coneStackAlignment = new Vector2d(38.5, -13.3);
-    Pose2d coneStack = new Pose2d(57, -12, Math.toRadians(180));
-    Vector2d groundJunction = new Vector2d(47, -11);
     Vector2d mediumJunction = new Vector2d(24.5, -10);
     Vector2d parkPosition = new Vector2d();
+    int maxVelocity = 60;
+    int maxAccel = 50;
 
     int[] liftPosition = {245, 170, 100, 35, 0};
-    int lowJunctionCycles = 3;
+    int highJunctionCycles = 5;
     int targetLiftPosition = 0;
 
     void next(State s) {
@@ -76,9 +76,21 @@ public class HighOnePlusFive_Right extends LinearOpMode {
         // Trajectories
         TrajectorySequence highPole =
                 drive.trajectorySequenceBuilder(startingPos)
-                        .splineToConstantHeading(new Vector2d(34.56, -53.17), Math.toRadians(90.00))
-                        .splineToConstantHeading(new Vector2d(35.94, -29.97), Math.toRadians(90.00))
-                        .splineTo(new Vector2d(30, -10.5), Math.toRadians(125.00))
+                        .splineToConstantHeading(
+                                new Vector2d(34.56, -53.17), Math.toRadians(90.00),
+                                SampleMecanumDrive.getVelocityConstraint(maxVelocity, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(maxAccel)
+                        )
+                        .splineToConstantHeading(
+                                new Vector2d(35.94, -29.97), Math.toRadians(90.00),
+                                SampleMecanumDrive.getVelocityConstraint(maxVelocity, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(maxAccel)
+                        )
+                        .splineTo(
+                                new Vector2d(30, -10.5), Math.toRadians(125.00),
+                                SampleMecanumDrive.getVelocityConstraint(maxVelocity, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(maxAccel)
+                        )
 
                         .addSpatialMarker(new Vector2d(35, -50),
                                 () -> {
@@ -93,8 +105,16 @@ public class HighOnePlusFive_Right extends LinearOpMode {
         TrajectorySequence toConeStack =
                 drive.trajectorySequenceBuilder(highPole.end())
 
-                        .splineToLinearHeading(new Pose2d(34.47, -13.02, Math.toRadians(180)), Math.toRadians(-9.46))
-                        .lineTo(new Vector2d(54, -12.5))
+                        .splineToLinearHeading(
+                                new Pose2d(34.47, -13.02, Math.toRadians(180)), Math.toRadians(-9.46),
+                                SampleMecanumDrive.getVelocityConstraint(maxVelocity, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(maxAccel)
+                        )
+                        .lineTo(
+                                new Vector2d(54, -12.5),
+                                SampleMecanumDrive.getVelocityConstraint(maxVelocity, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(maxAccel)
+                        )
 
                         .addSpatialMarker(new Vector2d(48, -12),
                                 () -> {
@@ -108,7 +128,11 @@ public class HighOnePlusFive_Right extends LinearOpMode {
 
         Trajectory toHighJunction =
                 drive.trajectoryBuilder(toConeStack.end())
-                        .lineTo(mediumJunction)
+                        .lineTo(
+                                mediumJunction,
+                                SampleMecanumDrive.getVelocityConstraint(maxVelocity, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(maxAccel)
+                        )
                         .addSpatialMarker(new Vector2d(56, -12),
                                 () -> {
                                     lift.move(Consts.Lift.AUTO_HIGH);
@@ -122,7 +146,11 @@ public class HighOnePlusFive_Right extends LinearOpMode {
         TrajectorySequence toConeStackFromHighPole =
                 drive.trajectorySequenceBuilder(toHighJunction.end())
 
-                        .lineTo(new Vector2d(54, -12.5))
+                        .lineTo(
+                                new Vector2d(54, -12.5),
+                                SampleMecanumDrive.getVelocityConstraint(maxVelocity, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(maxVelocity)
+                        )
 
                         .addSpatialMarker(new Vector2d(48, -12),
                                 () -> {
@@ -160,7 +188,11 @@ public class HighOnePlusFive_Right extends LinearOpMode {
 
         Trajectory park =
                 drive.trajectoryBuilder(toHighJunction.end())
-                        .lineToLinearHeading(new Pose2d(parkPosition, Math.toRadians(90)))
+                        .lineToLinearHeading(
+                                new Pose2d(parkPosition, Math.toRadians(90)),
+                                SampleMecanumDrive.getVelocityConstraint(maxVelocity, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(maxVelocity)
+                        )
                         .build();
 
         currentState = State.HIGH_POLE;
@@ -202,7 +234,7 @@ public class HighOnePlusFive_Right extends LinearOpMode {
                         sleep(250);
                         lift.move(liftPosition[targetLiftPosition]+225);
 
-                        while (conesCycled < lowJunctionCycles){
+                        while (conesCycled < highJunctionCycles){
 
                             sleep(250);
                             drive.followTrajectory(toHighJunction);
@@ -248,7 +280,7 @@ public class HighOnePlusFive_Right extends LinearOpMode {
 
             telemetry.addData("current state", currentState);
             telemetry.addData("busy", drive.isBusy());
-            telemetry.addData("cycles ", lowJunctionCycles);
+            telemetry.addData("cycles ", highJunctionCycles);
             telemetry.addData("belt ", belt.getPosition());
             telemetry.addData("lift ", lift.getPosition());
             telemetry.update();
