@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -44,6 +45,7 @@ import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 
 @TeleOp(name = "TeleOpProMax")
 @Config
+@Disabled
 
 public class Experimental_TeleOpProMaxPlusUltra extends LinearOpMode {
     public static double ROTATION_LOCK_GAIN = 0.02;
