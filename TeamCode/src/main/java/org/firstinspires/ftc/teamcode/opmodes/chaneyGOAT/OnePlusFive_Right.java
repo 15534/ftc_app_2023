@@ -50,10 +50,10 @@ public class OnePlusFive_Right extends LinearOpMode {
     ElapsedTime runTime = new ElapsedTime();
 
     Pose2d startingPos = new Pose2d(40, -62, Math.toRadians(90));
-    Vector2d coneStackAlignment = new Vector2d(36, -12);
-    Pose2d coneStack = new Pose2d(56, -12, Math.toRadians(0));
+    Vector2d coneStackAlignment = new Vector2d(38.5, -13.3);
+    Pose2d coneStack = new Pose2d(57, -12, Math.toRadians(0));
     Vector2d groundJunction = new Vector2d(47, -11);
-    Vector2d mediumJunction = new Vector2d(24, -10);
+    Vector2d mediumJunction = new Vector2d(24.5, -10);
     Vector2d parkPosition = new Vector2d();
 
     int[] liftPosition = {245, 170, 100, 35, 0};
@@ -83,7 +83,7 @@ public class OnePlusFive_Right extends LinearOpMode {
                 drive.trajectorySequenceBuilder(startingPos)
                         .splineToConstantHeading(new Vector2d(34.56, -53.17), Math.toRadians(90.00))
                         .splineToConstantHeading(new Vector2d(35.94, -29.97), Math.toRadians(90.00))
-                        .splineTo(new Vector2d(36.2, 2), Math.toRadians(90))
+                        .splineTo(new Vector2d(38.5, 2), Math.toRadians(90))
 
                         .addSpatialMarker(new Vector2d(36, -60),
                                 () -> {
@@ -123,7 +123,7 @@ public class OnePlusFive_Right extends LinearOpMode {
                         .back(0.1)
                         .addSpatialMarker(new Vector2d(56, -12),
                                 () -> {
-                                    turnTable.move(-123);
+                                    turnTable.move(-124);
                                 })
                         .addSpatialMarker(new Vector2d(56, -12),
                                 () -> {
@@ -165,6 +165,23 @@ public class OnePlusFive_Right extends LinearOpMode {
                                 })
                         .build();
 
+        Trajectory toConeStackAfterGroundJunction =
+                drive.trajectoryBuilder(toGroundJunction.end())
+                        .lineToLinearHeading(coneStack)
+                        .addSpatialMarker(new Vector2d(36, -12),
+                                () -> {
+                                    lift.move(liftPosition[0]);
+                                })
+                        .addSpatialMarker(new Vector2d(40, -12),
+                                () -> {
+                                    turnTable.move(10);
+                                })
+                        .addSpatialMarker(new Vector2d(40, -12),
+                                () -> {
+                                    belt.move(Consts.Belt.DOWN);
+                                })
+                        .build();
+
         // Camera + Park
         runTime.reset();
 
@@ -190,7 +207,7 @@ public class OnePlusFive_Right extends LinearOpMode {
         camera.webcam.stopRecordingPipeline();
 
         Trajectory park =
-                drive.trajectoryBuilder(toGroundJunction.end())
+                drive.trajectoryBuilder(toMediumJunction.end())
                         .lineTo(parkPosition)
                         .build();
 
@@ -247,10 +264,9 @@ public class OnePlusFive_Right extends LinearOpMode {
                             targetLiftPosition+=1;
 
                             drive.followTrajectory(faceConeStack);
-                            sleep(300);
+                            sleep(500);
                             lift.move(liftPosition[targetLiftPosition]);
-
-                            sleep(300);
+                            sleep(500);
 
                             claw.move(Consts.Claw.CLOSECLAW);
                             sleep(300);
@@ -271,14 +287,15 @@ public class OnePlusFive_Right extends LinearOpMode {
                         claw.move(Consts.Claw.OPENCLAW);
 
                         sleep(150);
-                        belt.move((Consts.Belt.UP));
+                        lift.move(Consts.Lift.AUTO_LOW);
+                        sleep(400);
 
                         next(State.BACK_TO_CONE);
                     }
                     break;
                 case BACK_TO_CONE:
                     if (!drive.isBusy()) {
-                        drive.followTrajectory(toConeStack);
+                        drive.followTrajectory(toConeStackAfterGroundJunction);
 
                         lift.move(liftPosition[4]);
                         sleep(400);

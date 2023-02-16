@@ -20,19 +20,23 @@ public class Lift {
                 break;
 
             case LOW:
-                move(780);
+                move(710); // old: 780
                 break;
 
             case MEDIUM:
-                move(1330);
+                move(1255); // old 1330
                 break;
 
             case HIGH:
-                move(1870);
+                move(1820); // old 1870
                 break;
 
             case AUTO_HIGH:
-                move(1730);
+                move(1790);
+                break;
+
+            case AUTO_MEDIUM:
+                move(1285);
                 break;
 
             case AUTO_LOW:
