@@ -208,7 +208,7 @@ public class OnePlusFive_Right extends LinearOpMode {
 
         Trajectory park =
                 drive.trajectoryBuilder(toMediumJunction.end())
-                        .lineTo(parkPosition)
+                        .lineToLinearHeading(new Pose2d(parkPosition, Math.toRadians(90)))
                         .build();
 
         currentState = State.HIGH_POLE;
