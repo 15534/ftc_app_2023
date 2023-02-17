@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Consts;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 
-@Autonomous(name = "1+5_RIGHT", group = "ChaneyTheGOAT")
+@Autonomous(name = "1+5_LEFT", group = "ChaneyTheGOAT")
 @Config
 
 public class OnePlusFive_Left extends LinearOpMode {
