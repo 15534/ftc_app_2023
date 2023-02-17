@@ -36,11 +36,11 @@ public class Lift {
                 break;
 
             case AUTO_MEDIUM:
-                move(1350);
+                move(1320);
                 break;
 
             case AUTO_LOW:
-                move(730);
+                move(700);
                 break;
 
             case AUTO_GROUND:
