@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.test;
+package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -12,11 +12,10 @@ import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.TurnTable;
 
-@TeleOp(name = "Reset")
+@TeleOp(name = "Reset_Subsystems")
 @Config
 
-public class Reset extends LinearOpMode {
-    public static int beltPosition = 0;
+public class Reset_Subsystems extends LinearOpMode {
 
     FtcDashboard dashboard = FtcDashboard.getInstance();
     Telemetry dashboardTelemetry = dashboard.getTelemetry();
@@ -41,6 +40,12 @@ public class Reset extends LinearOpMode {
             claw.reset();
             lift.reset();
             turnTable.reset();
+
+            telemetry.addData("Belt Position:", belt.getPosition());
+            telemetry.addData("Claw Position:", claw.getPosition());
+            telemetry.addData("Turntable Position:", turnTable.getPosition());
+            telemetry.addData("Lift Position:", lift.getPosition());
+            telemetry.update();
         }
     }
 }
