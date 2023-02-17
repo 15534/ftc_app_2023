@@ -48,7 +48,7 @@ public class DeBruh extends LinearOpMode {
     public static double ROTATION_LOCK_GAIN = 0.02;
     public static double ROTATION_LOCK_MULTIPLIER = 1.8;
     private double robotHeading = 0;
-    private double headingOffset = 90;
+    private double headingOffset = 0;
     private double headingError = 0;
     private double targetHeading = 0;
     public static double DEFAULT_MOVE_MULTIPLIER = .64;
