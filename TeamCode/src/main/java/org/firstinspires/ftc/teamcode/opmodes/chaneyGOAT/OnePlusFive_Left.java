@@ -51,7 +51,7 @@ public class OnePlusFive_Left extends LinearOpMode {
     int maxAccel = 60;
 
     Pose2d startingPos = new Pose2d(-40, -62, Math.toRadians(90));
-    Vector2d mediumJunction = new Vector2d(-24.2, -12);
+    Vector2d mediumJunction = new Vector2d(-24.0, -11);
     Vector2d parkPosition = new Vector2d();
 
     int[] liftPosition = {245, 160, 100, 35, 0};
@@ -114,7 +114,7 @@ public class OnePlusFive_Left extends LinearOpMode {
                         .back(0.1)
                         .addSpatialMarker(new Vector2d(-56, -12),
                                 () -> {
-                                    turnTable.move(-58);
+                                    turnTable.move(-53);
                                 })
                         .addSpatialMarker(new Vector2d(-56, -12),
                                 () -> {
@@ -133,10 +133,10 @@ public class OnePlusFive_Left extends LinearOpMode {
 
         Trajectory toGroundJunction =
                 drive.trajectoryBuilder(toConeStack.end())
-                        .lineTo(new Vector2d(-54.70, -10.70))
+                        .lineTo(new Vector2d(-54.70, -10.00))
                         .addSpatialMarker(new Vector2d(-55, -12),
                                 () -> {
-                                    turnTable.move(52);
+                                    turnTable.move(57);
                                 })
                         .addSpatialMarker(new Vector2d(-55, -12),
                                 () -> {

@@ -99,10 +99,17 @@ public class OnePlusFive_Right extends LinearOpMode {
                         .build();
         TrajectorySequence toConeStack =
             drive.trajectorySequenceBuilder(highPole.end())
-                    .splineToLinearHeading(new Pose2d(34.47, -13.02, Math.toRadians(180)), Math.toRadians(-9.46))
-                    .lineToSplineHeading(new Pose2d(56.2, -14.1, Math.toRadians(180)))
+                    .splineToLinearHeading(new Pose2d(34.47, -13.02, Math.toRadians(180)), Math.toRadians(-9.46),
+                        SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(35)
+                    )
+                    .lineToSplineHeading(
+                        new Pose2d(56.2, -12.7, Math.toRadians(180)),
+                        SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(35)
+                    )
 
-                            .addSpatialMarker(new Vector2d(48, -12),
+                        .addSpatialMarker(new Vector2d(48, -12),
                                     () -> {
                                         lift.move(liftPosition[0]);
                                     })
@@ -135,10 +142,10 @@ public class OnePlusFive_Right extends LinearOpMode {
 
         Trajectory toGroundJunction =
                 drive.trajectoryBuilder(toConeStack.end())
-                        .lineTo(new Vector2d(54.70, -10.70))
+                        .splineToConstantHeading(new Vector2d(54.50, -10.50), Math.toRadians(180))
                         .addSpatialMarker(new Vector2d(55, -12),
                                 () -> {
-                                    turnTable.move(-52);
+                                    turnTable.move(-57);
                                 })
                         .addSpatialMarker(new Vector2d(55, -12),
                                 () -> {
@@ -193,7 +200,10 @@ public class OnePlusFive_Right extends LinearOpMode {
 
         Trajectory park =
                 drive.trajectoryBuilder(toMediumJunction.end())
-                        .lineToLinearHeading(new Pose2d(parkPosition, Math.toRadians(90)))
+                        .lineToLinearHeading(new Pose2d(parkPosition, Math.toRadians(90)),
+                                SampleMecanumDrive.getVelocityConstraint(maxVelocity, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                                SampleMecanumDrive.getAccelerationConstraint(maxAccel)
+                                )
                         .build();
 
         currentState = State.HIGH_POLE;
@@ -212,6 +222,7 @@ public class OnePlusFive_Right extends LinearOpMode {
                         belt.move(Consts.Belt.UP);
                         sleep(100);
                         lift.move(Consts.Lift.AUTO_LOW);
+                        sleep(700);
                         next(State.TO_CONE_STACK);
                     }
                     break;
@@ -283,7 +294,7 @@ public class OnePlusFive_Right extends LinearOpMode {
                         sleep(600);
                         lift.move(liftPosition[4]);
                         sleep(600);
-                        belt.moveAbsolute(Consts.BELT_AUTO_DOWN_LIMIT);
+                        belt.moveAbsolute(Consts.BELT_DOWN_LIMIT);
                         sleep(600);
                         claw.move(Consts.Claw.CLOSECLAW);
                         sleep(600);
