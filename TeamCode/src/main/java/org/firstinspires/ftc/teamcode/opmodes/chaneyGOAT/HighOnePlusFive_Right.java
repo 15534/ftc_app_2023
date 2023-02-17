@@ -49,10 +49,10 @@ public class HighOnePlusFive_Right extends LinearOpMode {
     Vector2d mediumJunction = new Vector2d(24.5, -10);
     Vector2d parkPosition = new Vector2d();
     int maxVelocity = 60;
-    int maxAccel = 50;
+    int maxAccel = 60;
 
     int[] liftPosition = {245, 170, 100, 35, 0};
-    int highJunctionCycles = 5;
+    int highJunctionCycles = 4;
     int targetLiftPosition = 0;
 
     void next(State s) {
@@ -111,7 +111,7 @@ public class HighOnePlusFive_Right extends LinearOpMode {
                                 SampleMecanumDrive.getAccelerationConstraint(maxAccel)
                         )
                         .lineTo(
-                                new Vector2d(54, -12.5),
+                                new Vector2d(54.7, -12.5),
                                 SampleMecanumDrive.getVelocityConstraint(maxVelocity, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                                 SampleMecanumDrive.getAccelerationConstraint(maxAccel)
                         )
