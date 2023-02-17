@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Belt;
 import org.firstinspires.ftc.teamcode.subsystems.Camera;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 
-@Autonomous(name = "ParkOnly")
+@Autonomous(name = "ParkOnly", group = "ChaneyTheGOAT")
 @Config
 
 public class ParkOnly extends LinearOpMode {
