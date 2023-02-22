@@ -5,9 +5,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config()
 public class PID {
-    public static double Kp = 0.37;
-    public static double Ki = 0.05;
-    public static double Kd = 1.02;
+    public static double Kp = 0.4;
+    public static double Ki = 0; //0.05
+    public static double Kd = 0; //1.02
     double target = 0;
     double error;
     double derivative;
